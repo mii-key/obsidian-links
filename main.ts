@@ -1,4 +1,4 @@
-import { Editor, MarkdownView, Plugin} from 'obsidian';
+import { Editor, MarkdownView, Plugin } from 'obsidian';
 import { findLink, replaceAllHtmlLinks, LinkTypes, ILinkData } from './utils';
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -8,7 +8,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.addCommand({
 			id: 'links-editor-remove-link',
 			name: 'Remove link',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.removeLink(editor, view)
+			editorCallback: (editor: Editor, view: MarkdownView) => this.removeLinkUnderCursor(editor, view)
 		});
 
 		this.addCommand({
@@ -43,7 +43,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								this.convertLinkToWikiLink(linkData, editor);
 							});
 					});
-				} else{
+				} else {
 					menu.addItem((item) => {
 						item
 							.setTitle("Convert to markdown link")
@@ -53,6 +53,15 @@ export default class ObsidianLinksPlugin extends Plugin {
 							});
 					});
 				}
+				menu.addItem((item) => {
+					item
+						.setTitle("Remove link")
+						.setIcon("trash-2")
+						.onClick(async () => {
+							this.removeLink(linkData, editor);
+						});
+				});
+
 			})
 		);
 	}
@@ -67,7 +76,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return findLink(text, cursorOffset, cursorOffset);
 	}
 
-	removeLink(editor: Editor, view: MarkdownView) {
+
+	removeLinkUnderCursor(editor: Editor, view: MarkdownView) {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
@@ -77,6 +87,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 				editor.offsetToPos(linkData.startIdx),
 				editor.offsetToPos(linkData.endIdx));
 		}
+	}
+
+	removeLink(linkData: ILinkData, editor: Editor) {
+		editor.replaceRange(
+			linkData.text,
+			editor.offsetToPos(linkData.startIdx),
+			editor.offsetToPos(linkData.endIdx));
 	}
 
 	convertSelectedLinkToMarkdownLink(editor: Editor, view: MarkdownView) {
@@ -98,9 +115,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editor.offsetToPos(linkData.endIdx));
 	}
 
-	convertLinkToWikiLink(linkData: ILinkData, editor: Editor){
+	convertLinkToWikiLink(linkData: ILinkData, editor: Editor) {
 		const link = linkData.type === LinkTypes.Markdown ? decodeURI(linkData.link) : linkData.link;
-			const linkText = linkData.text !== linkData.link ? "|"+linkData.text : "";
+		const linkText = linkData.text !== linkData.link ? "|" + linkData.text : "";
 		editor.replaceRange(
 			`[[${link}${linkText}]]`,
 			editor.offsetToPos(linkData.startIdx),
