@@ -12,4 +12,3 @@ Context menu commands:
 - Convert to wikilink - convert markdown, html link to wikilink
 - Convert to markdown link - convert wiki, thml link to markdown
 - Remove link - remove link
-
