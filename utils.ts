@@ -1,3 +1,4 @@
+import { link } from "fs";
 
 export interface ILinkData {
     type: LinkType;
@@ -36,6 +37,7 @@ class LinkData implements ILinkData {
     }
 }
 
+//TODO: refactor
 export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): ILinkData | undefined {
     const wikiLinkRegEx = /\[\[([^\[\]|]+)(\|([^\[\]]+))?\]\]/g;
     const mdLinkRegEx = /\[([^\]]*)\]\(([^)]*)\)/gmi
@@ -76,7 +78,7 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
     return undefined;
 }
 
-// 
+//TODO: refactor
 export function findHtmlLink(text: string, startPos: number, endPos: number): ILinkData | undefined {
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
     let match;
@@ -84,7 +86,7 @@ export function findHtmlLink(text: string, startPos: number, endPos: number): IL
     while ((match = htmlLinkRegEx.exec(text))) {
         if (startPos >= match.index && endPos <= htmlLinkRegEx.lastIndex) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const [raw, openTag, href, url, text] = match;
+            const [raw, url, text] = match;
             return new LinkData(LinkTypes.Html, raw, text, url, match.index, htmlLinkRegEx.lastIndex);
         }
     }
@@ -92,10 +94,29 @@ export function findHtmlLink(text: string, startPos: number, endPos: number): IL
     return undefined;
 }
 
+//TODO: refactor
 export function replaceAllHtmlLinks(text: string): string {
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
 
     return text.replace(htmlLinkRegEx, (match, url, text) => {
         return `[${text}](${url})`;
     })
+}
+
+//TODO: refactor
+export function removeHtmlLinksFromHeadings(text: string) : string {
+    const headingWithLinksRegEx = /^(#+ .*)(?:(\[(.*)\]\((.*)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))(.*)$/gm
+    const result = text.replace(headingWithLinksRegEx, (match, start, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlUrl, htmlText, end, offset) => {
+        let linkText;
+        if(rawMdLink){
+            linkText =  mdText? mdText : "";
+        } else if(rawWikiLink){
+            linkText = wkText ? wkText : wkLink;
+        } else if(rawHtmlLink){
+            linkText = htmlText ? htmlText : ""
+        } 
+        return start + linkText + end;
+    });
+
+    return result;
 }
