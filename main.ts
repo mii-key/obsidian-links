@@ -12,8 +12,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'links-editor-link-to-mdlink',
-			name: 'Convert to Markdown link',
+			id: 'links-editor-convert-link-to-mdlink',
+			name: 'Convert link to Markdown link',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.convertSelectedLinkToMarkdownLink(editor, view)
 		});
 
@@ -21,6 +21,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			id: 'links-editor-copy-link-to-clipboard',
 			name: 'Copy link to clipboard',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.copyLinkToClipboard(editor, view)
+		});
+
+		this.addCommand({
+			id: 'links-editor-convert-link-to-wikilink',
+			name: 'Convert link to Wikilink',
+			editorCallback: (editor: Editor, view: MarkdownView) => this.convertSelectedLinkToWikilink(editor, view)
 		});
 
 		// this.registerEvent(
@@ -82,10 +88,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
 		if (linkData) {
-			editor.replaceRange(
-				linkData.text,
-				editor.offsetToPos(linkData.startIdx),
-				editor.offsetToPos(linkData.endIdx));
+			this.removeLink(linkData, editor);
 		}
 	}
 
@@ -101,10 +104,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html);
 		if (linkData) {
-			editor.replaceRange(
-				`[${linkData.text}](${encodeURI(linkData.link)})`,
-				editor.offsetToPos(linkData.startIdx),
-				editor.offsetToPos(linkData.endIdx));
+			this.convertLinkToMarkdownLink(linkData, editor);
 		}
 	}
 
@@ -115,9 +115,18 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editor.offsetToPos(linkData.endIdx));
 	}
 
+	convertSelectedLinkToWikilink(editor: Editor, view: MarkdownView) {
+		const text = editor.getValue();
+		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown | LinkTypes.Html);
+		if (linkData) {
+			this.convertLinkToWikiLink(linkData, editor);
+		}
+	}
+
 	convertLinkToWikiLink(linkData: ILinkData, editor: Editor) {
 		const link = linkData.type === LinkTypes.Markdown ? decodeURI(linkData.link) : linkData.link;
-		const linkText = linkData.text !== linkData.link ? "|" + linkData.text : "";
+		const linkText = linkData.text !== link ? "|" + linkData.text : "";
 		editor.replaceRange(
 			`[[${link}${linkText}]]`,
 			editor.offsetToPos(linkData.startIdx),
