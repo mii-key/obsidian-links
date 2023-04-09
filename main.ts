@@ -1,5 +1,5 @@
 import { Editor, MarkdownView, Plugin } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, ILinkData } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkTypes, ILinkData, removeHtmlLinksFromHeadings } from './utils';
 
 export default class ObsidianLinksPlugin extends Plugin {
 
@@ -27,6 +27,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			id: 'links-editor-convert-link-to-wikilink',
 			name: 'Convert link to Wikilink',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.convertSelectedLinkToWikilink(editor, view)
+		});
+
+		this.addCommand({
+			id: 'links-editor-remove-links-from-headings',
+			name: 'Remove links from headings',
+			editorCallback: (editor: Editor, view: MarkdownView) => this.removeLinksFromHeadings(editor, view)
 		});
 
 		// this.registerEvent(
@@ -148,6 +154,21 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const text = mdView.getViewData();
 			const result = replaceAllHtmlLinks(text)
 			mdView.setViewData(result, false);
+		}
+	}
+
+	removeLinksFromHeadings(editor: Editor, view: MarkdownView){
+		const selection = editor.getSelection();
+
+		if(selection){
+			const result = removeHtmlLinksFromHeadings(selection);
+			editor.replaceSelection(result);
+		} else{
+			const text = editor.getValue();
+			if(text){
+				const result = removeHtmlLinksFromHeadings(text);
+				editor.setValue(result);
+			}
 		}
 	}
 }
