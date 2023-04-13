@@ -1,12 +1,10 @@
-import { link } from "fs";
 
-export interface ILinkData {
-    type: LinkType;
-    rawText: string;
-    text: string;
-    link: string;
-    startIdx: number;
-    endIdx: number;
+class Position {
+    constructor(public start: number, public end: number){}
+}
+
+class TextPart {
+    constructor(public content: string, public position: Position){}
 }
 
 export enum LinkTypes {
@@ -19,39 +17,37 @@ export enum LinkTypes {
 type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki;
 
 
-class LinkData implements ILinkData {
-    rawText: string;
-    text: string;
-    link: string;
-    startIdx: number;
-    endIdx: number;
-    type : LinkType;
+export class LinkData extends TextPart {
 
-    constructor(type: LinkType, rawText: string, text: string, link: string, startIdx: number, endIdx: number) {
+    constructor(public type: LinkType, content: string, position: Position, public link?: TextPart, public text?: TextPart) {
+        super(content, position);
         this.type = type;
-        this.rawText = rawText;
-        this.text = text;
-        this.link = link;
-        this.startIdx = startIdx;
-        this.endIdx = endIdx;
     }
 }
 
 //TODO: refactor
-export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): ILinkData | undefined {
+export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): LinkData | undefined {
+    // eslint-disable-next-line no-useless-escape
     const wikiLinkRegEx = /\[\[([^\[\]|]+)(\|([^\[\]]+))?\]\]/g;
     const mdLinkRegEx = /\[([^\]]*)\]\(([^)]*)\)/gmi
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
     let match;
 
-
     if ((linkType & LinkTypes.Wiki)) {
         while ((match = wikiLinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= wikiLinkRegEx.lastIndex) {
                 const [raw, url, , text] = match;
-                return !text ? 
-                    new LinkData(LinkTypes.Wiki, raw, url, url, match.index, wikiLinkRegEx.lastIndex)
-                    : new LinkData(LinkTypes.Wiki, raw, text, url, match.index, wikiLinkRegEx.lastIndex);
+                const linkData = new LinkData(LinkTypes.Wiki, raw, new Position(match.index, wikiLinkRegEx.lastIndex));
+                if(url){
+                    const linkIdx = raw.indexOf(url)
+                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+                }
+                if(text){
+                    const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('|') + 1);
+                    linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
+                }
+                
+                return linkData;
             }
         }
     }
@@ -59,8 +55,19 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
     if ((linkType & LinkTypes.Markdown)) {
         while ((match = mdLinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= mdLinkRegEx.lastIndex) {
-                const [raw, text, link] = match;
-                return new LinkData(LinkTypes.Markdown, raw, text, link, match.index, mdLinkRegEx.lastIndex);
+                const [raw, text, url] = match;
+                const linkData = new LinkData(LinkTypes.Markdown, raw, new Position(match.index, mdLinkRegEx.lastIndex));
+                if(text){
+                    const textIdx = raw.indexOf(text);
+                    linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
+                }
+                if(url){
+                    const linkIdx = raw.indexOf(url, linkData.text ? linkData.text.position.end : raw.lastIndexOf('(') + 1)
+                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+                }
+               
+                
+                return linkData;
             }
         }
     }
@@ -69,8 +76,18 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
         while ((match = htmlLinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= htmlLinkRegEx.lastIndex) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const [raw, openTag, href, url, text] = match;
-                return new LinkData(LinkTypes.Html, raw, text, url, match.index, htmlLinkRegEx.lastIndex);
+                const [raw, url, text] = match;
+                const linkData = new LinkData(LinkTypes.Html, raw, new Position(match.index, htmlLinkRegEx.lastIndex));
+                if(url){
+                    const linkIdx = raw.indexOf(url)
+                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+                }
+                if(text){
+                    const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('>') + 1);
+                    linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
+                }
+                
+                return linkData;
             }
         }
     }
@@ -79,7 +96,7 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
 }
 
 //TODO: refactor
-export function findHtmlLink(text: string, startPos: number, endPos: number): ILinkData | undefined {
+export function findHtmlLink(text: string, startPos: number, endPos: number): LinkData | undefined {
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
     let match;
 
@@ -87,7 +104,17 @@ export function findHtmlLink(text: string, startPos: number, endPos: number): IL
         if (startPos >= match.index && endPos <= htmlLinkRegEx.lastIndex) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [raw, url, text] = match;
-            return new LinkData(LinkTypes.Html, raw, text, url, match.index, htmlLinkRegEx.lastIndex);
+            const linkData = new LinkData(LinkTypes.Html, raw, new Position(match.index, htmlLinkRegEx.lastIndex));
+                if(url){
+                    const linkIdx = raw.indexOf(url)
+                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+                }
+                if(text){
+                    const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('|') + 1);
+                    linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
+                }
+                
+                return linkData;
         }
     }
 
@@ -105,6 +132,7 @@ export function replaceAllHtmlLinks(text: string): string {
 
 //TODO: refactor
 export function removeHtmlLinksFromHeadings(text: string) : string {
+    // eslint-disable-next-line no-useless-escape
     const headingWithLinksRegEx = /^(#+ .*)(?:(\[(.*)\]\((.*)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))(.*)$/gm
     const result = text.replace(headingWithLinksRegEx, (match, start, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlUrl, htmlText, end, offset) => {
         let linkText;
