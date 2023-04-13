@@ -1,6 +1,6 @@
-import * as exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeHtmlLinksFromHeadings, LinkTypes } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeHtmlLinksFromHeadings, LinkTypes, getPageTitle } from './utils';
 import { expect, test } from '@jest/globals';
+
 
 test.each([
     // markdown
@@ -129,7 +129,7 @@ test.each([
         input: "Incididunt <a href=\"http://dolore.com\">dolore</a> ullamco <a href=\"http://sunt.com\">sunt</a> ullamco non.",
         expected: "Incididunt [dolore](http://dolore.com) ullamco [sunt](http://sunt.com) ullamco non."
     }
-])('$# convert html links to markdown [$name]', ({ name, input, expected}) => {
+])('$# convert html links to markdown [$name]', ({ name, input, expected }) => {
     const result = replaceAllHtmlLinks(input);
     expect(result).toBe(expected);
 });
@@ -138,21 +138,42 @@ test.each([
     {
         name: "wiki, markdown, html links",
         input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
-        "# Aute officia [do eu](ea sit aute). Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
-        "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
-        "## [[amet mollit velit|Duis cupidatat]]. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
-        " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
-        "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
-        "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+            "# Aute officia [do eu](ea sit aute). Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+            "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+            "## [[amet mollit velit|Duis cupidatat]]. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+            " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+            "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
+            "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
         expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
-        "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
-        "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
-        "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
-        " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
-        "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
-        "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n"
+            "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+            "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+            "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+            " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+            "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
+            "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n"
     }
-])('$# remove links from headings [$name]', ({ name, input, expected}) => {
+])('$# remove links from headings [$name]', ({ name, input, expected }) => {
     const result = removeHtmlLinksFromHeadings(input);
     expect(result).toBe(expected);
 });
+
+test.each([
+    {
+        name: "simple page",
+        url: "https://simple-page.com",
+        pageText: `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple page</title>
+</head>
+<body>
+</body>
+</html>`,
+        expected: "Simple page"
+    }
+
+])("$# get page title [$name]", async ({ name, url, pageText, expected }) => {
+    const result = await getPageTitle(new URL(url), async (url: URL) => Promise.resolve(pageText));
+    expect(result).toBe(expected);
+})

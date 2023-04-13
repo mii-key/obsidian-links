@@ -1,17 +1,19 @@
+// import { requestUrl } from 'obsidian';
+
 
 class Position {
-    constructor(public start: number, public end: number){}
+    constructor(public start: number, public end: number) { }
 }
 
 class TextPart {
-    constructor(public content: string, public position: Position){}
+    constructor(public content: string, public position: Position) { }
 }
 
 export enum LinkTypes {
-	All = 0xFFFF,
-	Markdown = 1,
-	Wiki  = 2,
-	Html = 4
+    All = 0xFFFF,
+    Markdown = 1,
+    Wiki = 2,
+    Html = 4
 }
 
 type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki;
@@ -38,15 +40,15 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
             if (startPos >= match.index && endPos <= wikiLinkRegEx.lastIndex) {
                 const [raw, url, , text] = match;
                 const linkData = new LinkData(LinkTypes.Wiki, raw, new Position(match.index, wikiLinkRegEx.lastIndex));
-                if(url){
+                if (url) {
                     const linkIdx = raw.indexOf(url)
                     linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
                 }
-                if(text){
+                if (text) {
                     const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('|') + 1);
                     linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
                 }
-                
+
                 return linkData;
             }
         }
@@ -57,16 +59,16 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
             if (startPos >= match.index && endPos <= mdLinkRegEx.lastIndex) {
                 const [raw, text, url] = match;
                 const linkData = new LinkData(LinkTypes.Markdown, raw, new Position(match.index, mdLinkRegEx.lastIndex));
-                if(text){
+                if (text) {
                     const textIdx = raw.indexOf(text);
                     linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
                 }
-                if(url){
+                if (url) {
                     const linkIdx = raw.indexOf(url, linkData.text ? linkData.text.position.end : raw.lastIndexOf('(') + 1)
                     linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
                 }
-               
-                
+
+
                 return linkData;
             }
         }
@@ -78,15 +80,15 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const [raw, url, text] = match;
                 const linkData = new LinkData(LinkTypes.Html, raw, new Position(match.index, htmlLinkRegEx.lastIndex));
-                if(url){
+                if (url) {
                     const linkIdx = raw.indexOf(url)
                     linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
                 }
-                if(text){
+                if (text) {
                     const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('>') + 1);
                     linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
                 }
-                
+
                 return linkData;
             }
         }
@@ -105,16 +107,16 @@ export function findHtmlLink(text: string, startPos: number, endPos: number): Li
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [raw, url, text] = match;
             const linkData = new LinkData(LinkTypes.Html, raw, new Position(match.index, htmlLinkRegEx.lastIndex));
-                if(url){
-                    const linkIdx = raw.indexOf(url)
-                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
-                }
-                if(text){
-                    const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('|') + 1);
-                    linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
-                }
-                
-                return linkData;
+            if (url) {
+                const linkIdx = raw.indexOf(url)
+                linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+            }
+            if (text) {
+                const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('|') + 1);
+                linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
+            }
+
+            return linkData;
         }
     }
 
@@ -131,20 +133,32 @@ export function replaceAllHtmlLinks(text: string): string {
 }
 
 //TODO: refactor
-export function removeHtmlLinksFromHeadings(text: string) : string {
+export function removeHtmlLinksFromHeadings(text: string): string {
     // eslint-disable-next-line no-useless-escape
     const headingWithLinksRegEx = /^(#+ .*)(?:(\[(.*)\]\((.*)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))(.*)$/gm
     const result = text.replace(headingWithLinksRegEx, (match, start, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlUrl, htmlText, end, offset) => {
         let linkText;
-        if(rawMdLink){
-            linkText =  mdText? mdText : "";
-        } else if(rawWikiLink){
+        if (rawMdLink) {
+            linkText = mdText ? mdText : "";
+        } else if (rawWikiLink) {
             linkText = wkText ? wkText : wkLink;
-        } else if(rawHtmlLink){
+        } else if (rawHtmlLink) {
             linkText = htmlText ? htmlText : ""
-        } 
+        }
         return start + linkText + end;
     });
 
     return result;
+}
+
+export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<string>): Promise<string> {
+    const titleRegEx = /<title[^>]*>(.*?)<\/title>/i;
+    const text = await getPageText(url);
+    const match = text.match(titleRegEx);
+    if (match) {
+        const [, title] = match;
+        return title;
+    }
+
+    throw new Error("Page has no title.");
 }

@@ -1,5 +1,5 @@
-import { Editor, MarkdownView, Plugin } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings } from './utils';
+import { Editor, MarkdownView, Notice, Plugin, requestUrl } from 'obsidian';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle } from './utils';
 
 export default class ObsidianLinksPlugin extends Plugin {
 
@@ -42,6 +42,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			name: 'Edit link text',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.editLinkTextUnderCursor(editor)
 		});
+
+		this.addCommand({
+			id: 'links-editor-add-link-text',
+			name: 'Add link text',
+			editorCallback: (editor: Editor, view: MarkdownView) => this.addLinkTextUnderCursor(editor)
+		});
+
 
 		// this.registerEvent(
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
@@ -89,12 +96,20 @@ export default class ObsidianLinksPlugin extends Plugin {
 								this.editLinkText(linkData, editor);
 							});
 					});
+				} else if (linkData.link) {
+					menu.addItem((item) => {
+						item
+							.setTitle("Add link text")
+							.setIcon("text-cursor-input")
+							.onClick(async () => {
+								this.addLinkText(linkData, editor);
+							});
+					});
 				}
 
 			})
 		);
 	}
-
 
 	onunload() {
 
@@ -213,13 +228,71 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	editLinkText(linkData: LinkData, editor: Editor) {
 		if (linkData.text) {
-				const start = linkData.position.start + linkData.text.position.start;
-				const end = linkData.position.start + linkData.text.position.end;
-				editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
+			const start = linkData.position.start + linkData.text.position.start;
+			const end = linkData.position.start + linkData.text.position.end;
+			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
 		} else if (this.generateLinkTextOnEdit) {
 			//TODO: 
 		}
 	}
+
+	getFileName(path: string) {
+		return path.replace(/^.*[\\\/]/, '');
+	}
+
+	async addLinkText(linkData: LinkData, editor: Editor) {
+		if (!linkData.link || (linkData.text && linkData.text.content !== "")) {
+			return;
+		}
+
+		if (linkData.type == LinkTypes.Wiki) {
+			const text = this.getFileName(linkData.link?.content);
+			let textStart = linkData.position.start + linkData.link?.position.end;
+			editor.setSelection(editor.offsetToPos(textStart));
+			editor.replaceSelection("|" + text);
+			textStart++;
+			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
+		} else if (linkData.type == LinkTypes.Markdown) {
+			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
+			let text = "";
+			if (urlRegEx.test(linkData.link.content)) {
+				const notice = new Notice("Getting title ...");
+				try {
+					text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
+				}
+				catch (error) {
+					new Notice(error);
+				}
+				finally{
+					notice.hide();
+				}
+			} else {
+				text = this.getFileName(decodeURI(linkData.link?.content));
+			}
+			const textStart = linkData.position.start + 1;
+			editor.setSelection(editor.offsetToPos(textStart));
+			editor.replaceSelection(text);
+			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
+		}
+	}
+
+	addLinkTextUnderCursor(editor: Editor) {
+		const linkData = this.getLink(editor);
+		if (linkData) {
+			// workaround: if executed from command palette, whole link is selected.
+			// with timeout, only specified region is selected.
+			setTimeout(() => {
+				this.addLinkText(linkData, editor);
+			}, 500);
+		}
+	}
+
+	async getPageText(url: URL): Promise<string> {
+		const response = await requestUrl({ url: url.toString() });
+		if (response.status !== 200) {
+			throw new Error(`Failed to request '${url}': ${response.status}`);
+		}
+		return response.text;
+	}
+
 }
-
-
