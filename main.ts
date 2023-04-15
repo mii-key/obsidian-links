@@ -256,7 +256,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
 			let text = "";
 			if (urlRegEx.test(linkData.link.content)) {
-				const notice = new Notice("Getting title ...");
+				const notice = new Notice("Getting title ...", 0);
 				try {
 					text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
 				}
