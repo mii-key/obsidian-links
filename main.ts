@@ -8,43 +8,43 @@ export default class ObsidianLinksPlugin extends Plugin {
 	async onload() {
 
 		this.addCommand({
-			id: 'links-editor-remove-link',
+			id: 'editor-remove-link',
 			name: 'Remove link',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.removeLinkUnderCursor(editor, view)
 		});
 
 		this.addCommand({
-			id: 'links-editor-convert-link-to-mdlink',
+			id: 'editor-convert-link-to-mdlink',
 			name: 'Convert link to Markdown link',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.convertSelectedLinkToMarkdownLink(editor, view)
 		});
 
 		this.addCommand({
-			id: 'links-editor-copy-link-to-clipboard',
+			id: 'editor-copy-link-to-clipboard',
 			name: 'Copy link to clipboard',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.copyLinkToClipboard(editor, view)
 		});
 
 		this.addCommand({
-			id: 'links-editor-convert-link-to-wikilink',
+			id: 'editor-convert-link-to-wikilink',
 			name: 'Convert link to Wikilink',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.convertSelectedLinkToWikilink(editor, view)
 		});
 
 		this.addCommand({
-			id: 'links-editor-remove-links-from-headings',
+			id: 'editor-remove-links-from-headings',
 			name: 'Remove links from headings',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.removeLinksFromHeadings(editor, view)
 		});
 
 		this.addCommand({
-			id: 'links-editor-edit-link-text',
+			id: 'editor-edit-link-text',
 			name: 'Edit link text',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.editLinkTextUnderCursor(editor)
 		});
 
 		this.addCommand({
-			id: 'links-editor-add-link-text',
+			id: 'editor-add-link-text',
 			name: 'Add link text',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.addLinkTextUnderCursor(editor)
 		});
