@@ -27,7 +27,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			titles: [],
 			provideSuggestions: false,
 
-			setLinkData(linkData: LinkData, titles: string[]){
+			setLinkData(linkData: LinkData, titles: string[]) {
 				this.linkData = linkData;
 				this.titles = titles;
 				this.provideSuggestions = true;
@@ -89,15 +89,28 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'links-editor-replace-external-link-with-internal',
+			id: 'editor-replace-external-link-with-internal',
 			name: 'Replace link',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.replaceExternalLinkUnderCursor(editor)
 		});
 
 		this.addCommand({
-			id: 'links-editor-replace-markdown-targets-in-note',
+			id: 'editor-replace-markdown-targets-in-note',
 			name: '#delete Replace markdown link in notes',
 			editorCallback: (editor: Editor, view: MarkdownView) => this.replaceMarkdownTargetsInNote()
+		});
+
+		this.addCommand({
+			id: 'editor-create-link-from-selection',
+			name: 'Create link from selection',
+			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
+				const selection = editor.getSelection();
+				if(checking){
+					return !!selection;
+				} else{
+					this.createLinkFromSelection(selection, editor)
+				}
+			}
 		});
 
 		// this.registerEvent(
@@ -105,67 +118,77 @@ export default class ObsidianLinksPlugin extends Plugin {
 		// )
 
 		this.registerEvent(
-			this.app.workspace.on("file-open",  (file) => this.replaceMarkdownTargetsInNote())
+			this.app.workspace.on("file-open", (file) => this.replaceMarkdownTargetsInNote())
 		)
 
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
 				const linkData = this.getLink(editor);
-				if (!linkData) {
-					return;
-				}
-				if (linkData.type == LinkTypes.Markdown) {
-					menu.addItem((item) => {
-						item
-							.setTitle("Convert to wikilink")
-							.setIcon("rotate-cw")
-							.onClick(async () => {
-								this.convertLinkToWikiLink(linkData, editor);
-							});
-					});
-
-					menu.addItem((item) => {
-						item
-							.setTitle("Replace link")
-							.setIcon("pencil")
-							.onClick(async () => {
-								this.replaceExternalLink(linkData, editor);
-							});
-					});
-				} else {
-					menu.addItem((item) => {
-						item
-							.setTitle("Convert to markdown link")
-							.setIcon("rotate-cw")
-							.onClick(async () => {
-								this.convertLinkToMarkdownLink(linkData, editor);
-							});
-					});
-				}
-				menu.addItem((item) => {
-					item
-						.setTitle("Remove link")
-						.setIcon("trash-2")
-						.onClick(async () => {
-							this.removeLink(linkData, editor);
+				if (linkData) {
+					if (linkData.type == LinkTypes.Markdown) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Convert to wikilink")
+								.setIcon("rotate-cw")
+								.onClick(async () => {
+									this.convertLinkToWikiLink(linkData, editor);
+								});
 						});
-				});
-				if (linkData.text) {
+
+						menu.addItem((item) => {
+							item
+								.setTitle("Replace link")
+								.setIcon("pencil")
+								.onClick(async () => {
+									this.replaceExternalLink(linkData, editor);
+								});
+						});
+					} else {
+						menu.addItem((item) => {
+							item
+								.setTitle("Convert to markdown link")
+								.setIcon("rotate-cw")
+								.onClick(async () => {
+									this.convertLinkToMarkdownLink(linkData, editor);
+								});
+						});
+					}
 					menu.addItem((item) => {
 						item
-							.setTitle("Edit link text")
-							.setIcon("text-cursor-input")
+							.setTitle("Remove link")
+							.setIcon("trash-2")
 							.onClick(async () => {
-								this.editLinkText(linkData, editor);
+								this.removeLink(linkData, editor);
 							});
 					});
-				} else if (linkData.link) {
+					if (linkData.text) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Edit link text")
+								.setIcon("text-cursor-input")
+								.onClick(async () => {
+									this.editLinkText(linkData, editor);
+								});
+						});
+					} else if (linkData.link) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Add link text")
+								.setIcon("text-cursor-input")
+								.onClick(async () => {
+									this.addLinkText(linkData, editor);
+								});
+						});
+					}
+				}
+				const selection = editor.getSelection();
+				if (selection) {
 					menu.addItem((item) => {
 						item
-							.setTitle("Add link text")
-							.setIcon("text-cursor-input")
+							.setTitle("Create link")
+							.setIcon("link")
 							.onClick(async () => {
-								this.addLinkText(linkData, editor);
+								this.createLinkFromSelection(selection, editor);
 							});
 					});
 				}
@@ -173,7 +196,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			})
 		);
 	}
-	
 
 	onunload() {
 
@@ -310,7 +332,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	showLinkTextSuggestions(linkData: LinkData, editor: Editor): boolean {
 		const titles = getLinkTitles(linkData);
-			
+
 		if (titles.length == 0) {
 			return false;
 		}
@@ -407,7 +429,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}).open();
 	}
 
-	escapeRegex(str: string) : string {
+	escapeRegex(str: string): string {
 		return str.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 	}
 
@@ -434,4 +456,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return [targetText, totalCount];
 	}
 
+	createLinkFromSelection(selection: string, editor: Editor) {
+		const linkStart = editor.posToOffset(editor.getCursor('from'));
+		editor.replaceSelection(`[[|${selection}]]`);
+		editor.setCursor(editor.offsetToPos(linkStart + 2));
+	}
 }

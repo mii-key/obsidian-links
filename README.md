@@ -11,6 +11,7 @@ Manipulate links in Obsidian (https://obsidian.md).
   - [Remove links from headings](#remove-links-from-headings)
   - [Edit link text](#edit-link-text)
   - [Add link text](#add-link-text)
+  - [Create link from selection](#create-link-from-selection)
 
 
 # Features
@@ -114,6 +115,20 @@ add link text, select it and place cursor at the end of the text. For local path
 <summary>Demo. External link</summary>
 
 ![convert to markdown link](docs/img/add-link-text-external.gif)
+
+</details>
+
+## Create link from selection
+Create wiki link from selected text.
+
+- Command palette: **Create link from selection**
+- Context menu: **Create link**
+
+
+<details>
+<summary>Demo</summary>
+
+![convert to markdown link](docs/img/create-wikilink-from-selection.gif)
 
 </details>
 
