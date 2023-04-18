@@ -162,3 +162,24 @@ export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<
 
     throw new Error("Page has no title.");
 }
+
+export function getLinkTitles(linkData: LinkData): string[]{
+    if(!linkData.link 
+        || (linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) == 0){
+        return [];
+    }
+    
+    const linkContent = linkData.type == LinkTypes.Markdown ? 
+        decodeURI(linkData.link?.content) : linkData.link?.content;
+
+    const hashIdx = linkContent.indexOf('#');
+    if(hashIdx > 0 && hashIdx < linkContent.length - 1){
+        return linkContent.substring(hashIdx + 1).split('#');
+    }
+
+    return [];
+}
+
+export function getFileName(path: string) {
+    return path.replace(/^.*[\\\/]/, '');
+}

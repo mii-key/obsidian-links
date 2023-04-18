@@ -1,11 +1,40 @@
-import { Editor, MarkdownView, Notice, Plugin, requestUrl } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle } from './utils';
+import { App, Editor, MarkdownView, Notice, Plugin, PluginManifest, requestUrl } from 'obsidian';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName } from './utils';
+import { LinkTextSuggest } from 'suggestors/LinkTextSuggest';
+import { ILinkTextSuggestContext } from 'suggestors/ILinkTextSuggestContext';
 
 export default class ObsidianLinksPlugin extends Plugin {
 
 	generateLinkTextOnEdit = true;
+	linkTextSuggestContext: ILinkTextSuggestContext;
+
+	constructor(app: App, manifest: PluginManifest) {
+		super(app, manifest)
+
+		this.linkTextSuggestContext = {
+			app: app,
+			titleSeparator: " • ",
+			titles: [],
+			provideSuggestions: false,
+
+			setLinkData(linkData: LinkData, titles: string[]){
+				this.linkData = linkData;
+				this.titles = titles;
+				this.provideSuggestions = true;
+			},
+
+			clearLinkData() {
+				this.provideSuggestions = false;
+				this.linkData = undefined;
+				this.titles = [];
+			}
+
+		};
+	}
 
 	async onload() {
+
+		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 
 		this.addCommand({
 			id: 'editor-remove-link',
@@ -236,8 +265,21 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	getFileName(path: string) {
-		return path.replace(/^.*[\\\/]/, '');
+	showLinkTextSuggestions(linkData: LinkData, editor: Editor): boolean {
+		const titles = getLinkTitles(linkData);
+			
+		if (titles.length == 0) {
+			return false;
+		}
+		this.linkTextSuggestContext.setLinkData(linkData, titles);
+
+		//trigger suggest
+		const posLinkEnd = editor.offsetToPos(linkData.position.end);
+		editor.setCursor(posLinkEnd);
+		editor.replaceRange(" ", posLinkEnd);
+		editor.replaceRange("", posLinkEnd, editor.offsetToPos(linkData.position.end + 1));
+
+		return true;
 	}
 
 	async addLinkText(linkData: LinkData, editor: Editor) {
@@ -246,7 +288,10 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 
 		if (linkData.type == LinkTypes.Wiki) {
-			const text = this.getFileName(linkData.link?.content);
+			if (this.showLinkTextSuggestions(linkData, editor)) {
+				return;
+			}
+			const text = getFileName(linkData.link?.content);
 			let textStart = linkData.position.start + linkData.link?.position.end;
 			editor.setSelection(editor.offsetToPos(textStart));
 			editor.replaceSelection("|" + text);
@@ -263,11 +308,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 				catch (error) {
 					new Notice(error);
 				}
-				finally{
+				finally {
 					notice.hide();
 				}
 			} else {
-				text = this.getFileName(decodeURI(linkData.link?.content));
+				if (this.showLinkTextSuggestions(linkData, editor)) {
+					return;
+				}
+				text = getFileName(decodeURI(linkData.link?.content));
 			}
 			const textStart = linkData.position.start + 1;
 			editor.setSelection(editor.offsetToPos(textStart));
