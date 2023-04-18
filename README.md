@@ -44,8 +44,8 @@ Convert Wikilink or HTML link to markdown link. (With HTML link works only if li
 
 
 ## Convert markdown link to Wikilink
-- Command palette: **Convert link to markdown link**
-- Context menu: **Convert to markdown link**
+- Command palette: **Convert link to wikilink**
+- Context menu: **Convert to wikilink**
 
 
 <details>
