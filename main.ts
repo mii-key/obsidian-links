@@ -215,8 +215,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
-		if (linkData) {
-			navigator.clipboard.writeText(linkData.content);
+		if (linkData?.link) {
+			navigator.clipboard.writeText(linkData.link?.content);
 		}
 	}
 
