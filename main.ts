@@ -1,9 +1,19 @@
 import { App, Editor, MarkdownView, Notice, Plugin, PluginManifest, requestUrl } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, getFileName, replaceMarkdownTarget } from './utils';
 import { LinkTextSuggest } from 'suggestors/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggestors/ILinkTextSuggestContext';
+import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
+
+interface ObsidianLinksinSettings {
+	linkReplacements: { source: string, target: string }[];
+}
+
+const DEFAULT_SETTINGS: ObsidianLinksinSettings = {
+	linkReplacements: []
+}
 
 export default class ObsidianLinksPlugin extends Plugin {
+	settings: ObsidianLinksinSettings;
 
 	generateLinkTextOnEdit = true;
 	linkTextSuggestContext: ILinkTextSuggestContext;
@@ -35,6 +45,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	async onload() {
 
 		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
+		await this.loadSettings();
 
 		this.addCommand({
 			id: 'editor-remove-link',
@@ -78,10 +89,25 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCallback: (editor: Editor, view: MarkdownView) => this.addLinkTextUnderCursor(editor)
 		});
 
+		this.addCommand({
+			id: 'links-editor-replace-external-link-with-internal',
+			name: 'Replace link',
+			editorCallback: (editor: Editor, view: MarkdownView) => this.replaceExternalLinkUnderCursor(editor)
+		});
+
+		this.addCommand({
+			id: 'links-editor-replace-markdown-targets-in-note',
+			name: '#delete Replace markdown link in notes',
+			editorCallback: (editor: Editor, view: MarkdownView) => this.replaceMarkdownTargetsInNote()
+		});
 
 		// this.registerEvent(
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
 		// )
+
+		this.registerEvent(
+			this.app.workspace.on("file-open",  (file) => this.replaceMarkdownTargetsInNote())
+		)
 
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
@@ -96,6 +122,15 @@ export default class ObsidianLinksPlugin extends Plugin {
 							.setIcon("rotate-cw")
 							.onClick(async () => {
 								this.convertLinkToWikiLink(linkData, editor);
+							});
+					});
+
+					menu.addItem((item) => {
+						item
+							.setTitle("Replace link")
+							.setIcon("pencil")
+							.onClick(async () => {
+								this.replaceExternalLink(linkData, editor);
 							});
 					});
 				} else {
@@ -139,9 +174,21 @@ export default class ObsidianLinksPlugin extends Plugin {
 			})
 		);
 	}
+	
 
 	onunload() {
 
+	}
+
+	async loadSettings() {
+		console.log("settings loaded");
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
+		console.log("settings saved");
+		console.log(this.settings);
 	}
 
 	getLink(editor: Editor): LinkData | undefined {
@@ -309,6 +356,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 					new Notice(error);
 				}
 				finally {
+				finally {
 					notice.hide();
 				}
 			} else {
@@ -341,6 +389,54 @@ export default class ObsidianLinksPlugin extends Plugin {
 			throw new Error(`Failed to request '${url}': ${response.status}`);
 		}
 		return response.text;
+	}
+
+	replaceExternalLinkUnderCursor(editor: Editor) {
+		const linkData = this.getLink(editor);
+		if (linkData) {
+			this.replaceExternalLink(linkData, editor);
+		}
+	}
+
+	replaceExternalLink(linkData: LinkData, editor: Editor) {
+		new ReplaceLinkModal(this.app, async (linkInfo) => {
+			if (linkInfo) {
+				new Notice(linkInfo.path);
+				this.settings.linkReplacements.push({
+					source: linkData.link!.content,
+					target: linkInfo.path
+				})
+				await this.saveSettings();
+				this.replaceMarkdownTargetsInNote();
+			}
+		}).open();
+	}
+
+	escapeRegex(str: string) : string {
+		return str.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+	}
+
+	replaceMarkdownTargetsInNote() {
+		const mdView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (mdView && mdView.getViewData()) {
+			const text = mdView.getViewData();
+			const [result, count] = this.replaceInputString(text)
+			if (count) {
+				mdView.setViewData(result, false);
+				new Notice(`Links: ${count} items replaced.`);
+			}
+		}
+	}
+
+	replaceInputString(text: string): [string, number] {
+		let targetText = text;
+		let totalCount = 0;
+		this.settings.linkReplacements.forEach(e => {
+			const [newText, count] = replaceMarkdownTarget(targetText, e.source, e.target);
+			targetText = newText;
+			totalCount += count;
+		});
+		return [targetText, totalCount];
 	}
 
 }
