@@ -10,7 +10,6 @@ export class FolderSuggest extends TextInputSuggest<TFile> {
     const lowerCaseInputStr = inputStr.toLowerCase()
 
     notes.forEach((file: TFile) => {
-      // console.log(file);
       if (
         file.path.toLowerCase().contains(lowerCaseInputStr)
       ) {

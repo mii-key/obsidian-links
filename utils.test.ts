@@ -179,10 +179,6 @@ test.each([
 })
 
 
-function escapeRegex(str: string): string {
-    return str.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
-}
-
 test.each([
     {
         name: "markddown with http urls",

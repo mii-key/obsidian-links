@@ -1,7 +1,6 @@
-import { LinkData, LinkTypes, getFileName } from './../utils';
-import { App, ButtonComponent, DropdownComponent, Modal, Notice, SearchComponent, Setting } from 'obsidian';
+import { LinkTypes } from './../utils';
+import { App, Modal, Setting } from 'obsidian';
 import { FolderSuggest } from 'suggesters/FolderSuggester';
-import { GenericTextSuggester } from 'suggesters/GenericTextSuggester';
 import parseFilepath  from 'parse-filepath';
 
 
@@ -64,7 +63,6 @@ export class ReplaceLinkModal extends Modal {
 						this.close();
 						if (this.notePath) {
 							const pathInfo = parseFilepath(this.notePath);
-							console.log(pathInfo);
 							this.onSubmit({ 
 								type: LinkTypes.Wiki, 
 								path: pathInfo.dir? pathInfo.dir.concat("/", pathInfo.name) :  pathInfo.name,

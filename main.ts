@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownView, Notice, Plugin, PluginManifest, requestUrl } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, getFileName, replaceMarkdownTarget } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget } from './utils';
 import { LinkTextSuggest } from 'suggestors/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggestors/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -43,9 +43,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	async onload() {
-
-		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 		await this.loadSettings();
+		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 
 		this.addCommand({
 			id: 'editor-remove-link',
@@ -181,14 +180,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		console.log("settings loaded");
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-		console.log("settings saved");
-		console.log(this.settings);
 	}
 
 	getLink(editor: Editor): LinkData | undefined {
@@ -355,7 +351,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 				catch (error) {
 					new Notice(error);
 				}
-				finally {
 				finally {
 					notice.hide();
 				}
