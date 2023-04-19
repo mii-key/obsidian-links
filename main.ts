@@ -156,7 +156,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 					menu.addItem((item) => {
 						item
 							.setTitle("Remove link")
-							.setIcon("trash-2")
+							.setIcon("unlink")
 							.onClick(async () => {
 								this.removeLink(linkData, editor);
 							});
