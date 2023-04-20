@@ -91,7 +91,11 @@ Select link text and place cursor at the end of the text
 </details>
 
 ## Add link text
-add link text, select it and place cursor at the end of the text. For local path link text = file name of the note. For http[s] based URL link text = heading (`<head/>`) of the page.
+Add link text, select it and place cursor at the end of the text. 
+Link text depends on the kind of a link. 
+For local notes text will be either file name of the note or popup with suggested link texts. Title separator can be specified in setting. 
+For external http[s] links, page content is requested and link text is set to the title (content of `<title/>` element) of the page.
+
 
 - Command palette: **Add link text**
 - Context menu: **Add link text**
