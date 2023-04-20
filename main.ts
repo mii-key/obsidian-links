@@ -8,6 +8,8 @@ interface ObsidianLinksinSettings {
 	linkReplacements: { source: string, target: string }[];
 }
 
+const featureEnabledReplaceLink = false;
+
 const DEFAULT_SETTINGS: ObsidianLinksinSettings = {
 	linkReplacements: []
 }
@@ -88,11 +90,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCallback: (editor: Editor, view: MarkdownView) => this.addLinkTextUnderCursor(editor)
 		});
 
-		this.addCommand({
-			id: 'editor-replace-external-link-with-internal',
-			name: 'Replace link',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.replaceExternalLinkUnderCursor(editor)
-		});
+		if (featureEnabledReplaceLink) {
+			this.addCommand({
+				id: 'editor-replace-external-link-with-internal',
+				name: 'Replace link',
+				editorCallback: (editor: Editor, view: MarkdownView) => this.replaceExternalLinkUnderCursor(editor)
+			});
+		}
 
 		this.addCommand({
 			id: 'editor-replace-markdown-targets-in-note',
@@ -105,9 +109,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 			name: 'Create link from selection',
 			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
 				const selection = editor.getSelection();
-				if(checking){
+				if (checking) {
 					return !!selection;
-				} else{
+				} else {
 					this.createLinkFromSelection(selection, editor)
 				}
 			}
@@ -135,14 +139,16 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 
-						menu.addItem((item) => {
-							item
-								.setTitle("Replace link")
-								.setIcon("pencil")
-								.onClick(async () => {
-									this.replaceExternalLink(linkData, editor);
-								});
-						});
+						if (featureEnabledReplaceLink) {
+							menu.addItem((item) => {
+								item
+									.setTitle("Replace link")
+									.setIcon("pencil")
+									.onClick(async () => {
+										this.replaceExternalLink(linkData, editor);
+									});
+							});
+						}
 					} else {
 						menu.addItem((item) => {
 							item
