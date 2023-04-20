@@ -1,21 +1,24 @@
-import { App, Editor, MarkdownView, Notice, Plugin, PluginManifest, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, requestUrl } from 'obsidian';
 import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget } from './utils';
 import { LinkTextSuggest } from 'suggestors/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggestors/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
 
-interface ObsidianLinksinSettings {
+
+interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
+	titleSeparator: string;
 }
 
 const featureEnabledReplaceLink = false;
 
-const DEFAULT_SETTINGS: ObsidianLinksinSettings = {
-	linkReplacements: []
+const DEFAULT_SETTINGS: IObsidianLinksSettings = {
+	linkReplacements: [],
+	titleSeparator: " • "
 }
 
 export default class ObsidianLinksPlugin extends Plugin {
-	settings: ObsidianLinksinSettings;
+	settings: IObsidianLinksSettings;
 
 	generateLinkTextOnEdit = true;
 	linkTextSuggestContext: ILinkTextSuggestContext;
@@ -46,6 +49,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		this.addSettingTab(new ObsidianLinksSettingTab(this.app, this));
+		
 		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 
 		this.addCommand({
@@ -209,10 +215,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+
+		this.linkTextSuggestContext.titleSeparator = this.settings.titleSeparator;
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+
+		this.linkTextSuggestContext.titleSeparator = this.settings.titleSeparator;
 	}
 
 	getLink(editor: Editor): LinkData | undefined {
@@ -466,5 +476,29 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const linkStart = editor.posToOffset(editor.getCursor('from'));
 		editor.replaceSelection(`[[|${selection}]]`);
 		editor.setCursor(editor.offsetToPos(linkStart + 2));
+	}
+}
+
+export class ObsidianLinksSettingTab extends PluginSettingTab {
+	plugin: ObsidianLinksPlugin;
+    constructor(app: App, plugin: ObsidianLinksPlugin) {
+		super(app, plugin);
+		this.plugin = plugin;
+	}
+
+	display(): void {
+		const {containerEl} = this;
+
+		containerEl.empty();
+
+		new Setting(containerEl)
+			.setName('Title separator')
+			.setDesc('String used as headings separator in \'Add link text\' command.')
+			.addText(text => text
+				.setValue(this.plugin.settings.titleSeparator)
+				.onChange(async (value) => {
+					this.plugin.settings.titleSeparator = value;
+					await this.plugin.saveSettings();
+				}));
 	}
 }
