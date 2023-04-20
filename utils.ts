@@ -1,6 +1,5 @@
 // import { requestUrl } from 'obsidian';
 
-
 class Position {
     constructor(public start: number, public end: number) { }
 }
@@ -161,4 +160,38 @@ export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<
     }
 
     throw new Error("Page has no title.");
+}
+
+export function getLinkTitles(linkData: LinkData): string[]{
+    if(!linkData.link 
+        || (linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) == 0){
+        return [];
+    }
+    
+    const linkContent = linkData.type == LinkTypes.Markdown ? 
+        decodeURI(linkData.link?.content) : linkData.link?.content;
+
+    const hashIdx = linkContent.indexOf('#');
+    if(hashIdx > 0 && hashIdx < linkContent.length - 1){
+        return linkContent.substring(hashIdx + 1).split('#');
+    }
+
+    return [];
+}
+
+export function getFileName(path: string) : string {
+    return path.replace(/^.*[\\\/]/, '');
+}
+
+function escapeRegex(str:string): string {
+    return str.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
+export function replaceMarkdownTarget(text: string, target: string, newTarget: string): [string, number]{
+    const regexp = new RegExp("\\[([^\\]]*)?\\]\\(("+ escapeRegex(target) + ")\\)", "ig");
+    let count = 0;
+    return [text.replace(regexp, (match, text) => {
+        count++;
+        return `[${text}](${encodeURI(newTarget)})`; 
+     }), count];
 }
