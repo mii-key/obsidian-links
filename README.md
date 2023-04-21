@@ -52,7 +52,7 @@ Convert Wikilink or HTML link to markdown link. (With HTML link works only if li
 <details>
 <summary>Demo</summary>
 
-![convert to markdown link](docs/img/convert-to-wikilink.gif)
+![convert markdown link to wiki link](docs/img/convert-to-wikilink.gif)
 
 </details>
 
@@ -72,7 +72,7 @@ Remove links from headings in selection or in an entier note.
 <details>
 <summary>Demo</summary>
 
-![convert to markdown link](docs/img/remove-links-from-headings.gif)
+![Remove links from headings](docs/img/remove-links-from-headings.gif)
 
 </details>
 
@@ -86,7 +86,7 @@ Select link text and place cursor at the end of the text
 <details>
 <summary>Demo</summary>
 
-![convert to markdown link](docs/img/edit-link-text.gif)
+![Edit link text](docs/img/edit-link-text.gif)
 
 </details>
 
@@ -104,26 +104,26 @@ For external http[s] links, page content is requested and link text is set to th
 <details>
 <summary>Demo. Link to local note</summary>
 
-![convert to markdown link](docs/img/add-link-text-local.gif)
+![Link to local note](docs/img/add-link-text-local.gif)
 
 </details>
 
 <details>
 <summary>Demo. Link to a heading in local note</summary>
 
-![convert to markdown link](docs/img/add-link-text-local-heading.gif)
+![Link to a heading in local note](docs/img/add-link-text-local-heading.gif)
 
 </details>
 
 <details>
 <summary>Demo. External link</summary>
 
-![convert to markdown link](docs/img/add-link-text-external.gif)
+![External link](docs/img/add-link-text-external.gif)
 
 </details>
 
 ## Create link from selection
-Create wiki link from selected text.
+Create link from selected text.
 
 - Command palette: **Create link from selection**
 - Context menu: **Create link**
@@ -132,7 +132,7 @@ Create wiki link from selected text.
 <details>
 <summary>Demo</summary>
 
-![convert to markdown link](docs/img/create-wikilink-from-selection.gif)
+![Create link from selection](docs/img/create-wikilink-from-selection.gif)
 
 </details>
 
