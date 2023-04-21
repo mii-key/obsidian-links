@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, htmlToMarkdown, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, htmlToMarkdown, requestUrl } from 'obsidian';
 import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget } from './utils';
 import { LinkTextSuggest } from 'suggestors/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggestors/ILinkTextSuggestContext';
@@ -485,7 +485,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		editor.setCursor(editor.offsetToPos(linkStart + 2));
 	}
 
-	onEditorPaste(evt: ClipboardEvent, editor: Editor, view: MarkdownView) {
+	onEditorPaste(evt: ClipboardEvent, editor: Editor, view: MarkdownView | MarkdownFileInfo) {
 		const html = evt.clipboardData?.getData('text/html');
 		if(html && html.indexOf('<a') > 0){
 			const markdown = htmlToMarkdown(html);
