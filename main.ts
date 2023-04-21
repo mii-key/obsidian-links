@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, htmlToMarkdown, requestUrl } from 'obsidian';
 import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget } from './utils';
 import { LinkTextSuggest } from 'suggestors/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggestors/ILinkTextSuggestContext';
@@ -127,9 +127,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
 		// )
 
-		this.registerEvent(
-			this.app.workspace.on("file-open", (file) => this.replaceMarkdownTargetsInNote())
-		)
+		if(featureEnabledReplaceLink){
+			this.registerEvent(
+				this.app.workspace.on("file-open", (file) => this.replaceMarkdownTargetsInNote())
+			)
+			this.registerEvent(
+				this.app.workspace.on('editor-paste', (evt, editor, view) => this.onEditorPaste(evt, editor, view))
+			);
+		}
 
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
@@ -207,6 +212,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 			})
 		);
+
+	
 	}
 
 	onunload() {
@@ -453,7 +460,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const mdView = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (mdView && mdView.getViewData()) {
 			const text = mdView.getViewData();
-			const [result, count] = this.replaceInputString(text)
+			const [result, count] = this.replaceLinksInText(text)
 			if (count) {
 				mdView.setViewData(result, false);
 				new Notice(`Links: ${count} items replaced.`);
@@ -461,7 +468,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	replaceInputString(text: string): [string, number] {
+	replaceLinksInText(text: string): [string, number] {
 		let targetText = text;
 		let totalCount = 0;
 		this.settings.linkReplacements.forEach(e => {
@@ -476,6 +483,18 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const linkStart = editor.posToOffset(editor.getCursor('from'));
 		editor.replaceSelection(`[[|${selection}]]`);
 		editor.setCursor(editor.offsetToPos(linkStart + 2));
+	}
+
+	onEditorPaste(evt: ClipboardEvent, editor: Editor, view: MarkdownView) {
+		const html = evt.clipboardData?.getData('text/html');
+		if(html && html.indexOf('<a') > 0){
+			const markdown = htmlToMarkdown(html);
+			const [text, count] = this.replaceLinksInText(markdown);
+			if(count){
+				evt.preventDefault();
+				editor.replaceRange(text, editor.getCursor('from'));
+			}
+		}
 	}
 }
 
