@@ -104,11 +104,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			});
 		}
 
-		this.addCommand({
-			id: 'editor-replace-markdown-targets-in-note',
-			name: '#delete Replace markdown link in notes',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.replaceMarkdownTargetsInNote()
-		});
+		
 
 		this.addCommand({
 			id: 'editor-create-link-from-selection',
@@ -134,6 +130,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			this.registerEvent(
 				this.app.workspace.on('editor-paste', (evt, editor, view) => this.onEditorPaste(evt, editor, view))
 			);
+
+			this.addCommand({
+				id: 'editor-replace-markdown-targets-in-note',
+				name: '#delete Replace markdown link in notes',
+				editorCallback: (editor: Editor, view: MarkdownView) => this.replaceMarkdownTargetsInNote()
+			});
 		}
 
 		this.registerEvent(
