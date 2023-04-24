@@ -1,4 +1,5 @@
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeHtmlLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget } from './utils';
+import exp from 'constants';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, HasLinksInHeadings } from './utils';
 import { expect, test } from '@jest/globals';
 
 
@@ -151,10 +152,28 @@ test.each([
             " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
             "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
             "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n"
+    },
+    {
+        name: "headings without links",
+        input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+        "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+        "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+        "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+        " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+        "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
+        "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+        expected: null
     }
-])('$# remove links from headings [$name]', ({ name, input, expected }) => {
-    const result = removeHtmlLinksFromHeadings(input);
-    expect(result).toBe(expected);
+])('$# check & remove links from headings [$name]', ({ name, input, expected }) => {
+
+    const hasLinks = HasLinksInHeadings(input);
+    if(expected){
+        expect(hasLinks).toBeTruthy();
+        const result = removeLinksFromHeadings(input);
+        expect(result).toBe(expected);
+    } else{
+        expect(hasLinks).toBeFalsy();
+    }
 });
 
 test.each([
