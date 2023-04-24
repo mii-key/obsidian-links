@@ -1,6 +1,6 @@
 {
 	"name": "links",
-	"version": "0.5.1",
+	"version": "0.5.2",
 	"description": "Manipulate links in Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
