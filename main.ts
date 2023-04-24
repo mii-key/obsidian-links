@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, htmlToMarkdown, requestUrl } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeHtmlLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings } from './utils';
 import { LinkTextSuggest } from 'suggestors/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggestors/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -51,79 +51,70 @@ export default class ObsidianLinksPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.addSettingTab(new ObsidianLinksSettingTab(this.app, this));
-		
+
 		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 
 		this.addCommand({
 			id: 'editor-remove-link',
 			name: 'Remove link',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.removeLinkUnderCursor(editor, view)
+			editorCheckCallback: (checking, editor, ctx) => this.removeLinkUnderCursorHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-convert-link-to-mdlink',
 			name: 'Convert link to Markdown link',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.convertSelectedLinkToMarkdownLink(editor, view)
+			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToMarkdownLinkHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-copy-link-to-clipboard',
 			name: 'Copy link to clipboard',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.copyLinkToClipboard(editor, view)
+			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-convert-link-to-wikilink',
 			name: 'Convert link to Wikilink',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.convertSelectedLinkToWikilink(editor, view)
+			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToWikilinkHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-remove-links-from-headings',
 			name: 'Remove links from headings',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.removeLinksFromHeadings(editor, view)
+			editorCheckCallback: (checking, editor, ctx) => this.removeLinksFromHeadingsHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-edit-link-text',
 			name: 'Edit link text',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.editLinkTextUnderCursor(editor)
+			editorCheckCallback: (checking, editor, ctx) => this.editLinkTextUnderCursorHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-add-link-text',
 			name: 'Add link text',
-			editorCallback: (editor: Editor, view: MarkdownView) => this.addLinkTextUnderCursor(editor)
+			editorCheckCallback: (checking, editor, ctx) => this.addLinkTextUnderCursorHandler(editor, checking)
 		});
 
 		if (featureEnabledReplaceLink) {
 			this.addCommand({
 				id: 'editor-replace-external-link-with-internal',
 				name: 'Replace link',
-				editorCallback: (editor: Editor, view: MarkdownView) => this.replaceExternalLinkUnderCursor(editor)
+				editorCheckCallback: (checking, editor, ctx) => this.replaceExternalLinkUnderCursorHandler(editor, checking)
 			});
 		}
-
-		
 
 		this.addCommand({
 			id: 'editor-create-link-from-selection',
 			name: 'Create link from selection',
-			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
-				const selection = editor.getSelection();
-				if (checking) {
-					return !!selection;
-				} else {
-					this.createLinkFromSelection(selection, editor)
-				}
-			}
+			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromSelectionHandler(editor, checking)
 		});
 
 		// this.registerEvent(
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
 		// )
 
-		if(featureEnabledReplaceLink){
+		if (featureEnabledReplaceLink) {
 			this.registerEvent(
 				this.app.workspace.on("file-open", (file) => this.replaceMarkdownTargetsInNote())
 			)
@@ -200,14 +191,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 				}
-				const selection = editor.getSelection();
-				if (selection) {
+				if (this.createLinkFromSelectionHandler(editor, true)) {
 					menu.addItem((item) => {
 						item
 							.setTitle("Create link")
 							.setIcon("link")
 							.onClick(async () => {
-								this.createLinkFromSelection(selection, editor);
+								this.createLinkFromSelectionHandler(editor);
 							});
 					});
 				}
@@ -215,7 +205,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			})
 		);
 
-	
+
 	}
 
 	onunload() {
@@ -240,10 +230,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return findLink(text, cursorOffset, cursorOffset);
 	}
 
-	removeLinkUnderCursor(editor: Editor, view: MarkdownView) {
+	removeLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
+		if(checking){
+			return !!linkData;
+		} 
 		if (linkData) {
 			this.removeLink(linkData, editor);
 		}
@@ -260,10 +253,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editor.offsetToPos(linkData.position.end));
 	}
 
-	convertSelectedLinkToMarkdownLink(editor: Editor, view: MarkdownView) {
+	convertLinkUnderCursorToMarkdownLinkHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html);
+		if(checking){
+			return !!linkData;
+		}
 		if (linkData) {
 			this.convertLinkToMarkdownLink(linkData, editor);
 		}
@@ -283,10 +279,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editor.offsetToPos(linkData.position.end));
 	}
 
-	convertSelectedLinkToWikilink(editor: Editor, view: MarkdownView) {
+	convertLinkUnderCursorToWikilinkHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown | LinkTypes.Html);
+		if(checking){
+			return !!linkData;
+		}
+
 		if (linkData) {
 			this.convertLinkToWikiLink(linkData, editor);
 		}
@@ -301,10 +301,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editor.offsetToPos(linkData.position.end));
 	}
 
-	copyLinkToClipboard(editor: Editor, view: MarkdownView) {
+	copyLinkUnderCursorToClipboardHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
+		if(checking){
+			return !!linkData;
+		}
 		if (linkData?.link) {
 			navigator.clipboard.writeText(linkData.link?.content);
 		}
@@ -319,23 +322,33 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	removeLinksFromHeadings(editor: Editor, view: MarkdownView) {
+	removeLinksFromHeadingsHandler(editor: Editor, checking: boolean): boolean | void {
 		const selection = editor.getSelection();
 
 		if (selection) {
-			const result = removeHtmlLinksFromHeadings(selection);
+			if(checking){
+				return HasLinksInHeadings(selection);
+			}
+			const result = removeLinksFromHeadings(selection);
 			editor.replaceSelection(result);
 		} else {
 			const text = editor.getValue();
+			if(checking){
+				return !!text && HasLinksInHeadings(text);
+			}
 			if (text) {
-				const result = removeHtmlLinksFromHeadings(text);
+				const result = removeLinksFromHeadings(text);
 				editor.setValue(result);
 			}
 		}
 	}
 
-	editLinkTextUnderCursor(editor: Editor) {
+	editLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
+		if(checking){
+			return !!linkData && !!linkData.text;
+		}
+
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
 			// with timeout, only specified region is selected.
@@ -414,8 +427,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	addLinkTextUnderCursor(editor: Editor) {
+	addLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
+		if(checking){
+			return !!linkData && !linkData.text;
+		}
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
 			// with timeout, only specified region is selected.
@@ -433,8 +449,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return response.text;
 	}
 
-	replaceExternalLinkUnderCursor(editor: Editor) {
+	replaceExternalLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
+		if(checking){
+			return !!linkData;
+		}
 		if (linkData) {
 			this.replaceExternalLink(linkData, editor);
 		}
@@ -481,7 +500,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return [targetText, totalCount];
 	}
 
-	createLinkFromSelection(selection: string, editor: Editor) {
+	createLinkFromSelectionHandler(editor: Editor, checking = false): boolean | void {
+		const selection = editor.getSelection();
+		
+		if(checking){
+			return !!selection;
+		}
+		
 		const linkStart = editor.posToOffset(editor.getCursor('from'));
 		editor.replaceSelection(`[[|${selection}]]`);
 		editor.setCursor(editor.offsetToPos(linkStart + 2));
@@ -489,10 +514,10 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	onEditorPaste(evt: ClipboardEvent, editor: Editor, view: MarkdownView | MarkdownFileInfo) {
 		const html = evt.clipboardData?.getData('text/html');
-		if(html && html.indexOf('<a') > 0){
+		if (html && html.indexOf('<a') > 0) {
 			const markdown = htmlToMarkdown(html);
 			const [text, count] = this.replaceLinksInText(markdown);
-			if(count){
+			if (count) {
 				evt.preventDefault();
 				editor.replaceRange(text, editor.getCursor('from'));
 			}
@@ -502,13 +527,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 export class ObsidianLinksSettingTab extends PluginSettingTab {
 	plugin: ObsidianLinksPlugin;
-    constructor(app: App, plugin: ObsidianLinksPlugin) {
+	constructor(app: App, plugin: ObsidianLinksPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
