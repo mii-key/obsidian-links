@@ -234,9 +234,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
-		if(checking){
+		if (checking) {
 			return !!linkData;
-		} 
+		}
 		if (linkData) {
 			this.removeLink(linkData, editor);
 		}
@@ -257,7 +257,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html);
-		if(checking){
+		if (checking) {
 			return !!linkData;
 		}
 		if (linkData) {
@@ -283,7 +283,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown | LinkTypes.Html);
-		if(checking){
+		if (checking) {
 			return !!linkData;
 		}
 
@@ -305,7 +305,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
-		if(checking){
+		if (checking) {
 			return !!linkData;
 		}
 		if (linkData?.link) {
@@ -326,14 +326,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const selection = editor.getSelection();
 
 		if (selection) {
-			if(checking){
+			if (checking) {
 				return HasLinksInHeadings(selection);
 			}
 			const result = removeLinksFromHeadings(selection);
 			editor.replaceSelection(result);
 		} else {
 			const text = editor.getValue();
-			if(checking){
+			if (checking) {
 				return !!text && HasLinksInHeadings(text);
 			}
 			if (text) {
@@ -345,7 +345,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	editLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
-		if(checking){
+		if (checking) {
 			return !!linkData && !!linkData.text;
 		}
 
@@ -429,7 +429,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	addLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
-		if(checking){
+		if (checking) {
 			return !!linkData && !linkData.text;
 		}
 		if (linkData) {
@@ -451,7 +451,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	replaceExternalLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
-		if(checking){
+		if (checking) {
 			return !!linkData;
 		}
 		if (linkData) {
@@ -502,11 +502,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	createLinkFromSelectionHandler(editor: Editor, checking = false): boolean | void {
 		const selection = editor.getSelection();
-		
-		if(checking){
+
+		if (checking) {
 			return !!selection;
 		}
-		
+
 		const linkStart = editor.posToOffset(editor.getCursor('from'));
 		editor.replaceSelection(`[[|${selection}]]`);
 		editor.setCursor(editor.offsetToPos(linkStart + 2));
@@ -519,7 +519,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const [text, count] = this.replaceLinksInText(markdown);
 			if (count) {
 				evt.preventDefault();
-				editor.replaceRange(text, editor.getCursor('from'));
+				if (editor.getSelection()) {
+					editor.replaceSelection(text);
+				} else {
+					editor.replaceRange(text, editor.getCursor('from'));
+				}
 			}
 		}
 	}
