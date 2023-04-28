@@ -1,7 +1,7 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, htmlToMarkdown, requestUrl } from 'obsidian';
 import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings } from './utils';
-import { LinkTextSuggest } from 'suggestors/LinkTextSuggest';
-import { ILinkTextSuggestContext } from 'suggestors/ILinkTextSuggestContext';
+import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
+import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
 
 
