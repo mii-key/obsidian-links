@@ -519,11 +519,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const [text, count] = this.replaceLinksInText(markdown);
 			if (count) {
 				evt.preventDefault();
+				const fromOffset = editor.posToOffset(editor.getCursor('from'));
 				if (editor.getSelection()) {
 					editor.replaceSelection(text);
 				} else {
 					editor.replaceRange(text, editor.getCursor('from'));
 				}
+				editor.setCursor(editor.offsetToPos(fromOffset + text.length));
 			}
 		}
 	}
