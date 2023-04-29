@@ -189,6 +189,16 @@ export function getFileName(path: string) : string {
     return path.replace(/^.*[\\\/]/, '');
 }
 
+export function removeExtention(path: string, extention = ".md"): [string, boolean] {
+    const extIdx = path.lastIndexOf(extention);
+
+		if(extIdx < 0 || extIdx < path.length - extention.length){
+			return [path, false];
+		}
+
+        return [path.substring(0, extIdx), true];
+}
+
 function escapeRegex(str:string): string {
     return str.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }

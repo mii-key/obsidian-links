@@ -1,5 +1,5 @@
-import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, htmlToMarkdown, requestUrl } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings } from './utils';
+import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl } from 'obsidian';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -118,6 +118,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 			this.registerEvent(
 				this.app.workspace.on("file-open", (file) => this.replaceMarkdownTargetsInNote())
 			)
+			this.registerEvent(
+				this.app.vault.on("delete", (file) => this.deleteFileHandler(file))
+			);
+
+			this.registerEvent(
+				this.app.vault.on("rename", (file, oldPath) => this.renameFileHandler(file, oldPath))
+			);
+
 			this.registerEvent(
 				this.app.workspace.on('editor-paste', (evt, editor, view) => this.onEditorPaste(evt, editor, view))
 			);
@@ -529,6 +537,45 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 		}
 	}
+
+
+	deleteFileHandler(file: TAbstractFile) {
+		const [pathWithoutExtention, success] = removeExtention(file.path);
+		if (!success) {
+			return;
+		}
+
+		const replacements = this.settings.linkReplacements.filter(r => {
+			const hashIdx = r.target.indexOf('#');
+			return hashIdx > 0 ?
+				r.target.substring(0, hashIdx) !== pathWithoutExtention
+				: r.target !== pathWithoutExtention;
+		});
+		this.settings.linkReplacements = replacements;
+		this.saveSettings();
+	}
+	
+	renameFileHandler(file: TAbstractFile, oldPath: string) {
+		const [oldPathWithoutExtention, success] = removeExtention(oldPath);
+		if (!success) {
+			return;
+		}
+
+		let settingsChanged = false;
+		this.settings.linkReplacements.forEach(r => {
+			const hashIdx = r.target.indexOf('#');
+			const targetPath = hashIdx > 0 ? r.target.substring(0, hashIdx) : r.target;
+			if (targetPath === oldPathWithoutExtention) {
+				const [newPathWithoutExtension] = removeExtention(file.path);
+				r.target = hashIdx > 0 ?
+					newPathWithoutExtension + r.target.substring(hashIdx) : newPathWithoutExtension;
+				settingsChanged = true;
+			}
+		});
+		if(settingsChanged){
+			this.saveSettings();
+		}
+	}
 }
 
 export class ObsidianLinksSettingTab extends PluginSettingTab {
@@ -554,3 +601,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				}));
 	}
 }
+
+
+
