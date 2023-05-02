@@ -247,8 +247,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 							});
 					});
 					
-				}
-				if (this.createLinkFromSelectionHandler(editor, true)) {
+				} else if (this.createLinkFromSelectionHandler(editor, true)) {
+					menu.addSeparator();
 					menu.addItem((item) => {
 						item
 							.setTitle("Create link")
