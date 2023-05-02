@@ -55,26 +55,32 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 
 		this.addCommand({
-			id: 'editor-remove-link',
-			name: 'Remove link',
-			editorCheckCallback: (checking, editor, ctx) => this.removeLinkUnderCursorHandler(editor, checking)
+			id: 'editor-unlink-link',
+			name: 'Unlink',
+			editorCheckCallback: (checking, editor, ctx) => this.unlinkLinkUnderCursorHandler(editor, checking)
+		});
+
+		this.addCommand({
+			id: 'editor-delete-link',
+			name: 'Delete link',
+			editorCheckCallback: (checking, editor, ctx) => this.deleteLinkUnderCursorHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-convert-link-to-mdlink',
-			name: 'Convert link to Markdown link',
+			name: 'Convert to Markdown link',
 			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToMarkdownLinkHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-copy-link-to-clipboard',
-			name: 'Copy link to clipboard',
+			name: 'Copy link destination',
 			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-convert-link-to-wikilink',
-			name: 'Convert link to Wikilink',
+			name: 'Convert to Wikilink',
 			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToWikilinkHandler(editor, checking)
 		});
 
@@ -96,6 +102,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.addLinkTextUnderCursorHandler(editor, checking)
 		});
 
+		this.addCommand({
+			id: 'editor-edit-link-destination',
+			name: 'Edit link destination',
+			editorCheckCallback: (checking, editor, ctx) => this.editLinkDestinationUnderCursorHandler(editor, checking)
+		});
+
 		if (featureEnabledReplaceLink) {
 			this.addCommand({
 				id: 'editor-replace-external-link-with-internal',
@@ -106,9 +118,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'editor-create-link-from-selection',
-			name: 'Create link from selection',
+			name: 'Create link',
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromSelectionHandler(editor, checking)
 		});
+
+		
 
 		// this.registerEvent(
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
@@ -141,6 +155,58 @@ export default class ObsidianLinksPlugin extends Plugin {
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
 				const linkData = this.getLink(editor);
 				if (linkData) {
+					menu.addSeparator();
+					if (linkData.text) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Edit link text")
+								.setIcon("text-cursor-input")
+								.onClick(async () => {
+									this.editLinkText(linkData, editor);
+								});
+						});
+					} else if (linkData.link) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Add link text")
+								.setIcon("text-cursor-input")
+								.onClick(async () => {
+									this.addLinkText(linkData, editor);
+								});
+						});
+					}
+					
+					if (linkData.link) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Edit link destination")
+								.setIcon("text-cursor-input")
+								.onClick(async () => {
+									this.editLinkDestination(linkData, editor);
+								});
+						});
+					}
+					
+					if (linkData.link) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Copy link destination")
+								.setIcon("copy")
+								.onClick(async () => {
+									this.copyLinkUnderCursorToClipboard(linkData);
+								});
+						});
+					}
+					
+					menu.addItem((item) => {
+						item
+							.setTitle("Unlink")
+							.setIcon("unlink")
+							.onClick(async () => {
+								this.unlinkLink(linkData, editor);
+							});
+					});
+					
 					if (linkData.type == LinkTypes.Markdown) {
 						menu.addItem((item) => {
 							item
@@ -171,33 +237,16 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
+					
 					menu.addItem((item) => {
 						item
-							.setTitle("Remove link")
-							.setIcon("unlink")
+							.setTitle("Delete")
+							.setIcon("trash-2")
 							.onClick(async () => {
-								this.removeLink(linkData, editor);
+								this.deleteLink(linkData, editor);
 							});
 					});
-					if (linkData.text) {
-						menu.addItem((item) => {
-							item
-								.setTitle("Edit link text")
-								.setIcon("text-cursor-input")
-								.onClick(async () => {
-									this.editLinkText(linkData, editor);
-								});
-						});
-					} else if (linkData.link) {
-						menu.addItem((item) => {
-							item
-								.setTitle("Add link text")
-								.setIcon("text-cursor-input")
-								.onClick(async () => {
-									this.addLinkText(linkData, editor);
-								});
-						});
-					}
+					
 				}
 				if (this.createLinkFromSelectionHandler(editor, true)) {
 					menu.addItem((item) => {
@@ -238,7 +287,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return findLink(text, cursorOffset, cursorOffset);
 	}
 
-	removeLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
+	unlinkLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
@@ -246,17 +295,36 @@ export default class ObsidianLinksPlugin extends Plugin {
 			return !!linkData;
 		}
 		if (linkData) {
-			this.removeLink(linkData, editor);
+			this.unlinkLink(linkData, editor);
 		}
 	}
 
-	removeLink(linkData: LinkData, editor: Editor) {
+	unlinkLink(linkData: LinkData, editor: Editor) {
 		let text = linkData.text ? linkData.text.content : "";
 		if (linkData.type === LinkTypes.Wiki && !text) {
 			text = linkData.link ? linkData.link.content : "";
 		}
 		editor.replaceRange(
 			text,
+			editor.offsetToPos(linkData.position.start),
+			editor.offsetToPos(linkData.position.end));
+	}
+
+	deleteLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
+		const text = editor.getValue();
+		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
+		const linkData = findLink(text, cursorOffset, cursorOffset);
+		if (checking) {
+			return !!linkData;
+		}
+		if (linkData) {
+			this.deleteLink(linkData, editor);
+		}
+	}
+
+	deleteLink(linkData: LinkData, editor: Editor) {
+		editor.replaceRange(
+			'',
 			editor.offsetToPos(linkData.position.start),
 			editor.offsetToPos(linkData.position.end));
 	}
@@ -314,10 +382,18 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset);
 		if (checking) {
-			return !!linkData;
+			return !!linkData && !!linkData.link;
 		}
+		if (linkData) {
+			this.copyLinkUnderCursorToClipboard(linkData);
+		}
+	}
+
+	copyLinkUnderCursorToClipboard(linkData: LinkData) {
+		console.log('copyLinkUnderCursorToClipboard');
 		if (linkData?.link) {
 			navigator.clipboard.writeText(linkData.link?.content);
+			new Notice("Link destination copied to your clipboard");
 		}
 	}
 
@@ -370,6 +446,31 @@ export default class ObsidianLinksPlugin extends Plugin {
 		if (linkData.text) {
 			const start = linkData.position.start + linkData.text.position.start;
 			const end = linkData.position.start + linkData.text.position.end;
+			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
+		} else if (this.generateLinkTextOnEdit) {
+			//TODO: 
+		}
+	}
+
+	editLinkDestinationUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
+		const linkData = this.getLink(editor);
+		if (checking) {
+			return !!linkData && !!linkData.link;
+		}
+
+		if (linkData) {
+			// workaround: if executed from command palette, whole link is selected.
+			// with timeout, only specified region is selected.
+			setTimeout(() => {
+				this.editLinkDestination(linkData, editor);
+			}, 500);
+		}
+	}
+
+	editLinkDestination(linkData: LinkData, editor: Editor) {
+		if (linkData.link) {
+			const start = linkData.position.start + linkData.link.position.start;
+			const end = linkData.position.start + linkData.link.position.end;
 			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
 		} else if (this.generateLinkTextOnEdit) {
 			//TODO: 
@@ -554,7 +655,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.settings.linkReplacements = replacements;
 		this.saveSettings();
 	}
-	
+
 	renameFileHandler(file: TAbstractFile, oldPath: string) {
 		const [oldPathWithoutExtention, success] = removeExtention(oldPath);
 		if (!success) {
@@ -572,7 +673,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 				settingsChanged = true;
 			}
 		});
-		if(settingsChanged){
+		if (settingsChanged) {
 			this.saveSettings();
 		}
 	}
