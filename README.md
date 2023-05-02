@@ -4,35 +4,50 @@ Manipulate links in Obsidian (https://obsidian.md).
 
 - [Obsidian Links](#obsidian-links)
 - [Features](#features)
-  - [Remove link](#remove-link)
-  - [Convert link to markdown link](#convert-link-to-markdown-link)
+  - [Unlink](#unlink)
+  - [Delete link](#delete-link)
+  - [Convert wikilink or html link to markdown link](#convert-wikilink-or-html-link-to-markdown-link)
   - [Convert markdown link to Wikilink](#convert-markdown-link-to-wikilink)
-  - [Copy link to clipboard](#copy-link-to-clipboard)
+  - [Copy link destination to clipboard](#copy-link-destination-to-clipboard)
   - [Remove links from headings](#remove-links-from-headings)
   - [Edit link text](#edit-link-text)
+  - [Edit link destination](#edit-link-destination)
   - [Add link text](#add-link-text)
   - [Create link from selection](#create-link-from-selection)
 
 
 # Features
 
-## Remove link
+## Unlink
 
-- Command palette: **Remove link**
-- Context menu: **Remove link**
+- Command palette: **Unlink**
+- Context menu: **Unlink**
+
 <details>
 <summary>Demo</summary>
 
-![remove link](docs/img/remove-link.gif)
+![remove link](docs/img/unlink-link.gif)
 
 </details>
 
 
-## Convert link to markdown link
+## Delete link
+
+- Command palette: **Delete link**
+- Context menu: **Delete**
+
+<details>
+<summary>Demo</summary>
+
+![delete link](docs/img/delete-link.gif)
+
+</details>
+
+## Convert wikilink or html link to markdown link
 
 Convert Wikilink or HTML link to markdown link. (With HTML link works only if link is expanded)
 
-- Command palette: **Convert link to markdown link**
+- Command palette: **Convert to markdown link**
 - Context menu: **Convert to markdown link**
 
 <details>
@@ -41,8 +56,6 @@ Convert Wikilink or HTML link to markdown link. (With HTML link works only if li
 ![convert to markdown link](docs/img/convert-to-markdown-link.gif)
 
 </details>
-
-
 
 ## Convert markdown link to Wikilink
 - Command palette: **Convert link to wikilink**
@@ -57,11 +70,20 @@ Convert Wikilink or HTML link to markdown link. (With HTML link works only if li
 </details>
 
 
-## Copy link to clipboard
+## Copy link destination to clipboard
 
 Copy link part of markdown, wiki or html link to clipboard.
 
-- Command palette: **Copy link clipboard**
+- Command palette: **Copy link destination**
+- Context menu: **Copy link destination**
+
+<details>
+<summary>Demo</summary>
+
+![copy link destination to clipboard](docs/img/copy-link-destination.gif)
+
+</details>
+
 
 ## Remove links from headings
 
@@ -87,6 +109,20 @@ Select link text and place cursor at the end of the text
 <summary>Demo</summary>
 
 ![Edit link text](docs/img/edit-link-text.gif)
+
+</details>
+
+## Edit link destination
+
+Select link text and place cursor at the end of the text
+
+- Command palette: **Edit link destination**
+- Context menu: **Edit link destination**
+
+<details>
+<summary>Demo</summary>
+
+![Edit link text](docs/img/edit-link-destination.gif)
 
 </details>
 
@@ -125,7 +161,7 @@ For external http[s] links, page content is requested and link text is set to th
 ## Create link from selection
 Create link from selected text.
 
-- Command palette: **Create link from selection**
+- Command palette: **Create link**
 - Context menu: **Create link**
 
 
