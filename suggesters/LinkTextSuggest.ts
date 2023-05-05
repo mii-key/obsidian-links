@@ -54,14 +54,16 @@ export class LinkTextSuggest extends EditorSuggest<string> {
 	}
 
 	selectSuggestion(suggestion: string): void {
-		if (!this.context?.editor || !this.suggestContext.linkData) {
+		if (!this.context?.editor || !this.suggestContext.linkData?.link) {
 			return;
 		}
-		if (this.suggestContext.linkData?.type == LinkTypes.Wiki) {
+		const linkData = this.suggestContext.linkData;
+		if (linkData?.type == LinkTypes.Wiki) {
 			const editor = this.context.editor;
-			const textStartOffset = this.suggestContext.linkData?.position.end - 2;
+			let textStartOffset = linkData.position.start + linkData.link.position.end;
 			editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset));
-			editor.setSelection(editor.offsetToPos(textStartOffset + 1), editor.offsetToPos(textStartOffset + suggestion.length + 1));
+			textStartOffset++;
+			editor.setSelection(editor.offsetToPos(textStartOffset), editor.offsetToPos(textStartOffset + suggestion.length));
 			this.suggestContext.provideSuggestions = false;
 
 		} else if (this.suggestContext.linkData?.type == LinkTypes.Markdown){

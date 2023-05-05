@@ -29,7 +29,7 @@ export class LinkData extends TextPart {
 //TODO: refactor
 export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): LinkData | undefined {
     // eslint-disable-next-line no-useless-escape
-    const wikiLinkRegEx = /\[\[([^\[\]|]+)(\|([^\[\]]+))?\]\]/g;
+    const wikiLinkRegEx = /\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
     const mdLinkRegEx = /\[([^\]]*)\]\(([^)]*)\)/gmi
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
     let match;
@@ -43,8 +43,8 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
                     const linkIdx = raw.indexOf(url)
                     linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
                 }
-                if (text) {
-                    const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('|') + 1);
+                if (text !== undefined) {
+                    const textIdx = text ? raw.indexOf(text, (linkData.link ? linkData.link.position.end : raw.indexOf('|')) + 1) : raw.length - 2;
                     linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
                 }
 
