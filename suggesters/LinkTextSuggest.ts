@@ -60,7 +60,8 @@ export class LinkTextSuggest extends EditorSuggest<string> {
 		const linkData = this.suggestContext.linkData;
 		if (linkData?.type == LinkTypes.Wiki) {
 			const editor = this.context.editor;
-			let textStartOffset = linkData.position.start + linkData.link.position.end;
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			let textStartOffset = linkData.position.start + linkData.link!.position.end;
 			editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset));
 			textStartOffset++;
 			editor.setSelection(editor.offsetToPos(textStartOffset), editor.offsetToPos(textStartOffset + suggestion.length));
