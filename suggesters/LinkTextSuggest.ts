@@ -62,7 +62,11 @@ export class LinkTextSuggest extends EditorSuggest<string> {
 			const editor = this.context.editor;
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			let textStartOffset = linkData.position.start + linkData.link!.position.end;
-			editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset));
+			if(linkData.text){
+				editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset), editor?.offsetToPos(textStartOffset + 1));
+			} else{
+				editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset));
+			}
 			textStartOffset++;
 			editor.setSelection(editor.offsetToPos(textStartOffset), editor.offsetToPos(textStartOffset + suggestion.length));
 			this.suggestContext.provideSuggestions = false;

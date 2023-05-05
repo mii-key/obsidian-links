@@ -505,7 +505,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 			const text = getFileName(linkData.link?.content);
 			let textStart = linkData.position.start + linkData.link.position.end;
-			editor.replaceRange("|" + text, editor.offsetToPos(textStart));
+			if(linkData.text){
+				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(textStart + 1));
+			} else{
+				editor.replaceRange("|" + text, editor.offsetToPos(textStart));
+			}
 			textStart ++;
 			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
 		} else if (linkData.type == LinkTypes.Markdown) {
