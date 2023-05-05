@@ -55,7 +55,7 @@ test.each([
 
     // wiki
     {
-        name: "wikilink: cursor on text",
+        name: "wikilink: cursor on destination",
         input: "Incididunt [[dolore]] ullamco [[sunt]] ullamco non.",
         cursorPos: "Incididunt [[dol".length,
         linkType: LinkTypes.Wiki,
@@ -68,8 +68,38 @@ test.each([
         target: "dolore",
         targetStart: "[[".length,
         targetEnd: "[[dolore".length
+    },
+    {
+        name: "wikilink with text: cursor on text",
+        input: "Incididunt [[dolore|dolore text]] ullamco [[sunt]] ullamco non.",
+        cursorPos: "Incididunt [[dolore|dol".length,
+        linkType: LinkTypes.Wiki,
+        linkText: "[[dolore|dolore text]]",
+        linkStart: "Incididunt ".length,
+        linkEnd: "Incididunt [[dolore|dolore text]]".length,
+        text: "dolore text",
+        textStart: "[[dolore|".length,
+        textEnd: "[[dolore|dolore text".length,
+        target: "dolore",
+        targetStart: "[[".length,
+        targetEnd: "[[dolore".length
+    },
+    {
+        name: "wikilink with empty text: cursor after |",
+        input: "Incididunt [[dolore|]] ullamco [[sunt]] ullamco non.",
+        cursorPos: "Incididunt [[dolore|".length,
+        linkType: LinkTypes.Wiki,
+        linkText: "[[dolore|]]",
+        linkStart: "Incididunt ".length,
+        linkEnd: "Incididunt [[dolore|]]".length,
+        text: "",
+        textStart: "[[dolore|".length,
+        textEnd: "[[dolore|".length,
+        target: "dolore",
+        targetStart: "[[".length,
+        targetEnd: "[[dolore".length
     }
-])('$# $name', ({ name, input, cursorPos, linkType, linkText, linkStart, linkEnd,
+])('findLink: $# $name', ({ name, input, cursorPos, linkType, linkText, linkStart, linkEnd,
     text, textStart, textEnd, target, targetStart, targetEnd }) => {
     const result = findLink(input, cursorPos, cursorPos);
     expect(result).toBeDefined();
@@ -77,7 +107,7 @@ test.each([
     expect(result?.content).toBe(linkText);
     expect(result?.position.start).toBe(linkStart);
     expect(result?.position.end).toBe(linkEnd);
-    if (text) {
+    if (text !== undefined) {
         expect(result?.text?.content).toBe(text);
         expect(result!.text!.position.start).toBe(textStart);
         expect(result!.text!.position.end).toBe(textEnd);
@@ -109,7 +139,7 @@ test.each([
         targetStart: "<a href=\"".length,
         targetEnd: "<a href=\"http://dolore.com".length
     }
-])('$# html link [$name]', ({ name, input, cursorPos, linkText, linkStart, linkEnd,
+])('findHtmlLink: $# html link [$name]', ({ name, input, cursorPos, linkText, linkStart, linkEnd,
     text, textStart, textEnd, target, targetStart, targetEnd }) => {
     const result = findHtmlLink(input, cursorPos, cursorPos);
     expect(result).toBeDefined();
@@ -130,7 +160,7 @@ test.each([
         input: "Incididunt <a href=\"http://dolore.com\">dolore</a> ullamco <a href=\"http://sunt.com\">sunt</a> ullamco non.",
         expected: "Incididunt [dolore](http://dolore.com) ullamco [sunt](http://sunt.com) ullamco non."
     }
-])('$# convert html links to markdown [$name]', ({ name, input, expected }) => {
+])('replaceAllHtmlLinks: $# convert html links to markdown [$name]', ({ name, input, expected }) => {
     const result = replaceAllHtmlLinks(input);
     expect(result).toBe(expected);
 });
@@ -164,7 +194,7 @@ test.each([
         "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
         expected: null
     }
-])('$# check & remove links from headings [$name]', ({ name, input, expected }) => {
+])('HasLinksInHeadings: $# check & remove links from headings [$name]', ({ name, input, expected }) => {
 
     const hasLinks = HasLinksInHeadings(input);
     if(expected){
@@ -192,7 +222,7 @@ test.each([
         expected: "Simple page"
     }
 
-])("$# get page title [$name]", async ({ name, url, pageText, expected }) => {
+])("getPageTitle: $# get page title [$name]", async ({ name, url, pageText, expected }) => {
     const result = await getPageTitle(new URL(url), async (url: URL) => Promise.resolve(pageText));
     expect(result).toBe(expected);
 })

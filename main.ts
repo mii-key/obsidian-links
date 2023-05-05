@@ -156,7 +156,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 				const linkData = this.getLink(editor);
 				if (linkData) {
 					menu.addSeparator();
-					if (linkData.text) {
+					if (linkData.text && linkData.text.content.length > 0) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Edit link text")
@@ -504,10 +504,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 				return;
 			}
 			const text = getFileName(linkData.link?.content);
-			let textStart = linkData.position.start + linkData.link?.position.end;
-			editor.setSelection(editor.offsetToPos(textStart));
-			editor.replaceSelection("|" + text);
-			textStart++;
+			let textStart = linkData.position.start + linkData.link.position.end;
+			editor.replaceRange("|" + text, editor.offsetToPos(textStart));
+			textStart ++;
 			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
 		} else if (linkData.type == LinkTypes.Markdown) {
 			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
@@ -539,7 +538,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	addLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
 		if (checking) {
-			return !!linkData && !linkData.text;
+			return !!linkData && (!linkData.text || !linkData?.text.content);
 		}
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
