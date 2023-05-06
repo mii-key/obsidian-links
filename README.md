@@ -14,6 +14,7 @@ Manipulate links in Obsidian (https://obsidian.md).
   - [Edit link destination](#edit-link-destination)
   - [Add link text](#add-link-text)
   - [Create link from selection](#create-link-from-selection)
+  - [Create link from clipboard](#create-link-from-clipboard)
 
 
 # Features
@@ -171,4 +172,19 @@ Create link from selected text.
 ![Create link from selection](docs/img/create-wikilink-from-selection.gif)
 
 </details>
+
+## Create link from clipboard
+Create link from textual content of the system clipboard.
+
+- Command palette: **Create link from clipboard**
+- Context menu: **Create link from clipboard**
+
+
+<details>
+<summary>Demo</summary>
+
+![Create link from selection](docs/img/create-mdlink-from-clipboard.gif)
+
+</details>
+
 

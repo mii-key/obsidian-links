@@ -122,7 +122,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromSelectionHandler(editor, checking)
 		});
 
-		
+		this.addCommand({
+			id: 'editor-create-link-from-clipboard',
+			name: 'Create link from clipboard',
+			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
+		});
+
+
 
 		// this.registerEvent(
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
@@ -175,7 +181,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
-					
+
 					if (linkData.link) {
 						menu.addItem((item) => {
 							item
@@ -186,7 +192,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
-					
+
 					if (linkData.link) {
 						menu.addItem((item) => {
 							item
@@ -197,7 +203,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
-					
+
 					menu.addItem((item) => {
 						item
 							.setTitle("Unlink")
@@ -206,7 +212,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								this.unlinkLink(linkData, editor);
 							});
 					});
-					
+
 					if (linkData.type == LinkTypes.Markdown) {
 						menu.addItem((item) => {
 							item
@@ -237,7 +243,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
-					
+
 					menu.addItem((item) => {
 						item
 							.setTitle("Delete")
@@ -246,17 +252,29 @@ export default class ObsidianLinksPlugin extends Plugin {
 								this.deleteLink(linkData, editor);
 							});
 					});
-					
-				} else if (this.createLinkFromSelectionHandler(editor, true)) {
+
+				} else {
 					menu.addSeparator();
-					menu.addItem((item) => {
-						item
-							.setTitle("Create link")
-							.setIcon("link")
-							.onClick(async () => {
-								this.createLinkFromSelectionHandler(editor);
-							});
-					});
+					if (this.createLinkFromSelectionHandler(editor, true)) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Create link")
+								.setIcon("link")
+								.onClick(async () => {
+									this.createLinkFromSelectionHandler(editor);
+								});
+						});
+					}
+					if (this.createLinkFromClipboardHandler(editor, true)) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Create link from clipboard")
+								.setIcon("link")
+								.onClick(async () => {
+									this.createLinkFromClipboardHandler(editor);
+								});
+						});
+					}
 				}
 
 			})
@@ -505,12 +523,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 			const text = getFileName(linkData.link?.content);
 			let textStart = linkData.position.start + linkData.link.position.end;
-			if(linkData.text){
+			if (linkData.text) {
 				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(textStart + 1));
-			} else{
+			} else {
 				editor.replaceRange("|" + text, editor.offsetToPos(textStart));
 			}
-			textStart ++;
+			textStart++;
 			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
 		} else if (linkData.type == LinkTypes.Markdown) {
 			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
@@ -554,6 +572,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	async getPageText(url: URL): Promise<string> {
+		console.log('getPageText');
 		const response = await requestUrl({ url: url.toString() });
 		if (response.status !== 200) {
 			throw new Error(`Failed to request '${url}': ${response.status}`);
@@ -679,6 +698,47 @@ export default class ObsidianLinksPlugin extends Plugin {
 		if (settingsChanged) {
 			this.saveSettings();
 		}
+	}
+
+	createLinkFromClipboardHandler(editor: Editor, checking = false): boolean | void {
+		// TODO: no check for now
+		if (checking) {
+			return true;
+		}
+
+		(async () => {
+			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
+			const linkDestination = await navigator.clipboard.readText();
+			let linkText = linkDestination;
+			const selection = editor.getSelection();
+
+			if (selection.length == 0 && urlRegEx.test(linkDestination)) {
+				const notice = new Notice("Getting title ...", 0);
+				try {
+					linkText = await getPageTitle(new URL(linkDestination), this.getPageText);
+				}
+				catch (error) {
+					new Notice(error);
+					return;
+				}
+				finally {
+					notice.hide();
+				}
+			}
+			
+			let posRangeStart = editor.getCursor();
+			let posRangeEnd = posRangeStart;
+			if (selection.length > 0) {
+				posRangeStart = editor.getCursor('from');
+				posRangeEnd = editor.getCursor('to');
+				linkText = selection;
+			} 
+			const linkRawText = `[${linkText}](${linkDestination})`;
+			const endOffset = editor.posToOffset(posRangeStart) + linkRawText.length;
+			editor.replaceRange(linkRawText, posRangeStart, posRangeEnd);
+			editor.setCursor(editor.offsetToPos(endOffset));
+
+		})();
 	}
 }
 
