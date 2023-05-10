@@ -57,54 +57,63 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.addCommand({
 			id: 'editor-unlink-link',
 			name: 'Unlink',
+			icon: "unlink",
 			editorCheckCallback: (checking, editor, ctx) => this.unlinkLinkUnderCursorHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-delete-link',
 			name: 'Delete link',
+			icon: "trash-2",
 			editorCheckCallback: (checking, editor, ctx) => this.deleteLinkUnderCursorHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-convert-link-to-mdlink',
 			name: 'Convert to Markdown link',
+			icon: "rotate-cw",
 			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToMarkdownLinkHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-copy-link-to-clipboard',
 			name: 'Copy link destination',
+			icon: "copy",
 			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-convert-link-to-wikilink',
 			name: 'Convert to Wikilink',
+			icon: "rotate-cw",
 			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToWikilinkHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-remove-links-from-headings',
 			name: 'Remove links from headings',
+			icon: "unlink",
 			editorCheckCallback: (checking, editor, ctx) => this.removeLinksFromHeadingsHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-edit-link-text',
 			name: 'Edit link text',
+			icon: "text-cursor-input",
 			editorCheckCallback: (checking, editor, ctx) => this.editLinkTextUnderCursorHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-add-link-text',
 			name: 'Add link text',
+			icon: "text-cursor-input",
 			editorCheckCallback: (checking, editor, ctx) => this.addLinkTextUnderCursorHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-edit-link-destination',
 			name: 'Edit link destination',
+			icon: "text-cursor-input",
 			editorCheckCallback: (checking, editor, ctx) => this.editLinkDestinationUnderCursorHandler(editor, checking)
 		});
 
@@ -112,6 +121,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			this.addCommand({
 				id: 'editor-replace-external-link-with-internal',
 				name: 'Replace link',
+				icon: "pencil",
 				editorCheckCallback: (checking, editor, ctx) => this.replaceExternalLinkUnderCursorHandler(editor, checking)
 			});
 		}
@@ -119,12 +129,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.addCommand({
 			id: 'editor-create-link-from-selection',
 			name: 'Create link',
+			icon: "link",
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromSelectionHandler(editor, checking)
 		});
 
 		this.addCommand({
 			id: 'editor-create-link-from-clipboard',
 			name: 'Create link from clipboard',
+			icon: "link",
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
 		});
 
