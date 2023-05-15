@@ -10,7 +10,7 @@ interface IObsidianLinksSettings {
 	titleSeparator: string;
 }
 
-const featureEnabledReplaceLink = false;
+const featureEnabledReplaceLink = true;
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
@@ -766,6 +766,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
+		containerEl.createEl('h3', { text: 'General settings' });
 		new Setting(containerEl)
 			.setName('Title separator')
 			.setDesc('String used as headings separator in \'Add link text\' command.')
@@ -775,6 +776,40 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 					this.plugin.settings.titleSeparator = value;
 					await this.plugin.saveSettings();
 				}));
+		
+
+		containerEl.createEl('h3', { text: 'Early access features' });
+		containerEl.createEl('p', {
+			text: "Almost finished features with some bugs to be fixed."
+		});
+			
+		
+		//containerEl.createEl('hr');
+		containerEl.createEl('h3', { text: 'Insider features' });
+		containerEl.createEl('p', {
+			text: "Incomplete features currently under development. Enable these features to provide your input and influence the direction of development."
+		});
+
+
+		// new Setting(containerEl)
+		// 	.setName("Feature1")
+		// 	.setDesc("feature 1 desc.")
+		// 	.setClass("setting-item--insider-feature1")
+		// 	.addToggle((t) => {
+
+		// 	});
+		// const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
+		// console.log(feature1SettingDesc);
+
+		// if(feature1SettingDesc){
+		// 	feature1SettingDesc.appendText(' see ');
+		// 	feature1SettingDesc.appendChild(
+		// 		createEl('a', {
+		// 		href: 'https://github.com/mii-key/obsidian-links/blob/feature/early-access-features/docs/insider/feature1.md',
+		// 		text: 'docs'
+		// 	}));
+		// 	feature1SettingDesc.appendText('.');
+		// }
 	}
 }
 
