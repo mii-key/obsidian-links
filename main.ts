@@ -737,14 +737,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 					notice.hide();
 				}
 			}
-			
+
 			let posRangeStart = editor.getCursor();
 			let posRangeEnd = posRangeStart;
 			if (selection.length > 0) {
 				posRangeStart = editor.getCursor('from');
 				posRangeEnd = editor.getCursor('to');
 				linkText = selection;
-			} 
+			}
 			const linkRawText = `[${linkText}](${linkDestination})`;
 			const endOffset = editor.posToOffset(posRangeStart) + linkRawText.length;
 			editor.replaceRange(linkRawText, posRangeStart, posRangeEnd);
@@ -776,18 +776,41 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 					this.plugin.settings.titleSeparator = value;
 					await this.plugin.saveSettings();
 				}));
-		
+
 
 		containerEl.createEl('h3', { text: 'Early access features' });
-		containerEl.createEl('p', {
-			text: "Almost finished features with some bugs to be fixed."
+		const earlyAccessDescription = containerEl.createEl('p');
+		earlyAccessDescription.createEl('span', {
+			text: "Almost finished features with some "
 		});
-			
-		
+
+		earlyAccessDescription.createEl('a', {
+			href: 'https://github.com/mii-key/obsidian-links/issues',
+			text: 'bugs'
+		});
+
+		earlyAccessDescription.createEl('span', {
+			text: " to be fixed."
+		});
+
+
 		//containerEl.createEl('hr');
 		containerEl.createEl('h3', { text: 'Insider features' });
-		containerEl.createEl('p', {
-			text: "Incomplete features currently under development. Enable these features to provide your input and influence the direction of development."
+
+		const insiderDescription = containerEl.createEl('p');
+	
+
+		insiderDescription.createEl('span', {
+			text: "Incomplete features currently under development. Enable these features to "
+		});
+
+		insiderDescription.createEl('a', {
+			href: 'https://github.com/mii-key/obsidian-links/issues',
+			text: 'provide your input'
+		});
+
+		insiderDescription.createEl('span', {
+			text: " and influence the direction of development."
 		});
 
 
