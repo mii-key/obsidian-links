@@ -10,7 +10,7 @@ interface IObsidianLinksSettings {
 	titleSeparator: string;
 }
 
-const featureEnabledReplaceLink = true;
+const featureEnabledReplaceLink = false;
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
