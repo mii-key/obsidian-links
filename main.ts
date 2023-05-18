@@ -224,6 +224,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 				}
 
 				if (linkData || (selection && HasLinks(selection))) {
+					addTopSeparator();
 					menu.addItem((item) => {
 						item
 							.setTitle("Unlink")
@@ -239,6 +240,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 				}
 
 				if (linkData) {
+					addTopSeparator();
 					if (linkData.type == LinkTypes.Markdown) {
 						menu.addItem((item) => {
 							item
