@@ -25,9 +25,16 @@ Manipulate links in Obsidian (https://obsidian.md).
 - Context menu: **Unlink**
 
 <details>
-<summary>Demo</summary>
+<summary>Demo. Unlink single link.</summary>
 
 ![remove link](docs/img/unlink-link.gif)
+
+</details>
+
+<details>
+<summary>Demo. Unlink links in selection.</summary>
+
+![remove link](docs/img/unlink-selection.gif)
 
 </details>
 

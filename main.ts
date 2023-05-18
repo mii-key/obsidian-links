@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -58,7 +58,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			id: 'editor-unlink-link',
 			name: 'Unlink',
 			icon: "unlink",
-			editorCheckCallback: (checking, editor, ctx) => this.unlinkLinkUnderCursorHandler(editor, checking)
+			editorCheckCallback: (checking, editor, ctx) => this.unlinkLinkOrSelectionHandler(editor, checking)
 		});
 
 		this.addCommand({
@@ -140,7 +140,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
 		});
 
-
+		
 
 		// this.registerEvent(
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
@@ -172,8 +172,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
 				const linkData = this.getLink(editor);
-				if (linkData) {
+				const selection = editor.getSelection();
+				let addTopSeparator = function() {
 					menu.addSeparator();
+					addTopSeparator = function(){};
+				}
+
+				if (linkData) {
+					addTopSeparator();
 					if (linkData.text && linkData.text.content.length > 0) {
 						menu.addItem((item) => {
 							item
@@ -215,16 +221,24 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
+				}
 
+				if (linkData || (selection && HasLinks(selection))) {
 					menu.addItem((item) => {
 						item
 							.setTitle("Unlink")
 							.setIcon("unlink")
-							.onClick(async () => {
-								this.unlinkLink(linkData, editor);
+							.onClick(() => {
+								if (selection && HasLinks(selection)) {
+									this.removeLinksFromSelection(editor, selection);
+								} else if(linkData) {
+									this.unlinkLink(linkData, editor);
+								}
 							});
 					});
+				}
 
+				if (linkData) {
 					if (linkData.type == LinkTypes.Markdown) {
 						menu.addItem((item) => {
 							item
@@ -266,7 +280,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 					});
 
 				} else {
-					menu.addSeparator();
+					addTopSeparator();
 					if (this.createLinkFromSelectionHandler(editor, true)) {
 						menu.addItem((item) => {
 							item
@@ -317,16 +331,30 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return findLink(text, cursorOffset, cursorOffset);
 	}
 
-	unlinkLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset);
-		if (checking) {
-			return !!linkData;
+	unlinkLinkOrSelectionHandler(editor: Editor, checking: boolean): boolean | void {
+		const selection = editor.getSelection();
+		if (selection) {
+			if (checking) {
+				return HasLinks(selection);
+			}
+			this.removeLinksFromSelection(editor, selection);
+
+		} else {
+			const text = editor.getValue();
+			const cursorOffset = editor.posToOffset(editor.getCursor('from'));
+			const linkData = findLink(text, cursorOffset, cursorOffset);
+			if (checking) {
+				return !!linkData;
+			}
+			if (linkData) {
+				this.unlinkLink(linkData, editor);
+			}
 		}
-		if (linkData) {
-			this.unlinkLink(linkData, editor);
-		}
+	}
+
+	removeLinksFromSelection(editor: Editor, selection: string) {
+		const unlinkedText = removeLinks(selection);
+		editor.replaceSelection(unlinkedText);
 	}
 
 	unlinkLink(linkData: LinkData, editor: Editor) {
@@ -798,7 +826,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 		containerEl.createEl('h3', { text: 'Insider features' });
 
 		const insiderDescription = containerEl.createEl('p');
-	
+
 
 		insiderDescription.createEl('span', {
 			text: "Incomplete features currently under development. Enable these features to "
