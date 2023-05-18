@@ -137,6 +137,7 @@ export function HasLinksInHeadings(text: string): boolean {
     return headingWithLinksRegEx.test(text);
 }
 
+
 //TODO: refactor
 export function removeLinksFromHeadings(text: string): string {
     // eslint-disable-next-line no-useless-escape
@@ -155,6 +156,34 @@ export function removeLinksFromHeadings(text: string): string {
 
     return result;
 }
+
+
+// const textWithLinksRegEx = /(?:(\[(.*?)\]\((.*?)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))/gm
+const textWithLinksRegEx = /(?:(\[(.*?)\]\((.*?)\))|(\[\[([^\[\]|\r\n]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))/gm
+
+export function HasLinks(text: string): boolean {
+    return textWithLinksRegEx.test(text);
+}
+
+//TODO: refactor
+export function removeLinks(text: string): string {
+    // eslint-disable-next-line no-useless-escape
+    
+    const result = text.replace(textWithLinksRegEx, (match, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlUrl, htmlText, offset) => {
+        let linkText;
+        if (rawMdLink) {
+            linkText = mdText ? mdText : "";
+        } else if (rawWikiLink) {
+            linkText = wkText ? wkText : wkLink;
+        } else if (rawHtmlLink) {
+            linkText = htmlText ? htmlText : ""
+        }
+        return linkText;
+    });
+
+    return result;
+}
+
 
 export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<string>): Promise<string> {
     const titleRegEx = /<title[^>]*>(.*?)<\/title>/i;

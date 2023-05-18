@@ -1,5 +1,5 @@
 import exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, HasLinksInHeadings } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, HasLinksInHeadings, HasLinks, removeLinks } from './utils';
 import { expect, test } from '@jest/globals';
 
 
@@ -200,6 +200,53 @@ test.each([
     if(expected){
         expect(hasLinks).toBeTruthy();
         const result = removeLinksFromHeadings(input);
+        expect(result).toBe(expected);
+    } else{
+        expect(hasLinks).toBeFalsy();
+    }
+});
+
+test.only.each([
+    {
+        name: "text without links",
+        input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+        "# Aute [[officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+        "sit consequat ]] mollit. Duis cupidatat minim </a> commodo <a>exercitation labore qui non qui eiusmod labore \n" +
+        "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est [ipsum] culpa (nulla) eu nulla culpa ullamco.\r\n" +
+        " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+        "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
+        "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+        expected: null
+    },
+    {
+        name: "wiki, markdown, html links",
+        input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+            "# Aute officia [do eu](ea sit aute). Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+            "sit consequat mollit. [Duis](duis) cupidatat minim [[commodo]] exercitation [[lkjf0934|labore qui]] non qui eiusmod labore \n" +
+            "## [[amet mollit velit|Duis cupidatat]]. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+            " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+            "Et magna velit <a href=\"http://hi.com\">adipisicing</a> non exercitation commodo officia in sunt aliquip.\n" +
+            "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+        expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+            "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+            "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+            "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+            " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+            "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
+            "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n"
+    }
+    
+])('HasLinks/RemoveLinks: $# check & remove links from headings [$name]', ({ name, input, expected }) => {
+
+    console.log(input);
+    const hasLinks = HasLinks(input);
+    if(expected){
+        expect(hasLinks).toBeTruthy();
+        const result = removeLinks(input);
+        console.log('____________________________________________________________________________');
+        console.log(result);
+        console.log('____________________________________________________________________________');
+        console.log(expected);
         expect(result).toBe(expected);
     } else{
         expect(hasLinks).toBeFalsy();
