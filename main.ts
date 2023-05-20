@@ -8,13 +8,13 @@ import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
 interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
 	titleSeparator: string;
+	featureFlagReplaceLink: boolean;
 }
-
-const featureEnabledReplaceLink = false;
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
-	titleSeparator: " • "
+	titleSeparator: " • ",
+	featureFlagReplaceLink: false,
 }
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -117,7 +117,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.editLinkDestinationUnderCursorHandler(editor, checking)
 		});
 
-		if (featureEnabledReplaceLink) {
+		if (this.settings.featureFlagReplaceLink) {
 			this.addCommand({
 				id: 'editor-replace-external-link-with-internal',
 				name: 'Replace link',
@@ -146,7 +146,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
 		// )
 
-		if (featureEnabledReplaceLink) {
+		if (this.settings.featureFlagReplaceLink) {
 			this.registerEvent(
 				this.app.workspace.on("file-open", (file) => this.replaceMarkdownTargetsInNote())
 			)
@@ -251,7 +251,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 
-						if (featureEnabledReplaceLink) {
+						if (this.settings.featureFlagReplaceLink) {
 							menu.addItem((item) => {
 								item
 									.setTitle("Replace link")
