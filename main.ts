@@ -450,7 +450,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	copyLinkUnderCursorToClipboard(linkData: LinkData) {
-		console.log('copyLinkUnderCursorToClipboard');
 		if (linkData?.link) {
 			navigator.clipboard.writeText(linkData.link?.content);
 			new Notice("Link destination copied to your clipboard");
@@ -614,7 +613,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	async getPageText(url: URL): Promise<string> {
-		console.log('getPageText');
 		const response = await requestUrl({ url: url.toString() });
 		if (response.status !== 200) {
 			throw new Error(`Failed to request '${url}': ${response.status}`);
@@ -633,12 +631,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	replaceExternalLink(linkData: LinkData, editor: Editor) {
-		new ReplaceLinkModal(this.app, async (linkInfo) => {
-			if (linkInfo) {
-				new Notice(linkInfo.path);
+		new ReplaceLinkModal(this.app, async (path) => {
+			if (path) {
 				this.settings.linkReplacements.push({
 					source: linkData.link!.content,
-					target: linkInfo.path
+					target: path
 				})
 				await this.saveSettings();
 				this.replaceMarkdownTargetsInNote();

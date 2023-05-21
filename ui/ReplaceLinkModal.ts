@@ -15,9 +15,9 @@ export class ReplaceLinkModal extends Modal {
 	buttonContainerEl: HTMLDivElement;
 	notePath: string;
 
-	onSubmit: (linkData: LinkInfo) => void;
+	onSubmit: (internalPath: string) => void;
 
-	constructor(app: App, onSubmit: (linkData: LinkInfo) => void) {
+	constructor(app: App, onSubmit: (internalPath: string) => void) {
 		super(app);
 		this.onSubmit = onSubmit;
 	}
@@ -62,11 +62,9 @@ export class ReplaceLinkModal extends Modal {
 					.onClick(() => {
 						this.close();
 						if (this.notePath) {
-							const pathInfo = parseFilepath(this.notePath);
-							this.onSubmit({ 
-								type: LinkTypes.Wiki, 
-								path: pathInfo.dir? pathInfo.dir.concat("/", pathInfo.name) :  pathInfo.name,
-								text: pathInfo.dir? pathInfo.name : undefined});
+							// const pathInfo = parseFilepath(this.notePath);
+							// pathInfo.dir? pathInfo.dir.concat("/", pathInfo.name) :  pathInfo.name,
+							this.onSubmit(this.notePath);
 						}
 					}));
 	}
