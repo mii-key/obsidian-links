@@ -238,15 +238,10 @@ test.only.each([
     
 ])('HasLinks/RemoveLinks: $# check & remove links from headings [$name]', ({ name, input, expected }) => {
 
-    console.log(input);
     const hasLinks = HasLinks(input);
     if(expected){
         expect(hasLinks).toBeTruthy();
         const result = removeLinks(input);
-        console.log('____________________________________________________________________________');
-        console.log(result);
-        console.log('____________________________________________________________________________');
-        console.log(expected);
         expect(result).toBe(expected);
     } else{
         expect(hasLinks).toBeFalsy();
