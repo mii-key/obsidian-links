@@ -1,5 +1,5 @@
-import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks } from './utils';
+import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl, moment } from 'obsidian';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks} from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -9,12 +9,14 @@ interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
 	titleSeparator: string;
 	featureFlagReplaceLink: boolean;
+	showPerformanceNotification: boolean;
 }
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
 	titleSeparator: " • ",
 	featureFlagReplaceLink: false,
+	showPerformanceNotification: false
 }
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -45,6 +47,16 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 
 		};
+	}
+
+	measurePerformance(func: Function) : number {
+		const start = moment();
+		try{
+			func();
+		}
+		finally{
+			return moment().diff(start);
+		}
 	}
 
 	async onload() {
@@ -140,7 +152,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
 		});
 
-		
+
 
 		// this.registerEvent(
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
@@ -162,9 +174,10 @@ export default class ObsidianLinksPlugin extends Plugin {
 				this.app.workspace.on('editor-paste', (evt, editor, view) => this.onEditorPaste(evt, editor, view))
 			);
 
+			//TODO: temp command.
 			this.addCommand({
 				id: 'editor-replace-markdown-targets-in-note',
-				name: '#delete Replace markdown link in notes',
+				name: '#Replace markdown link in notes',
 				editorCallback: (editor: Editor, view: MarkdownView) => this.replaceMarkdownTargetsInNote()
 			});
 		}
@@ -173,9 +186,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
 				const linkData = this.getLink(editor);
 				const selection = editor.getSelection();
-				let addTopSeparator = function() {
+				let addTopSeparator = function () {
 					menu.addSeparator();
-					addTopSeparator = function(){};
+					addTopSeparator = function () { };
 				}
 
 				if (linkData) {
@@ -232,7 +245,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 							.onClick(() => {
 								if (selection && HasLinks(selection)) {
 									this.removeLinksFromSelection(editor, selection);
-								} else if(linkData) {
+								} else if (linkData) {
 									this.unlinkLink(linkData, editor);
 								}
 							});
@@ -648,16 +661,22 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	replaceMarkdownTargetsInNote() {
-		const mdView = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (mdView && mdView.getViewData()) {
-			const text = mdView.getViewData();
-			const [result, count] = this.replaceLinksInText(text)
-			if (count) {
-				mdView.setViewData(result, false);
-				new Notice(`Links: ${count} items replaced.`);
+		const e = this.measurePerformance(() => {
+			const mdView = this.app.workspace.getActiveViewOfType(MarkdownView);
+			if (mdView && mdView.getViewData()) {
+				const text = mdView.getViewData();
+				const [result, count] = this.replaceLinksInText(text)
+				if (count) {
+					mdView.setViewData(result, false);
+					new Notice(`Links: ${count} items replaced.`);
+				}
 			}
+		});
+		if (this.settings.showPerformanceNotification) {
+			new Notice(`${e} ms`);
 		}
 	}
+
 
 	replaceLinksInText(text: string): [string, number] {
 		let targetText = text;
