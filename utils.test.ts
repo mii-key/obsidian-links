@@ -206,7 +206,7 @@ test.each([
     }
 });
 
-test.only.each([
+test.each([
     {
         name: "text without links",
         input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
