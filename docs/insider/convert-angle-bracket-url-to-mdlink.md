@@ -5,6 +5,6 @@ If <> URL has `http` or `https` schema content of `<page/>` element will be set 
 <details>
 <summary>Demo. <> URL </summary>
 
-![convert to markdown link](docs/img/convert-angle-bracket-link-to-markdown-link.gif)
+![convert to markdown link](/docs/img/convert-angle-bracket-link-to-markdown-link.gif)
 
 </details>
