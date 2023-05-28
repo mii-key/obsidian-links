@@ -8,17 +8,19 @@ import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
 interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
 	titleSeparator: string;
-	featureFlagReplaceLink: boolean;
 	showPerformanceNotification: boolean;
-	featureFlagAnglebracketURLToMDLink: boolean;
+	// feature flags
+	ffReplaceLink: boolean;
+	ffAnglebracketURLToMDLink: boolean;
 }
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
 	titleSeparator: " • ",
-	featureFlagReplaceLink: false,
 	showPerformanceNotification: false,
-	featureFlagAnglebracketURLToMDLink: false
+	//feature flags
+	ffReplaceLink: false,
+	ffAnglebracketURLToMDLink: false
 }
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -131,7 +133,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.editLinkDestinationUnderCursorHandler(editor, checking)
 		});
 
-		if (this.settings.featureFlagReplaceLink) {
+		if (this.settings.ffReplaceLink) {
 			this.addCommand({
 				id: 'editor-replace-external-link-with-internal',
 				name: 'Replace link',
@@ -160,7 +162,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
 		// )
 
-		if (this.settings.featureFlagReplaceLink) {
+		if (this.settings.ffReplaceLink) {
 			this.registerEvent(
 				this.app.workspace.on("file-open", (file) => this.replaceMarkdownTargetsInNote())
 			)
@@ -266,7 +268,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 
-						if (this.settings.featureFlagReplaceLink) {
+						if (this.settings.ffReplaceLink) {
 							menu.addItem((item) => {
 								item
 									.setTitle("Replace link")
@@ -343,9 +345,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	getLink(editor: Editor): LinkData | undefined {
+		console.log(`getLink: ${LinkTypes.All & ~LinkTypes.AngleBracket}`);
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		return findLink(text, cursorOffset, cursorOffset);
+		return this.settings.ffAnglebracketURLToMDLink ?
+			findLink(text, cursorOffset, cursorOffset)
+			: findLink(text, cursorOffset, cursorOffset, LinkTypes.All & ~LinkTypes.AngleBracket)
 	}
 
 	unlinkLinkOrSelectionHandler(editor: Editor, checking: boolean): boolean | void {
@@ -359,7 +364,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		} else {
 			const text = editor.getValue();
 			const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-			const linkData = findLink(text, cursorOffset, cursorOffset);
+			const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.Markdown)
 			if (checking) {
 				return !!linkData;
 			}
@@ -388,7 +393,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	deleteLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset);
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html);
 		if (checking) {
 			return !!linkData;
 		}
@@ -407,7 +412,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 	convertLinkUnderCursorToMarkdownLinkHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.AngleBracket);
+		const linkData = this.settings.ffAnglebracketURLToMDLink ?
+		findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.AngleBracket)
+		: findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html)
 		if (checking) {
 			return !!linkData;
 		}
@@ -443,9 +450,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 			rawLinkText,
 			editor.offsetToPos(linkData.position.start),
 			editor.offsetToPos(linkData.position.end));
-		if(text){
+		if (text) {
 			editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
-		} else{
+		} else {
 			editor.setCursor(editor.offsetToPos(linkData.position.start + 1));
 		}
 	}
@@ -475,7 +482,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	copyLinkUnderCursorToClipboardHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset);
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html);
 		if (checking) {
 			return !!linkData && !!linkData.link;
 		}
