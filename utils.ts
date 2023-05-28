@@ -12,10 +12,11 @@ export enum LinkTypes {
     All = 0xFFFF,
     Markdown = 1,
     Wiki = 2,
-    Html = 4
+    Html = 4,
+    AngleBracket = 8
 }
 
-type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki;
+type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes.AngleBracket;
 
 
 export class LinkData extends TextPart {
@@ -32,6 +33,7 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
     const wikiLinkRegEx = /\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
     const mdLinkRegEx = /\[([^\]]*)\]\(([^)]*)\)/gmi
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
+    const angleBracket = /<([a-z]+:\/\/[^>]+)>/gmi;
     let match;
 
     if ((linkType & LinkTypes.Wiki)) {
@@ -88,6 +90,21 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
                     linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
                 }
 
+                return linkData;
+            }
+        }
+    }
+
+    if ((linkType & LinkTypes.AngleBracket)) {
+        while ((match = angleBracket.exec(text))) {
+            if (startPos >= match.index && endPos <= angleBracket.lastIndex) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const [raw, url] = match;
+                const linkData = new LinkData(LinkTypes.AngleBracket, raw, new Position(match.index, angleBracket.lastIndex));
+                if (url) {
+                    const linkIdx = raw.indexOf(url)
+                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+                }
                 return linkData;
             }
         }
