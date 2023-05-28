@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl, moment } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks} from './utils';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -49,12 +49,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 		};
 	}
 
-	measurePerformance(func: Function) : number {
+	measurePerformance(func: Function): number {
 		const start = moment();
-		try{
+		try {
 			func();
 		}
-		finally{
+		finally {
 			return moment().diff(start);
 		}
 	}
@@ -405,7 +405,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	convertLinkUnderCursorToMarkdownLinkHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html);
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.AngleBracket);
 		if (checking) {
 			return !!linkData;
 		}
@@ -414,7 +414,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	convertLinkToMarkdownLink(linkData: LinkData, editor: Editor) {
+	async convertLinkToMarkdownLink(linkData: LinkData, editor: Editor) {
 		let text = linkData.text ? linkData.text.content : "";
 		const link = linkData.link ? linkData.link.content : "";
 
@@ -422,10 +422,30 @@ export default class ObsidianLinksPlugin extends Plugin {
 			text = link;
 		}
 
+		const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
+		if (linkData.type === LinkTypes.AngleBracket && linkData.link && urlRegEx.test(linkData.link.content)) {
+			const notice = new Notice("Getting title ...", 0);
+			try {
+				text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
+			}
+			catch (error) {
+				new Notice(error);
+			}
+			finally {
+				notice.hide();
+			}
+		}
+
+		const rawLinkText = `[${text}](${link ? encodeURI(link) : ""})`
 		editor.replaceRange(
-			`[${text}](${link ? encodeURI(link) : ""})`,
+			rawLinkText,
 			editor.offsetToPos(linkData.position.start),
 			editor.offsetToPos(linkData.position.end));
+		if(text){
+			editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
+		} else{
+			editor.setCursor(editor.offsetToPos(linkData.position.start + 1));
+		}
 	}
 
 	convertLinkUnderCursorToWikilinkHandler(editor: Editor, checking: boolean): boolean | void {

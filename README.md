@@ -51,17 +51,25 @@ Manipulate links in Obsidian (https://obsidian.md).
 
 </details>
 
-## Convert wikilink or html link to markdown link
+## Convert wikilink, html link or <> URL to markdown link
 
-Convert Wikilink or HTML link to markdown link. (With HTML link works only if link is expanded)
+Convert Wikilink, HTML link or angle bracket URL to markdown link. (With HTML link works only if link is expanded)
+If <> URL has http or https schema content of `<page/>` element will be set as a link text. If request fails or URL has other schemas cursor will be places inside the []. 
 
 - Command palette: **Convert to markdown link**
 - Context menu: **Convert to markdown link**
 
 <details>
-<summary>Demo</summary>
+<summary>Demo. Wiki or html link</summary>
 
 ![convert to markdown link](docs/img/convert-to-markdown-link.gif)
+
+</details>
+
+<details>
+<summary>Demo. <> URL </summary>
+
+![convert to markdown link](docs/img/convert-angle-bracket-link-to-markdown-link.gif)
 
 </details>
 

@@ -98,7 +98,24 @@ test.each([
         target: "dolore",
         targetStart: "[[".length,
         targetEnd: "[[dolore".length
-    }
+    },
+
+    // angle bracket
+    {
+        name: "angle bracket url link: cursor on target",
+        input: "Incididunt dolore <http://dolore.com> ullamco sunt <https://sunt.com> ullamco non.",
+        cursorPos: "Incididunt dolore <htt".length,
+        linkType: LinkTypes.AngleBracket,
+        linkText: "<http://dolore.com>",
+        linkStart: "Incididunt dolore ".length,
+        linkEnd: "Incididunt dolore <http://dolore.com>".length,
+        text: undefined,
+        textStart: undefined,
+        textEnd: undefined,
+        target: "http://dolore.com",
+        targetStart: ">".length,
+        targetEnd: "<http://dolore.com".length
+    },
 ])('findLink: $# $name', ({ name, input, cursorPos, linkType, linkText, linkStart, linkEnd,
     text, textStart, textEnd, target, targetStart, targetEnd }) => {
     const result = findLink(input, cursorPos, cursorPos);
