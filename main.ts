@@ -10,13 +10,15 @@ interface IObsidianLinksSettings {
 	titleSeparator: string;
 	featureFlagReplaceLink: boolean;
 	showPerformanceNotification: boolean;
+	featureFlagAnglebracketURLToMDLink: boolean;
 }
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
 	titleSeparator: " • ",
 	featureFlagReplaceLink: false,
-	showPerformanceNotification: false
+	showPerformanceNotification: false,
+	featureFlagAnglebracketURLToMDLink: false
 }
 
 export default class ObsidianLinksPlugin extends Plugin {
