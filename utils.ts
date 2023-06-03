@@ -31,7 +31,7 @@ export class LinkData extends TextPart {
 export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): LinkData | undefined {
     // eslint-disable-next-line no-useless-escape
     const wikiLinkRegEx = /\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
-    const mdLinkRegEx = /\[([^\]]*)\]\(([^)]*)\)/gmi
+    const mdLinkRegEx = /\[([^\]\[]*)\]\(([^)(]*)\)/gmi
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
     const angleBracket = /<([a-z]+:\/\/[^>]+)>/gmi;
     let match;
