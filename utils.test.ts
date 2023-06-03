@@ -35,6 +35,21 @@ test.each([
         targetStart: "[dolore](".length,
         targetEnd: "[dolore](http://dolore.com".length
     },
+    {
+        name: "md link: cursor on target",
+        input: "Incidid`[`unt [dolore](http://dolore.com) ullamco [sunt](https://sunt.com) ullamco non.",
+        cursorPos: "Incidid`[`unt [dolore](h".length,
+        linkType: LinkTypes.Markdown,
+        linkText: "[dolore](http://dolore.com)",
+        linkStart: "Incidid`[`unt ".length,
+        linkEnd: "Incidid`[`unt [dolore](http://dolore.com)".length,
+        text: "dolore",
+        textStart: "[".length,
+        textEnd: "[dolore".length,
+        target: "http://dolore.com",
+        targetStart: "[dolore](".length,
+        targetEnd: "[dolore](http://dolore.com".length
+    },
 
     // html
     {
