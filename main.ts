@@ -11,7 +11,7 @@ interface IObsidianLinksSettings {
 	showPerformanceNotification: boolean;
 	// feature flags
 	ffReplaceLink: boolean;
-	ffAnglebracketURLToMDLink: boolean;
+	ffAnglebracketURLSupport: boolean;
 }
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
@@ -20,7 +20,7 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	showPerformanceNotification: false,
 	//feature flags
 	ffReplaceLink: false,
-	ffAnglebracketURLToMDLink: false
+	ffAnglebracketURLSupport: false
 }
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -348,7 +348,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		console.log(`getLink: ${LinkTypes.All & ~LinkTypes.AngleBracket}`);
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		return this.settings.ffAnglebracketURLToMDLink ?
+		return this.settings.ffAnglebracketURLSupport ?
 			findLink(text, cursorOffset, cursorOffset)
 			: findLink(text, cursorOffset, cursorOffset, LinkTypes.All & ~LinkTypes.AngleBracket)
 	}
@@ -412,7 +412,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	convertLinkUnderCursorToMarkdownLinkHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = this.settings.ffAnglebracketURLToMDLink ?
+		const linkData = this.settings.ffAnglebracketURLSupport ?
 		findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.AngleBracket)
 		: findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html)
 		if (checking) {
@@ -889,25 +889,31 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 		});
 
 
-		// new Setting(containerEl)
-		// 	.setName("Feature1")
-		// 	.setDesc("feature 1 desc.")
-		// 	.setClass("setting-item--insider-feature1")
-		// 	.addToggle((t) => {
+		new Setting(containerEl)
+			.setName("Angle bracket URL support")
+			.setDesc("Adds ability to work with URLs like <http://example.com>.")
+			.setClass("setting-item--insider-feature1")
+			.addToggle((toggle) => {
+				toggle
+				.setValue(this.plugin.settings.ffAnglebracketURLSupport)
+				.onChange(async (value) => {
+					this.plugin.settings.ffAnglebracketURLSupport = value;
+					await this.plugin.saveSettings();
+				})
 
-		// 	});
-		// const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
-		// console.log(feature1SettingDesc);
+			});
+		const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
+		console.log(feature1SettingDesc);
 
-		// if(feature1SettingDesc){
-		// 	feature1SettingDesc.appendText(' see ');
-		// 	feature1SettingDesc.appendChild(
-		// 		createEl('a', {
-		// 		href: 'https://github.com/mii-key/obsidian-links/blob/feature/early-access-features/docs/insider/feature1.md',
-		// 		text: 'docs'
-		// 	}));
-		// 	feature1SettingDesc.appendText('.');
-		// }
+		if(feature1SettingDesc){
+			feature1SettingDesc.appendText(' see ');
+			feature1SettingDesc.appendChild(
+				createEl('a', {
+				href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/angle-bracket-url-support.md',
+				text: 'docs'
+			}));
+			feature1SettingDesc.appendText('.');
+		}
 	}
 }
 
