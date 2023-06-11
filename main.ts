@@ -345,7 +345,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	getLink(editor: Editor): LinkData | undefined {
-		console.log(`getLink: ${LinkTypes.All & ~LinkTypes.AngleBracket}`);
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		return this.settings.ffAnglebracketURLSupport ?

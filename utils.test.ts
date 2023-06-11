@@ -1,5 +1,5 @@
 import exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, HasLinksInHeadings, HasLinks, removeLinks } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, HasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities } from './utils';
 import { expect, test } from '@jest/globals';
 
 
@@ -314,4 +314,27 @@ test.each([
     const [output, count] = replaceMarkdownTarget(input, target, newtarget);
     expect(count).toBe(2);
     expect(output).toBe(expected);
+});
+
+
+test.each([
+    {
+        name: "&",
+        input: "Dolore qui elit &amp; cillum ex.",
+        expected: "Dolore qui elit & cillum ex."
+    },
+    {
+        name: "nbsp",
+        input: "Dolore qui elit&nbsp;cillum ex.",
+        expected: "Dolore qui elit cillum ex."
+    },
+    {
+        name: "\"",
+        input: "Dolore qui &quot;elit&quot; cillum ex.",
+        expected: "Dolore qui \"elit\" cillum ex."
+    }
+
+])("$# decode html entity [$name]", ({name, input, expected}) => {
+    const result = decodeHtmlEntities(input);
+    expect(result).toBe(expected);
 });
