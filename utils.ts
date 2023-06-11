@@ -208,7 +208,7 @@ export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<
     const match = text.match(titleRegEx);
     if (match) {
         const [, title] = match;
-        return title;
+        return  decodeHtmlEntities(title);
     }
 
     throw new Error("Page has no title.");
@@ -256,4 +256,17 @@ export function replaceMarkdownTarget(text: string, target: string, newTarget: s
         count++;
         return `[${text}](${encodeURI(newTarget)})`; 
      }), count];
+}
+
+export function decodeHtmlEntities(text: string) : string {
+    const regexpHe = /&([a-zA-Z\d]+);/gm;
+    const charByHe = new Map<string, string> ();
+    charByHe.set("amp", "&");
+    charByHe.set("nbsp", " ");
+    charByHe.set("quot", "\"");
+    
+    return text.replace(regexpHe, (match, he) => {
+        const entry = charByHe.get(he);
+        return entry ?? match;
+    });
 }
