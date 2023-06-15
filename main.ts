@@ -908,7 +908,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			feature1SettingDesc.appendText(' see ');
 			feature1SettingDesc.appendChild(
 				createEl('a', {
-				href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/angle-bracket-url-support.md',
+				href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/autolink-support.md',
 				text: 'docs'
 			}));
 			feature1SettingDesc.appendText('.');
