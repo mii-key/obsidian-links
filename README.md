@@ -6,7 +6,7 @@ Manipulate links in Obsidian (https://obsidian.md).
 - [Features](#features)
   - [Unlink](#unlink)
   - [Delete link](#delete-link)
-  - [Convert wikilink or html link to markdown link](#convert-wikilink-or-html-link-to-markdown-link)
+  - [Convert a wikilink or html link to a markdown link](#convert-a-wikilink-or-html-link-to-a-markdown-link)
   - [Convert markdown link to Wikilink](#convert-markdown-link-to-wikilink)
   - [Copy link destination to clipboard](#copy-link-destination-to-clipboard)
   - [Remove links from headings](#remove-links-from-headings)
