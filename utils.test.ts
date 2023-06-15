@@ -50,6 +50,21 @@ test.each([
         targetStart: "[dolore](".length,
         targetEnd: "[dolore](http://dolore.com".length
     },
+    {
+        name: "md link with <> in destination: cursor on target",
+        input: "Incidid`[`unt [dolore](<http://dolore.com>) ullamco [sunt](https://sunt.com) ullamco non.",
+        cursorPos: "Incidid`[`unt [dol".length,
+        linkType: LinkTypes.Markdown,
+        linkText: "[dolore](<http://dolore.com>)",
+        linkStart: "Incidid`[`unt ".length,
+        linkEnd: "Incidid`[`unt [dolore](<http://dolore.com>)".length,
+        text: "dolore",
+        textStart: "[".length,
+        textEnd: "[dolore".length,
+        target: "http://dolore.com",
+        targetStart: "[dolore](<".length,
+        targetEnd: "[dolore](<http://dolore.com".length
+    },
 
     // html
     {
@@ -115,12 +130,12 @@ test.each([
         targetEnd: "[[dolore".length
     },
 
-    // angle bracket
+    // autolink
     {
-        name: "angle bracket url link: cursor on target",
+        name: "http autolink: cursor on target",
         input: "Incididunt dolore <http://dolore.com> ullamco sunt <https://sunt.com> ullamco non.",
         cursorPos: "Incididunt dolore <htt".length,
-        linkType: LinkTypes.AngleBracket,
+        linkType: LinkTypes.Autolink,
         linkText: "<http://dolore.com>",
         linkStart: "Incididunt dolore ".length,
         linkEnd: "Incididunt dolore <http://dolore.com>".length,
@@ -131,6 +146,21 @@ test.each([
         targetStart: ">".length,
         targetEnd: "<http://dolore.com".length
     },
+    {
+        name: "custom scheme autolink: cursor on target",
+        input: "Incididunt dolore <custom://dolore.com> ullamco sunt <https://sunt.com> ullamco non.",
+        cursorPos: "Incididunt dolore <cust".length,
+        linkType: LinkTypes.Autolink,
+        linkText: "<custom://dolore.com>",
+        linkStart: "Incididunt dolore ".length,
+        linkEnd: "Incididunt dolore <custom://dolore.com>".length,
+        text: undefined,
+        textStart: undefined,
+        textEnd: undefined,
+        target: "custom://dolore.com",
+        targetStart: ">".length,
+        targetEnd: "<custom://dolore.com".length
+    }
 ])('findLink: $# $name', ({ name, input, cursorPos, linkType, linkText, linkStart, linkEnd,
     text, textStart, textEnd, target, targetStart, targetEnd }) => {
     const result = findLink(input, cursorPos, cursorPos);

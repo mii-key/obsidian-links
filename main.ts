@@ -349,7 +349,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		return this.settings.ffAnglebracketURLSupport ?
 			findLink(text, cursorOffset, cursorOffset)
-			: findLink(text, cursorOffset, cursorOffset, LinkTypes.All & ~LinkTypes.AngleBracket)
+			: findLink(text, cursorOffset, cursorOffset, LinkTypes.All & ~LinkTypes.Autolink)
 	}
 
 	unlinkLinkOrSelectionHandler(editor: Editor, checking: boolean): boolean | void {
@@ -412,8 +412,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = this.settings.ffAnglebracketURLSupport ?
-		findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.AngleBracket)
-		: findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html)
+			findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.Autolink)
+			: findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html)
 		if (checking) {
 			return !!linkData;
 		}
@@ -431,7 +431,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 
 		const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-		if (linkData.type === LinkTypes.AngleBracket && linkData.link && urlRegEx.test(linkData.link.content)) {
+		if (linkData.type === LinkTypes.Autolink && linkData.link && urlRegEx.test(linkData.link.content)) {
 			const notice = new Notice("Getting title ...", 0);
 			try {
 				text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
@@ -444,7 +444,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 		}
 
-		const rawLinkText = `[${text}](${link ? encodeURI(link) : ""})`
+		let destination = link ? encodeURI(link) : "";
+		if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
+			destination = `<${destination.replace(/%20/g, " ")}>`;
+		}
+
+		const rawLinkText = `[${text}](${destination})`
 		editor.replaceRange(
 			rawLinkText,
 			editor.offsetToPos(linkData.position.start),
@@ -470,6 +475,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	convertLinkToWikiLink(linkData: LinkData, editor: Editor) {
+		console.log(linkData.link?.content);
 		const link = linkData.type === LinkTypes.Markdown ? (linkData.link ? decodeURI(linkData.link.content) : "") : linkData.link;
 		const text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
 		editor.replaceRange(
@@ -889,28 +895,28 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
 
 		new Setting(containerEl)
-			.setName("Angle bracket URL support")
-			.setDesc("Adds ability to work with URLs like <http://example.com>.")
+			.setName("Autolink support")
+			.setDesc("Adds ability to work with links like <http://example.com>.")
 			.setClass("setting-item--insider-feature1")
 			.addToggle((toggle) => {
 				toggle
-				.setValue(this.plugin.settings.ffAnglebracketURLSupport)
-				.onChange(async (value) => {
-					this.plugin.settings.ffAnglebracketURLSupport = value;
-					await this.plugin.saveSettings();
-				})
+					.setValue(this.plugin.settings.ffAnglebracketURLSupport)
+					.onChange(async (value) => {
+						this.plugin.settings.ffAnglebracketURLSupport = value;
+						await this.plugin.saveSettings();
+					})
 
 			});
 		const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
 		console.log(feature1SettingDesc);
 
-		if(feature1SettingDesc){
+		if (feature1SettingDesc) {
 			feature1SettingDesc.appendText(' see ');
 			feature1SettingDesc.appendChild(
 				createEl('a', {
-				href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/angle-bracket-url-support.md',
-				text: 'docs'
-			}));
+					href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/autolink-support.md',
+					text: 'docs'
+				}));
 			feature1SettingDesc.appendText('.');
 		}
 	}
