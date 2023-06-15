@@ -66,9 +66,11 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
                 }
                 if (url) {
                     const linkIdx = raw.indexOf(url, linkData.text ? linkData.text.position.end : raw.lastIndexOf('(') + 1)
-                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+                    const wrappedInAngleBrackets = url[0] === '<' && url[url.length - 1] === '>';
+                    linkData.link = wrappedInAngleBrackets ?
+                        new TextPart(url.substring(1, url.length - 1), new Position(linkIdx + 1, linkIdx + url.length - 1))
+                        : new TextPart(url, new Position(linkIdx, linkIdx + url.length))
                 }
-
 
                 return linkData;
             }
@@ -158,7 +160,7 @@ export function HasLinksInHeadings(text: string): boolean {
 //TODO: refactor
 export function removeLinksFromHeadings(text: string): string {
     // eslint-disable-next-line no-useless-escape
-    
+
     const result = text.replace(headingWithLinksRegEx, (match, start, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlUrl, htmlText, end, offset) => {
         let linkText;
         if (rawMdLink) {
@@ -185,7 +187,7 @@ export function HasLinks(text: string): boolean {
 //TODO: refactor
 export function removeLinks(text: string): string {
     // eslint-disable-next-line no-useless-escape
-    
+
     const result = text.replace(textWithLinksRegEx, (match, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlUrl, htmlText, offset) => {
         let linkText;
         if (rawMdLink) {
@@ -208,63 +210,63 @@ export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<
     const match = text.match(titleRegEx);
     if (match) {
         const [, title] = match;
-        return  decodeHtmlEntities(title);
+        return decodeHtmlEntities(title);
     }
 
     throw new Error("Page has no title.");
 }
 
-export function getLinkTitles(linkData: LinkData): string[]{
-    if(!linkData.link 
-        || (linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) == 0){
+export function getLinkTitles(linkData: LinkData): string[] {
+    if (!linkData.link
+        || (linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) == 0) {
         return [];
     }
-    
-    const linkContent = linkData.type == LinkTypes.Markdown ? 
+
+    const linkContent = linkData.type == LinkTypes.Markdown ?
         decodeURI(linkData.link?.content) : linkData.link?.content;
 
     const hashIdx = linkContent.indexOf('#');
-    if(hashIdx > 0 && hashIdx < linkContent.length - 1){
+    if (hashIdx > 0 && hashIdx < linkContent.length - 1) {
         return linkContent.substring(hashIdx + 1).split('#');
     }
 
     return [];
 }
 
-export function getFileName(path: string) : string {
+export function getFileName(path: string): string {
     return path.replace(/^.*[\\\/]/, '');
 }
 
 export function removeExtention(path: string, extention = ".md"): [string, boolean] {
     const extIdx = path.lastIndexOf(extention);
 
-		if(extIdx < 0 || extIdx < path.length - extention.length){
-			return [path, false];
-		}
+    if (extIdx < 0 || extIdx < path.length - extention.length) {
+        return [path, false];
+    }
 
-        return [path.substring(0, extIdx), true];
+    return [path.substring(0, extIdx), true];
 }
 
-function escapeRegex(str:string): string {
+function escapeRegex(str: string): string {
     return str.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-export function replaceMarkdownTarget(text: string, target: string, newTarget: string): [string, number]{
-    const regexp = new RegExp("\\[([^\\]]*)?\\]\\(("+ escapeRegex(target) + ")\\)", "ig");
+export function replaceMarkdownTarget(text: string, target: string, newTarget: string): [string, number] {
+    const regexp = new RegExp("\\[([^\\]]*)?\\]\\((" + escapeRegex(target) + ")\\)", "ig");
     let count = 0;
     return [text.replace(regexp, (match, text) => {
         count++;
-        return `[${text}](${encodeURI(newTarget)})`; 
-     }), count];
+        return `[${text}](${encodeURI(newTarget)})`;
+    }), count];
 }
 
-export function decodeHtmlEntities(text: string) : string {
+export function decodeHtmlEntities(text: string): string {
     const regexpHe = /&([a-zA-Z\d]+);/gm;
-    const charByHe = new Map<string, string> ();
+    const charByHe = new Map<string, string>();
     charByHe.set("amp", "&");
     charByHe.set("nbsp", " ");
     charByHe.set("quot", "\"");
-    
+
     return text.replace(regexpHe, (match, he) => {
         const entry = charByHe.get(he);
         return entry ?? match;
