@@ -51,17 +51,24 @@ Manipulate links in Obsidian (https://obsidian.md).
 
 </details>
 
-## Convert wikilink or html link to markdown link
+## Convert a wikilink or html link to a markdown link
 
-Convert Wikilink or HTML link to markdown link. (With HTML link works only if link is expanded)
+Convert a wikilink or HTML link to markdown link. If a wiki link contains spaces a destination of a markdown link will be places in <>. HTML link must be expanded.
 
 - Command palette: **Convert to markdown link**
 - Context menu: **Convert to markdown link**
 
 <details>
-<summary>Demo. Wiki or html link</summary>
+<summary>Demo. Wikilink</summary>
 
-![convert to markdown link](docs/img/convert-to-markdown-link.gif)
+![convert wikilink to markdown link](docs/img/convert-wikilink-to-mdlink.gif)
+
+</details>
+
+<details>
+<summary>Demo. HTML link</summary>
+
+![convert html link to markdown link](docs/img/convert-htmllink-to-mdlink.gif)
 
 </details>
 
@@ -193,5 +200,3 @@ Create link from textual content of the system clipboard.
 ![Create link from selection](docs/img/create-mdlink-from-clipboard.gif)
 
 </details>
-
-
