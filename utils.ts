@@ -13,10 +13,10 @@ export enum LinkTypes {
     Markdown = 1,
     Wiki = 2,
     Html = 4,
-    AngleBracket = 8
+    Autolink = 8
 }
 
-type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes.AngleBracket;
+type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes.Autolink;
 
 
 export class LinkData extends TextPart {
@@ -95,12 +95,12 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
         }
     }
 
-    if ((linkType & LinkTypes.AngleBracket)) {
+    if ((linkType & LinkTypes.Autolink)) {
         while ((match = angleBracket.exec(text))) {
             if (startPos >= match.index && endPos <= angleBracket.lastIndex) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const [raw, url] = match;
-                const linkData = new LinkData(LinkTypes.AngleBracket, raw, new Position(match.index, angleBracket.lastIndex));
+                const linkData = new LinkData(LinkTypes.Autolink, raw, new Position(match.index, angleBracket.lastIndex));
                 if (url) {
                     const linkIdx = raw.indexOf(url)
                     linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
