@@ -475,7 +475,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	convertLinkToWikiLink(linkData: LinkData, editor: Editor) {
-		console.log(linkData.link?.content);
 		const link = linkData.type === LinkTypes.Markdown ? (linkData.link ? decodeURI(linkData.link.content) : "") : linkData.link;
 		const text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
 		editor.replaceRange(
@@ -908,7 +907,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
 			});
 		const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
-		console.log(feature1SettingDesc);
 
 		if (feature1SettingDesc) {
 			feature1SettingDesc.appendText(' see ');
