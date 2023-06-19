@@ -240,7 +240,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 					}
 				}
 
-				if (linkData || (selection && HasLinks(selection))) {
+				if ((linkData && ((linkData.type & LinkTypes.Autolink) == 0)) || (selection && HasLinks(selection))) {
 					addTopSeparator();
 					menu.addItem((item) => {
 						item
