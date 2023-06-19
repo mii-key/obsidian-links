@@ -8,3 +8,5 @@ If an autolink is an absolute URI with `http` or `https` scheme content of the `
 ![convert to markdown link](/docs/img/convert-autolink-to-markdown-link.gif)
 
 </details>
+
+## Delete link
