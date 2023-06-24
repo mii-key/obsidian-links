@@ -206,7 +206,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 									this.editLinkText(linkData, editor);
 								});
 						});
-					} else if (linkData.link) {
+					} else if (linkData.link && ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Add link text")
@@ -217,7 +217,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					if (linkData.link) {
+					if (((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0) && linkData.link) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Edit link destination")
@@ -560,8 +560,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 	editLinkDestinationUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
 		if (checking) {
-			return !!linkData && !!linkData.link;
+			return !!linkData 
+			&& ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0) 
+			&& !!linkData.link;
 		}
+
 
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
@@ -647,7 +650,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 	addLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
 		if (checking) {
-			return !!linkData && (!linkData.text || !linkData?.text.content);
+			return !!linkData
+				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0) 
+				&& (!linkData.text || !linkData?.text.content);
 		}
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
