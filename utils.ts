@@ -33,8 +33,8 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
     const wikiLinkRegEx = /\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
     const mdLinkRegEx = /\[([^\]\[]*)\]\(([^)(]*)\)/gmi
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
-    const autolinkRegEx = /<([a-z]+:\/\/[^>]+)>/gmi;
-    const autolinkRegEx1 = /(<([a-zA-Z]{2,32}:[^>]+)>)|(<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>)/gmi;
+    const autolinkRegEx1 = /<([a-z]+:\/\/[^>]+)>/gmi;
+    const autolinkRegEx = /(<([a-zA-Z]{2,32}:[^>]+)>)|(<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>)/gmi;
     
     let match;
 
@@ -103,11 +103,11 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
         while ((match = autolinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= autolinkRegEx.lastIndex) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const [raw, url] = match;
+                const [raw, urlAutolink, urlDestination, mailAutolink, mailDestination] = match;
                 const linkData = new LinkData(LinkTypes.Autolink, raw, new Position(match.index, autolinkRegEx.lastIndex));
-                if (url) {
-                    const linkIdx = raw.indexOf(url)
-                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+                if (urlDestination) {
+                    const linkIdx = raw.indexOf(urlDestination)
+                    linkData.link = new TextPart(urlDestination, new Position(linkIdx, linkIdx + urlDestination.length));
                 }
                 return linkData;
             }
