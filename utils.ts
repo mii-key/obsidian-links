@@ -106,8 +106,11 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
                 const [raw, urlAutolink, urlDestination, mailAutolink, mailDestination] = match;
                 const linkData = new LinkData(LinkTypes.Autolink, raw, new Position(match.index, autolinkRegEx.lastIndex));
                 if (urlDestination) {
-                    const linkIdx = raw.indexOf(urlDestination)
+                    const linkIdx = raw.indexOf(urlDestination);
                     linkData.link = new TextPart(urlDestination, new Position(linkIdx, linkIdx + urlDestination.length));
+                } else if(mailDestination) {
+                    const linkIdx = raw.indexOf(mailDestination);
+                    linkData.link = new TextPart(mailDestination, new Position(linkIdx, linkIdx + mailDestination.length));
                 }
                 return linkData;
             }

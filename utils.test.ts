@@ -3,7 +3,7 @@ import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, L
 import { expect, test } from '@jest/globals';
 
 
-test.only.each([
+test.each([
     // markdown
     {
         name: "md link: cursor on text",
@@ -131,51 +131,51 @@ test.only.each([
     },
 
     // autolink
-    // {
-    //     name: "http autolink: cursor on target",
-    //     input: "Incididunt dolore <http://dolore.com> ullamco sunt <https://sunt.com> ullamco non.",
-    //     cursorPos: "Incididunt dolore <htt".length,
-    //     linkType: LinkTypes.Autolink,
-    //     linkText: "<http://dolore.com>",
-    //     linkStart: "Incididunt dolore ".length,
-    //     linkEnd: "Incididunt dolore <http://dolore.com>".length,
-    //     text: undefined,
-    //     textStart: undefined,
-    //     textEnd: undefined,
-    //     target: "http://dolore.com",
-    //     targetStart: ">".length,
-    //     targetEnd: "<http://dolore.com".length
-    // },
-    // {
-    //     name: "irc scheme autolink with port: cursor on target",
-    //     input: "Incididunt dolore <irc://foo.bar:2233/baz> ullamco sunt <https://sunt.com> ullamco non.",
-    //     cursorPos: "Incididunt dolore <ir".length,
-    //     linkType: LinkTypes.Autolink,
-    //     linkText: "<irc://foo.bar:2233/baz>",
-    //     linkStart: "Incididunt dolore ".length,
-    //     linkEnd: "Incididunt dolore <irc://foo.bar:2233/baz>".length,
-    //     text: undefined,
-    //     textStart: undefined,
-    //     textEnd: undefined,
-    //     target: "irc://foo.bar:2233/baz",
-    //     targetStart: "<".length,
-    //     targetEnd: "<irc://foo.bar:2233/baz".length
-    // },
-    // {
-    //     name: "url with request: cursor on target",
-    //     input: "Incididunt dolore <http://foo.bar.baz/test?q=hello&id=22&boolean> ullamco sunt <https://sunt.com> ullamco non.",
-    //     cursorPos: "Incididunt dolore <ht".length,
-    //     linkType: LinkTypes.Autolink,
-    //     linkText: "<http://foo.bar.baz/test?q=hello&id=22&boolean>",
-    //     linkStart: "Incididunt dolore ".length,
-    //     linkEnd: "Incididunt dolore <http://foo.bar.baz/test?q=hello&id=22&boolean>".length,
-    //     text: undefined,
-    //     textStart: undefined,
-    //     textEnd: undefined,
-    //     target: "http://foo.bar.baz/test?q=hello&id=22&boolean",
-    //     targetStart: "<".length,
-    //     targetEnd: "<http://foo.bar.baz/test?q=hello&id=22&boolean".length
-    // },
+    {
+        name: "http autolink: cursor on target",
+        input: "Incididunt dolore <http://dolore.com> ullamco sunt <https://sunt.com> ullamco non.",
+        cursorPos: "Incididunt dolore <htt".length,
+        linkType: LinkTypes.Autolink,
+        linkText: "<http://dolore.com>",
+        linkStart: "Incididunt dolore ".length,
+        linkEnd: "Incididunt dolore <http://dolore.com>".length,
+        text: undefined,
+        textStart: undefined,
+        textEnd: undefined,
+        target: "http://dolore.com",
+        targetStart: ">".length,
+        targetEnd: "<http://dolore.com".length
+    },
+    {
+        name: "irc scheme autolink with port: cursor on target",
+        input: "Incididunt dolore <irc://foo.bar:2233/baz> ullamco sunt <https://sunt.com> ullamco non.",
+        cursorPos: "Incididunt dolore <ir".length,
+        linkType: LinkTypes.Autolink,
+        linkText: "<irc://foo.bar:2233/baz>",
+        linkStart: "Incididunt dolore ".length,
+        linkEnd: "Incididunt dolore <irc://foo.bar:2233/baz>".length,
+        text: undefined,
+        textStart: undefined,
+        textEnd: undefined,
+        target: "irc://foo.bar:2233/baz",
+        targetStart: "<".length,
+        targetEnd: "<irc://foo.bar:2233/baz".length
+    },
+    {
+        name: "url with request: cursor on target",
+        input: "Incididunt dolore <http://foo.bar.baz/test?q=hello&id=22&boolean> ullamco sunt <https://sunt.com> ullamco non.",
+        cursorPos: "Incididunt dolore <ht".length,
+        linkType: LinkTypes.Autolink,
+        linkText: "<http://foo.bar.baz/test?q=hello&id=22&boolean>",
+        linkStart: "Incididunt dolore ".length,
+        linkEnd: "Incididunt dolore <http://foo.bar.baz/test?q=hello&id=22&boolean>".length,
+        text: undefined,
+        textStart: undefined,
+        textEnd: undefined,
+        target: "http://foo.bar.baz/test?q=hello&id=22&boolean",
+        targetStart: "<".length,
+        targetEnd: "<http://foo.bar.baz/test?q=hello&id=22&boolean".length
+    },
     {
         name: "mailto autolink: cursor on target",
         input: "Incididunt dolore <MAILTO:FOO@BAR.BAZ> ullamco sunt <https://sunt.com> ullamco non.",
