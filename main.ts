@@ -3,6 +3,7 @@ import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHead
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
+import { RegExPatterns } from 'RegExPatterns';
 
 
 interface IObsidianLinksSettings {
@@ -259,14 +260,16 @@ export default class ObsidianLinksPlugin extends Plugin {
 				if (linkData) {
 					addTopSeparator();
 					if (linkData.type == LinkTypes.Markdown) {
-						menu.addItem((item) => {
-							item
-								.setTitle("Convert to wikilink")
-								.setIcon("rotate-cw")
-								.onClick(async () => {
-									this.convertLinkToWikiLink(linkData, editor);
-								});
-						});
+						if (this.convertLinkUnderCursorToWikilinkHandler(editor, true)) {
+							menu.addItem((item) => {
+								item
+									.setTitle("Convert to wikilink")
+									.setIcon("rotate-cw")
+									.onClick(async () => {
+										this.convertLinkToWikiLink(linkData, editor);
+									});
+							});
+						}
 
 						if (this.settings.ffReplaceLink) {
 							menu.addItem((item) => {
@@ -430,6 +433,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 			text = link;
 		}
 
+		let destination = "";
+
 		const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
 		if (linkData.type === LinkTypes.Autolink && linkData.link && urlRegEx.test(linkData.link.content)) {
 			const notice = new Notice("Getting title ...", 0);
@@ -444,12 +449,18 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 		}
 
-		let destination = link ? encodeURI(link) : "";
-		if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
-			destination = `<${destination.replace(/%20/g, " ")}>`;
+		let rawLinkText = "";
+		if (linkData.type === LinkTypes.Autolink && linkData.link && RegExPatterns.Email.test(linkData.link.content)) {
+			rawLinkText = `[${text}](mailto:${linkData.link.content})`;
+		} else {
+			destination = encodeURI(link);
+			if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
+				destination = `<${destination.replace(/%20/g, " ")}>`;
+			}
+
+			rawLinkText = `[${text}](${destination})`
 		}
 
-		const rawLinkText = `[${text}](${destination})`
 		editor.replaceRange(
 			rawLinkText,
 			editor.offsetToPos(linkData.position.start),
@@ -466,7 +477,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown | LinkTypes.Html);
 		if (checking) {
-			return !!linkData;
+			return !!linkData && linkData.link && !linkData.link.content.trim().startsWith('mailto:');
 		}
 
 		if (linkData) {
@@ -560,9 +571,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 	editLinkDestinationUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
 		if (checking) {
-			return !!linkData 
-			&& ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0) 
-			&& !!linkData.link;
+			return !!linkData
+				&& ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0)
+				&& !!linkData.link;
 		}
 
 
@@ -651,7 +662,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const linkData = this.getLink(editor);
 		if (checking) {
 			return !!linkData
-				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0) 
+				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
 				&& (!linkData.text || !linkData?.text.content);
 		}
 		if (linkData) {
