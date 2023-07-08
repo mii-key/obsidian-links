@@ -93,17 +93,24 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'editor-copy-link-to-clipboard',
-			name: 'Copy link destination',
-			icon: "copy",
-			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
-		});
-
-		this.addCommand({
 			id: 'editor-convert-link-to-wikilink',
 			name: 'Convert to Wikilink',
 			icon: "rotate-cw",
 			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToWikilinkHandler(editor, checking)
+		});
+
+		this.addCommand({
+			id: 'editor-convert-link-to-autolink',
+			name: 'Convert to Autolink',
+			icon: "rotate-cw",
+			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToAutolinkHandler(editor, checking)
+		});
+
+		this.addCommand({
+			id: 'editor-copy-link-to-clipboard',
+			name: 'Copy link destination',
+			icon: "copy",
+			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
 		});
 
 		this.addCommand({
@@ -267,6 +274,17 @@ export default class ObsidianLinksPlugin extends Plugin {
 									.setIcon("rotate-cw")
 									.onClick(async () => {
 										this.convertLinkToWikiLink(linkData, editor);
+									});
+							});
+						}
+
+						if (this.settings.ffAnglebracketURLSupport && this.convertLinkUnderCursorToAutolinkHandler(editor, true)) {
+							menu.addItem((item) => {
+								item
+									.setTitle("Convert to autolink")
+									.setIcon("rotate-cw")
+									.onClick(async () => {
+										this.convertLinkToAutolink(linkData, editor);
 									});
 							});
 						}
@@ -492,6 +510,38 @@ export default class ObsidianLinksPlugin extends Plugin {
 			`[[${link}${text}]]`,
 			editor.offsetToPos(linkData.position.start),
 			editor.offsetToPos(linkData.position.end));
+	}
+
+	convertLinkUnderCursorToAutolinkHandler(editor: Editor, checking: boolean): boolean | void {
+		const text = editor.getValue();
+		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
+		const linkData = this.settings.ffAnglebracketURLSupport ?
+			findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown)
+			: undefined;
+		if (checking) {
+			return !!linkData 
+			&& linkData.link?.content != undefined
+			&& RegExPatterns.AbsoluteUri.test(linkData.link.content) 
+			&& !linkData.link.content.startsWith('mailto:');
+		}
+		if (linkData) {
+			this.convertLinkToAutolink(linkData, editor);
+		}
+	}
+
+	async convertLinkToAutolink(linkData: LinkData, editor: Editor) {
+		if (linkData.type === LinkTypes.Markdown
+			&& linkData.link?.content
+			&& RegExPatterns.AbsoluteUri.test(linkData.link.content)) {
+			const rawLinkText = `<${linkData.link.content}>`;
+
+			editor.replaceRange(
+				rawLinkText,
+				editor.offsetToPos(linkData.position.start),
+				editor.offsetToPos(linkData.position.end));
+
+			editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
+		}
 	}
 
 	copyLinkUnderCursorToClipboardHandler(editor: Editor, checking: boolean): boolean | void {
