@@ -10,3 +10,13 @@ If an autolink is an absolute URI with `http` or `https` scheme content of the `
 </details>
 
 ## Delete link
+
+## Convert markdown link to autolink
+Converts markdown links with absolute URI to autolink.
+
+<details>
+<summary>Demo. Autolink </summary>
+
+TODO:
+
+</details>
