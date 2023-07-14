@@ -27,8 +27,10 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 export default class ObsidianLinksPlugin extends Plugin {
 	settings: IObsidianLinksSettings;
 
+	readonly EmailScheme: string = "mailto:";
 	generateLinkTextOnEdit = true;
 	linkTextSuggestContext: ILinkTextSuggestContext;
+
 
 	constructor(app: App, manifest: PluginManifest) {
 		super(app, manifest)
@@ -469,7 +471,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 		let rawLinkText = "";
 		if (linkData.type === LinkTypes.Autolink && linkData.link && RegExPatterns.Email.test(linkData.link.content)) {
-			rawLinkText = `[${text}](mailto:${linkData.link.content})`;
+			rawLinkText = `[${text}](${this.EmailScheme}${linkData.link.content})`;
 		} else {
 			destination = encodeURI(link);
 			if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
@@ -495,7 +497,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown | LinkTypes.Html);
 		if (checking) {
-			return !!linkData && linkData.link && !linkData.link.content.trim().startsWith('mailto:');
+			return !!linkData && linkData.link && !linkData.link.content.trim().startsWith(this.EmailScheme);
 		}
 
 		if (linkData) {
@@ -519,10 +521,10 @@ export default class ObsidianLinksPlugin extends Plugin {
 			findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown)
 			: undefined;
 		if (checking) {
-			return !!linkData 
-			&& linkData.link?.content != undefined
-			&& RegExPatterns.AbsoluteUri.test(linkData.link.content) 
-			&& !linkData.link.content.startsWith('mailto:');
+			return !!linkData
+				&& linkData.link?.content != undefined
+				&& (RegExPatterns.AbsoluteUri.test(linkData.link.content)
+					|| linkData.link.content.startsWith(this.EmailScheme))
 		}
 		if (linkData) {
 			this.convertLinkToAutolink(linkData, editor);
@@ -531,16 +533,22 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	async convertLinkToAutolink(linkData: LinkData, editor: Editor) {
 		if (linkData.type === LinkTypes.Markdown
-			&& linkData.link?.content
-			&& RegExPatterns.AbsoluteUri.test(linkData.link.content)) {
-			const rawLinkText = `<${linkData.link.content}>`;
+			&& linkData.link?.content) {
+			let rawLinkText;
+			if (linkData.link.content.startsWith(this.EmailScheme)) {
+				rawLinkText = `<${linkData.link.content.substring(this.EmailScheme.length)}>`;
+			} else if (RegExPatterns.AbsoluteUri.test(linkData.link.content)) {
+				rawLinkText = `<${linkData.link.content}>`;
+			}
 
-			editor.replaceRange(
-				rawLinkText,
-				editor.offsetToPos(linkData.position.start),
-				editor.offsetToPos(linkData.position.end));
+			if (rawLinkText) {
+				editor.replaceRange(
+					rawLinkText,
+					editor.offsetToPos(linkData.position.start),
+					editor.offsetToPos(linkData.position.end));
 
-			editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
+				editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
+			}
 		}
 	}
 
