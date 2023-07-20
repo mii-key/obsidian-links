@@ -129,6 +129,22 @@ test.each([
         targetStart: "[[".length,
         targetEnd: "[[dolore".length
     },
+    {
+        name: "embeded wikilink with text: cursor after |",
+        input: "Incididunt ![[dolore|dolore text]] ullamco [[sunt]] ullamco non.",
+        cursorPos: "Incididunt [[dolore|".length,
+        linkType: LinkTypes.Wiki,
+        linkText: "![[dolore|dolore text]]",
+        linkStart: "Incididunt ".length,
+        linkEnd: "Incididunt ![[dolore|dolore text]]".length,
+        text: "dolore text",
+        textStart: "![[dolore|".length,
+        textEnd: "![[dolore|dolore text".length,
+        target: "dolore",
+        targetStart: "![[".length,
+        targetEnd: "![[dolore".length,
+        embeded: true,
+    },
 
     // autolink
     {
@@ -207,7 +223,7 @@ test.each([
         targetEnd: "<foo@bar.example.com".length
     }
 ])('findLink: $# $name', ({ name, input, cursorPos, linkType, linkText, linkStart, linkEnd,
-    text, textStart, textEnd, target, targetStart, targetEnd }) => {
+    text, textStart, textEnd, target, targetStart, targetEnd, embeded }) => {
     const result = findLink(input, cursorPos, cursorPos);
     expect(result).toBeDefined();
     expect(result?.type).toBe(linkType);
@@ -228,6 +244,9 @@ test.each([
     }
     else {
         expect(result?.link).toBeUndefined();
+    }
+    if(embeded){
+        expect(result!.embeded).toBe(embeded);
     }
 });
 
@@ -259,6 +278,7 @@ test.each([
     expect(result?.link?.content).toBe(target);
     expect(result!.link!.position.start).toBe(targetStart);
     expect(result!.link!.position.end).toBe(targetEnd);
+
 });
 
 test.each([
