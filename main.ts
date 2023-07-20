@@ -13,6 +13,7 @@ interface IObsidianLinksSettings {
 	// feature flags
 	ffReplaceLink: boolean;
 	ffAnglebracketURLSupport: boolean;
+	ffEmbedFiles: boolean;
 }
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
@@ -21,7 +22,8 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	showPerformanceNotification: false,
 	//feature flags
 	ffReplaceLink: false,
-	ffAnglebracketURLSupport: false
+	ffAnglebracketURLSupport: false,
+	ffEmbedFiles: false
 }
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -308,6 +310,17 @@ export default class ObsidianLinksPlugin extends Plugin {
 								.setIcon("rotate-cw")
 								.onClick(async () => {
 									this.convertLinkToMarkdownLink(linkData, editor);
+								});
+						});
+					}
+
+					if (this.unembedLinkUnderCursorHandler(editor, true)) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Unembed")
+								.setIcon("file-output")
+								.onClick(async () => {
+									this.unembedLinkUnderCursorHandler(editor);
 								});
 						});
 					}
@@ -905,6 +918,28 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 		})();
 	}
+
+	unembedLinkUnderCursorHandler(editor: Editor, checking: boolean = false): boolean | void {
+		const text = editor.getValue();
+		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
+		if (checking) {
+			return this.settings.ffEmbedFiles && !!linkData && linkData.embeded && !!linkData.link;
+		}
+
+		if (linkData) {
+			this.unembedLinkUnderCursor(linkData, editor);
+		}
+	}
+
+	unembedLinkUnderCursor(linkData: LinkData, editor: Editor) {
+		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && linkData.embeded) {
+			editor.replaceRange(
+				linkData.content.substring(1),
+				editor.offsetToPos(linkData.position.start),
+				editor.offsetToPos(linkData.position.end));
+		}
+	}
 }
 
 export class ObsidianLinksSettingTab extends PluginSettingTab {
@@ -980,6 +1015,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 					})
 
 			});
+
 		const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
 
 		if (feature1SettingDesc) {
@@ -990,6 +1026,32 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 					text: 'docs'
 				}));
 			feature1SettingDesc.appendText('.');
+		}
+
+		new Setting(containerEl)
+			.setName("Embed/unembed files")
+			.setDesc("Adds ability to embed/unembed files.")
+			.setClass("setting-item--insider-feature2")
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						this.plugin.settings.ffEmbedFiles = value;
+						await this.plugin.saveSettings();
+					})
+
+			});
+
+		const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
+
+		if (feature2SettingDesc) {
+			feature2SettingDesc.appendText(' see ');
+			feature2SettingDesc.appendChild(
+				createEl('a', {
+					href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/embed-unembed-files.md',
+					text: 'docs'
+				}));
+			feature2SettingDesc.appendText('.');
 		}
 	}
 }

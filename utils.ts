@@ -20,6 +20,7 @@ type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes
 
 
 export class LinkData extends TextPart {
+    embeded : boolean = false;
 
     constructor(public type: LinkType, content: string, position: Position, public link?: TextPart, public text?: TextPart) {
         super(content, position);
@@ -30,7 +31,7 @@ export class LinkData extends TextPart {
 //TODO: refactor
 export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): LinkData | undefined {
     // eslint-disable-next-line no-useless-escape
-    const wikiLinkRegEx = /\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
+    const wikiLinkRegEx = /(!?)\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
     const mdLinkRegEx = /\[([^\]\[]*)\]\(([^)(]*)\)/gmi
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
     const autolinkRegEx1 = /<([a-z]+:\/\/[^>]+)>/gmi;
@@ -41,8 +42,9 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
     if ((linkType & LinkTypes.Wiki)) {
         while ((match = wikiLinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= wikiLinkRegEx.lastIndex) {
-                const [raw, url, , text] = match;
+                const [raw, exclamationMark, url, , text] = match;
                 const linkData = new LinkData(LinkTypes.Wiki, raw, new Position(match.index, wikiLinkRegEx.lastIndex));
+                linkData.embeded = exclamationMark === '!';
                 if (url) {
                     const linkIdx = raw.indexOf(url)
                     linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
