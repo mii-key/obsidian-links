@@ -981,6 +981,31 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			text: " to be fixed."
 		});
 
+		new Setting(containerEl)
+			.setName("Autolink support")
+			.setDesc("Adds ability to work with links like <http://example.com>.")
+			.setClass("setting-item--insider-feature1")
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffAnglebracketURLSupport)
+					.onChange(async (value) => {
+						this.plugin.settings.ffAnglebracketURLSupport = value;
+						await this.plugin.saveSettings();
+					})
+
+			});
+
+		const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
+
+		if (feature1SettingDesc) {
+			feature1SettingDesc.appendText(' see ');
+			feature1SettingDesc.appendChild(
+				createEl('a', {
+					href: 'https://github.com/mii-key/obsidian-links#readme',
+					text: 'docs'
+				}));
+			feature1SettingDesc.appendText('.');
+		}
 
 		//containerEl.createEl('hr');
 		containerEl.createEl('h3', { text: 'Insider features' });
@@ -1002,31 +1027,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 		});
 
 
-		new Setting(containerEl)
-			.setName("Autolink support")
-			.setDesc("Adds ability to work with links like <http://example.com>.")
-			.setClass("setting-item--insider-feature1")
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.ffAnglebracketURLSupport)
-					.onChange(async (value) => {
-						this.plugin.settings.ffAnglebracketURLSupport = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-
-		const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
-
-		if (feature1SettingDesc) {
-			feature1SettingDesc.appendText(' see ');
-			feature1SettingDesc.appendChild(
-				createEl('a', {
-					href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/autolink-support.md',
-					text: 'docs'
-				}));
-			feature1SettingDesc.appendText('.');
-		}
+		
 
 		new Setting(containerEl)
 			.setName("Embed/unembed files")

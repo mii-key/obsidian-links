@@ -1,13 +1,13 @@
-# Obsidian Links
+# Obsidian Links <!-- omit in toc -->
 
 Manipulate links in Obsidian (https://obsidian.md).
 
-- [Obsidian Links](#obsidian-links)
 - [Features](#features)
   - [Unlink](#unlink)
   - [Delete link](#delete-link)
-  - [Convert a wikilink or html link to a markdown link](#convert-a-wikilink-or-html-link-to-a-markdown-link)
+  - [Convert wikilink or html link to markdown link](#convert-wikilink-or-html-link-to-markdown-link)
   - [Convert markdown link to Wikilink](#convert-markdown-link-to-wikilink)
+  - [Convert markdown link to autolink](#convert-markdown-link-to-autolink)
   - [Copy link destination to clipboard](#copy-link-destination-to-clipboard)
   - [Remove links from headings](#remove-links-from-headings)
   - [Edit link text](#edit-link-text)
@@ -15,24 +15,27 @@ Manipulate links in Obsidian (https://obsidian.md).
   - [Add link text](#add-link-text)
   - [Create link from selection](#create-link-from-selection)
   - [Create link from clipboard](#create-link-from-clipboard)
+  - [Convert autolink to markdown link](#convert-autolink-to-markdown-link)
 
 
 # Features
 
 ## Unlink
 
+Unlink single link or all links in a selection.
+
 - Command palette: **Unlink**
 - Context menu: **Unlink**
 
 <details>
-<summary>Demo. Unlink single link.</summary>
+<summary>Demo. Single link.</summary>
 
 ![remove link](docs/img/unlink-link.gif)
 
 </details>
 
 <details>
-<summary>Demo. Unlink links in selection.</summary>
+<summary>Demo. Links in a selection.</summary>
 
 ![remove link](docs/img/unlink-selection.gif)
 
@@ -45,15 +48,30 @@ Manipulate links in Obsidian (https://obsidian.md).
 - Context menu: **Delete**
 
 <details>
-<summary>Demo</summary>
+<summary>Demo. Wikilink</summary>
 
-![delete link](docs/img/delete-link.gif)
+![delete link](docs/img/delete-wikilink.gif)
 
 </details>
 
-## Convert a wikilink or html link to a markdown link
+<details>
+<summary>Demo. Makdown link</summary>
 
-Convert a wikilink or HTML link to markdown link. If a wiki link contains spaces a destination of a markdown link will be places in <>. HTML link must be expanded.
+![delete link](docs/img/delete-markdown-link.gif)
+
+</details>
+
+<details>
+<summary>Demo. Autolink (beta - enable in settings)</summary>
+
+![delete link](docs/img/delete-autolink.gif)
+
+</details>
+
+
+## Convert wikilink or html link to markdown link
+
+Convert a wikilink or HTML link to a markdown link. If a wiki link contains spaces a destination of a markdown link will be places in <>. HTML link must be expanded.
 
 - Command palette: **Convert to markdown link**
 - Context menu: **Convert to markdown link**
@@ -73,7 +91,7 @@ Convert a wikilink or HTML link to markdown link. If a wiki link contains spaces
 </details>
 
 ## Convert markdown link to Wikilink
-- Command palette: **Convert link to wikilink**
+- Command palette: **Convert to wikilink**
 - Context menu: **Convert to wikilink**
 
 
@@ -84,10 +102,34 @@ Convert a wikilink or HTML link to markdown link. If a wiki link contains spaces
 
 </details>
 
+## Convert markdown link to autolink
+
+(beta - enable in settings)
+
+Converts a markdown link with an absolute URL or an email address to an autolink.
+
+- Command palette: **Convert to autolink**
+- Context menu: **Convert to autolink**
+
+
+<details>
+<summary>Demo. Markdown link with absolute URL.</summary>
+
+![convert markdown link to wiki link](docs/img/convert-markdown-url-link-to-autolink.gif)
+
+</details>
+
+<details>
+<summary>Demo. Markdown link with email address.</summary>
+
+![convert markdown link to wiki link](docs/img/convert-markdown-email-link-to-autolink.gif)
+
+</details>
+
 
 ## Copy link destination to clipboard
 
-Copy link part of markdown, wiki or html link to clipboard.
+Copy link part of markdown, wiki or html link to the clipboard.
 
 - Command palette: **Copy link destination**
 - Context menu: **Copy link destination**
@@ -198,5 +240,19 @@ Create link from textual content of the system clipboard.
 <summary>Demo</summary>
 
 ![Create link from selection](docs/img/create-mdlink-from-clipboard.gif)
+
+</details>
+
+## Convert autolink to markdown link
+
+(beta - enable in settings)
+
+Convert an autolink to a markdown link.
+If an autolink has an absolute URI with `http` or `https` scheme content of the `<page/>` element will be set as a link text. If request fails or the URL has other scheme cursor will be places inside the `[]` of the markdown link. For email autolink `mailto` scheme will be added before email address.
+
+<details>
+<summary>Demo. Convert autolink to markdown link</summary>
+
+![convert to markdown link](/docs/img/convert-autolink-to-markdown-link.gif)
 
 </details>
