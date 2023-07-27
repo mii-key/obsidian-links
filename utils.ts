@@ -32,7 +32,7 @@ export class LinkData extends TextPart {
 export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): LinkData | undefined {
     // eslint-disable-next-line no-useless-escape
     const wikiLinkRegEx = /(!?)\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
-    const mdLinkRegEx = /\[([^\]\[]*)\]\(([^)(]*)\)/gmi
+    const mdLinkRegEx = /(!?)\[([^\]\[]*)\]\(([^)(]*)\)/gmi
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
     const autolinkRegEx1 = /<([a-z]+:\/\/[^>]+)>/gmi;
     const autolinkRegEx = /(<([a-zA-Z]{2,32}:[^>]+)>)|(<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>)/gmi;
@@ -62,8 +62,9 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
     if ((linkType & LinkTypes.Markdown)) {
         while ((match = mdLinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= mdLinkRegEx.lastIndex) {
-                const [raw, text, url] = match;
+                const [raw, exclamationMark, text, url] = match;
                 const linkData = new LinkData(LinkTypes.Markdown, raw, new Position(match.index, mdLinkRegEx.lastIndex));
+                linkData.embeded = exclamationMark === '!';
                 if (text) {
                     const textIdx = raw.indexOf(text);
                     linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
