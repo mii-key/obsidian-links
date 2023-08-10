@@ -62,7 +62,7 @@ Unlink single link or all links in a selection.
 </details>
 
 <details>
-<summary>Demo. Autolink (beta - enable in settings)</summary>
+<summary>Demo. Autolink</summary>
 
 ![delete link](docs/img/delete-autolink.gif)
 
@@ -103,8 +103,6 @@ Convert a wikilink or HTML link to a markdown link. If a wiki link contains spac
 </details>
 
 ## Convert markdown link to autolink
-
-(beta - enable in settings)
 
 Converts a markdown link with an absolute URL or an email address to an autolink.
 
@@ -244,8 +242,6 @@ Create link from textual content of the system clipboard.
 </details>
 
 ## Convert autolink to markdown link
-
-(beta - enable in settings)
 
 Convert an autolink to a markdown link.
 If an autolink has an absolute URI with `http` or `https` scheme content of the `<page/>` element will be set as a link text. If request fails or the URL has other scheme cursor will be places inside the `[]` of the markdown link. For email autolink `mailto` scheme will be added before email address.
