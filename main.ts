@@ -12,7 +12,6 @@ interface IObsidianLinksSettings {
 	showPerformanceNotification: boolean;
 	// feature flags
 	ffReplaceLink: boolean;
-	ffAnglebracketURLSupport: boolean;
 	ffEmbedFiles: boolean;
 }
 
@@ -22,7 +21,6 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	showPerformanceNotification: false,
 	//feature flags
 	ffReplaceLink: false,
-	ffAnglebracketURLSupport: false,
 	ffEmbedFiles: false
 }
 
@@ -282,7 +280,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 							});
 						}
 
-						if (this.settings.ffAnglebracketURLSupport && this.convertLinkUnderCursorToAutolinkHandler(editor, true)) {
+						if (this.convertLinkUnderCursorToAutolinkHandler(editor, true)) {
 							menu.addItem((item) => {
 								item
 									.setTitle("Convert to autolink")
@@ -383,9 +381,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	getLink(editor: Editor): LinkData | undefined {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		return this.settings.ffAnglebracketURLSupport ?
-			findLink(text, cursorOffset, cursorOffset)
-			: findLink(text, cursorOffset, cursorOffset, LinkTypes.All & ~LinkTypes.Autolink)
+		return findLink(text, cursorOffset, cursorOffset)
 	}
 
 	unlinkLinkOrSelectionHandler(editor: Editor, checking: boolean): boolean | void {
@@ -447,9 +443,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	convertLinkUnderCursorToMarkdownLinkHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = this.settings.ffAnglebracketURLSupport ?
-			findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.Autolink)
-			: findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html)
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.Autolink)
 		if (checking) {
 			return !!linkData;
 		}
@@ -530,9 +524,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	convertLinkUnderCursorToAutolinkHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = this.settings.ffAnglebracketURLSupport ?
-			findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown)
-			: undefined;
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown);
 		if (checking) {
 			return !!linkData
 				&& linkData.link?.content != undefined
@@ -981,31 +973,32 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			text: " to be fixed."
 		});
 
-		new Setting(containerEl)
-			.setName("Autolink support")
-			.setDesc("Adds ability to work with links like <http://example.com>.")
-			.setClass("setting-item--insider-feature1")
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.ffAnglebracketURLSupport)
-					.onChange(async (value) => {
-						this.plugin.settings.ffAnglebracketURLSupport = value;
-						await this.plugin.saveSettings();
-					})
+		// ----- Early access feature1
 
-			});
+		// new Setting(containerEl)
+		// 	.setName("Early access feature1")
+		// 	.setDesc("Feature description")
+		// 	.setClass("setting-item--eaccess-feature1")
+		// 	.addToggle((toggle) => {
+		// 		toggle
+		// 			.setValue(this.plugin.settings.ffEarlyAccessFeature1)
+		// 			.onChange(async (value) => {
+		// 				this.plugin.settings.ffEarlyAccessFeature1 = value;
+		// 				await this.plugin.saveSettings();
+		// 			})
+		// 	});
 
-		const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
-
-		if (feature1SettingDesc) {
-			feature1SettingDesc.appendText(' see ');
-			feature1SettingDesc.appendChild(
-				createEl('a', {
-					href: 'https://github.com/mii-key/obsidian-links#readme',
-					text: 'docs'
-				}));
-			feature1SettingDesc.appendText('.');
-		}
+		// const earlyAccessFeature1SettingDesc = containerEl.querySelector(".setting-item--eaccess-feature1 .setting-item-description");
+		// if (earlyAccessFeature1SettingDesc) {
+		// 	earlyAccessFeature1SettingDesc.appendText(' see ');
+		// 	earlyAccessFeature1SettingDesc.appendChild(
+		// 		createEl('a', {
+		// 			href: 'https://github.com/mii-key/obsidian-links#readme',
+		// 			text: 'docs'
+		// 		}));
+		// 	earlyAccessFeature1SettingDesc.appendText('.');
+		// }
+		// ----------
 
 		//containerEl.createEl('hr');
 		containerEl.createEl('h3', { text: 'Insider features' });
