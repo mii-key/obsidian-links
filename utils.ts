@@ -211,14 +211,17 @@ export function removeLinks(text: string): string {
     return result;
 }
 
+function removeWhitespaces(str :string) : string {
+    return str.replace(/\s+/g, ' ').trim();
+}
 
 export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<string>): Promise<string> {
-    const titleRegEx = /<title[^>]*>(.*?)<\/title>/i;
+    const titleRegEx = /<title[^>]*>([^<]*?)<\/title>/i;
     const text = await getPageText(url);
     const match = text.match(titleRegEx);
     if (match) {
         const [, title] = match;
-        return decodeHtmlEntities(title);
+        return decodeHtmlEntities(removeWhitespaces(title));
     }
 
     throw new Error("Page has no title.");
@@ -274,7 +277,7 @@ export function decodeHtmlEntities(text: string): string {
     charByHe.set("amp", "&");
     charByHe.set("nbsp", " ");
     charByHe.set("quot", "\"");
-
+   
     return text.replace(regexpHe, (match, he) => {
         const entry = charByHe.get(he);
         return entry ?? match;
