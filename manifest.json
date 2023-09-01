@@ -1,7 +1,7 @@
 {
 	"id": "links",
 	"name": "Links",
-	"version": "1.3.1",
+	"version": "1.3.2",
 	"minAppVersion": "0.15.0",
 	"description": "Manipulate links",
 	"author": "MiiKey",
