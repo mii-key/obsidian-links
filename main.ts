@@ -166,6 +166,19 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
 		});
 
+		this.addCommand({
+			id: 'editor-unembed-mdlink',
+			name: 'Unembed link',
+			icon: "file-output",
+			editorCheckCallback: (checking, editor, ctx) => this.unembedLinkUnderCursorHandler(editor, checking)
+		});
+
+		this.addCommand({
+			id: 'editor-embed-mdlink',
+			name: 'Embed link',
+			icon: "file-input",
+			editorCheckCallback: (checking, editor, ctx) => this.embedLinkUnderCursorHandler(editor, checking)
+		});
 
 
 		// this.registerEvent(
@@ -319,6 +332,17 @@ export default class ObsidianLinksPlugin extends Plugin {
 								.setIcon("file-output")
 								.onClick(async () => {
 									this.unembedLinkUnderCursorHandler(editor);
+								});
+						});
+					}
+
+					if (this.embedLinkUnderCursorHandler(editor, true)) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Embed")
+								.setIcon("file-input")
+								.onClick(async () => {
+									this.embedLinkUnderCursorHandler(editor);
 								});
 						});
 					}
@@ -928,6 +952,28 @@ export default class ObsidianLinksPlugin extends Plugin {
 		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && linkData.embeded) {
 			editor.replaceRange(
 				linkData.content.substring(1),
+				editor.offsetToPos(linkData.position.start),
+				editor.offsetToPos(linkData.position.end));
+		}
+	}
+
+	embedLinkUnderCursorHandler(editor: Editor, checking: boolean = false): boolean | void {
+		const text = editor.getValue();
+		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
+		if (checking) {
+			return this.settings.ffEmbedFiles && !!linkData && !linkData.embeded && !!linkData.link;
+		}
+
+		if (linkData) {
+			this.embedLinkUnderCursor(linkData, editor);
+		}
+	}
+
+	embedLinkUnderCursor(linkData: LinkData, editor: Editor) {
+		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && !linkData.embeded) {
+			editor.replaceRange(
+				'!' + linkData.content,
 				editor.offsetToPos(linkData.position.start),
 				editor.offsetToPos(linkData.position.end));
 		}
