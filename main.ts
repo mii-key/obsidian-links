@@ -1004,6 +1004,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				}));
 
 
+		// ------ Early access features -----------------
+
 		containerEl.createEl('h3', { text: 'Early access features' });
 		const earlyAccessDescription = containerEl.createEl('p');
 		earlyAccessDescription.createEl('span', {
@@ -1019,6 +1021,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			text: " to be fixed."
 		});
 
+		// feature embed/unembed
+
+		new Setting(containerEl)
+			.setName("Embed/unembed files")
+			.setDesc("Adds ability to embed/unembed files.")
+			.setClass("setting-item--insider-feature1")
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						this.plugin.settings.ffEmbedFiles = value;
+						await this.plugin.saveSettings();
+					})
+
+			});
+
+		const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
+
+		if (feature2SettingDesc) {
+			feature2SettingDesc.appendText(' see ');
+			feature2SettingDesc.appendChild(
+				createEl('a', {
+					href: 'https://github.com/mii-key/obsidian-links#embed--unembed-files',
+					text: 'docs'
+				}));
+			feature2SettingDesc.appendText('.');
+		}
+		
 		// ----- Early access feature1
 
 		// new Setting(containerEl)
@@ -1046,7 +1076,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 		// }
 		// ----------
 
-		//containerEl.createEl('hr');
+		// ------ Insider features -----------------
+
 		containerEl.createEl('h3', { text: 'Insider features' });
 
 		const insiderDescription = containerEl.createEl('p');
@@ -1066,33 +1097,33 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 		});
 
 
-		
+		// // feature embed/unembed
 
-		new Setting(containerEl)
-			.setName("Embed/unembed files")
-			.setDesc("Adds ability to embed/unembed files.")
-			.setClass("setting-item--insider-feature2")
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
-					.onChange(async (value) => {
-						this.plugin.settings.ffEmbedFiles = value;
-						await this.plugin.saveSettings();
-					})
+		// new Setting(containerEl)
+		// 	.setName("Embed/unembed files")
+		// 	.setDesc("Adds ability to embed/unembed files.")
+		// 	.setClass("setting-item--insider-feature2")
+		// 	.addToggle((toggle) => {
+		// 		toggle
+		// 			.setValue(this.plugin.settings.ffEmbedFiles)
+		// 			.onChange(async (value) => {
+		// 				this.plugin.settings.ffEmbedFiles = value;
+		// 				await this.plugin.saveSettings();
+		// 			})
 
-			});
+		// 	});
 
-		const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
+		// const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
 
-		if (feature2SettingDesc) {
-			feature2SettingDesc.appendText(' see ');
-			feature2SettingDesc.appendChild(
-				createEl('a', {
-					href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/embed-unembed-files.md',
-					text: 'docs'
-				}));
-			feature2SettingDesc.appendText('.');
-		}
+		// if (feature2SettingDesc) {
+		// 	feature2SettingDesc.appendText(' see ');
+		// 	feature2SettingDesc.appendChild(
+		// 		createEl('a', {
+		// 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/embed-unembed-files.md',
+		// 			text: 'docs'
+		// 		}));
+		// 	feature2SettingDesc.appendText('.');
+		// }
 	}
 }
 
