@@ -1003,6 +1003,167 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+		containerEl.createEl('h3', { text: 'Context menu' });
+		new Setting(containerEl)
+			.setName('Edit link text')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		new Setting(containerEl)
+			.setName('Add link text')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		new Setting(containerEl)
+			.setName('Edit link destination')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		new Setting(containerEl)
+			.setName('Copy link destination')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+
+		new Setting(containerEl)
+			.setName('Unlink')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		new Setting(containerEl)
+			.setName('Convert to wikilink')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		new Setting(containerEl)
+			.setName('Convert to autolink')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		new Setting(containerEl)
+			.setName('Convert to markdown link')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		if (this.plugin.settings.ffReplaceLink) {
+			new Setting(containerEl)
+				.setName('Replace link')
+				.setDesc('')
+				.addToggle((toggle) => {
+					toggle
+						.setValue(this.plugin.settings.ffEmbedFiles)
+						.onChange(async (value) => {
+							// this.plugin.settings.ffEmbedFiles = value;
+							// await this.plugin.saveSettings();
+						})
+
+				});
+		}
+		new Setting(containerEl)
+			.setName('Embed/Unembed')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+
+		new Setting(containerEl)
+			.setName('Delete')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		new Setting(containerEl)
+			.setName('Create link')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
+		new Setting(containerEl)
+			.setName('Create link from clipboard')
+			.setDesc('')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffEmbedFiles)
+					.onChange(async (value) => {
+						// this.plugin.settings.ffEmbedFiles = value;
+						// await this.plugin.saveSettings();
+					})
+
+			});
 
 		// ------ Early access features -----------------
 
@@ -1048,7 +1209,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				}));
 			feature2SettingDesc.appendText('.');
 		}
-		
+
 		// ----- Early access feature1
 
 		// new Setting(containerEl)
