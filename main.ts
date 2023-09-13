@@ -509,7 +509,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 				destination = `<${destination.replace(/%20/g, " ")}>`;
 			}
 
-			rawLinkText = `[${text}](${destination})`
+			//TODO: use const for !
+			const embededSymbol = linkData.embeded ? '!' : ''
+			rawLinkText = `${embededSymbol}[${text}](${destination})`
 		}
 
 		editor.replaceRange(
@@ -539,8 +541,11 @@ export default class ObsidianLinksPlugin extends Plugin {
 	convertLinkToWikiLink(linkData: LinkData, editor: Editor) {
 		const link = linkData.type === LinkTypes.Markdown ? (linkData.link ? decodeURI(linkData.link.content) : "") : linkData.link;
 		const text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
+		//TODO: use const for !
+		const embededSymbol = linkData.embeded ? '!' : '';
+		const rawText = `${embededSymbol}[[${link}${text}]]`;
 		editor.replaceRange(
-			`[[${link}${text}]]`,
+			rawText,
 			editor.offsetToPos(linkData.position.start),
 			editor.offsetToPos(linkData.position.end));
 	}
