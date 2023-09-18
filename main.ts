@@ -13,7 +13,7 @@ interface IObsidianLinksSettings {
 	// feature flags
 	ffReplaceLink: boolean;
 	ffEmbedFiles: boolean;
-	contexMenu : {
+	contexMenu: {
 		editLinkText: boolean;
 		addLinkText: boolean;
 		editLinkDestination: boolean;
@@ -1040,7 +1040,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.editLinkText)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.editLinkText = value;
 						await this.plugin.saveSettings();
@@ -1052,7 +1052,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.addLinkText)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.addLinkText = value;
 						await this.plugin.saveSettings();
@@ -1064,7 +1064,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.editLinkDestination)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.editLinkDestination = value;
 						await this.plugin.saveSettings();
@@ -1076,7 +1076,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.copyLinkDestination)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.copyLinkDestination = value;
 						await this.plugin.saveSettings();
@@ -1089,7 +1089,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.unlink)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.unlink = value;
 						await this.plugin.saveSettings();
@@ -1101,7 +1101,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.convertToWikilink)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.convertToWikilink = value;
 						await this.plugin.saveSettings();
@@ -1113,7 +1113,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.convertToAutolink)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.convertToAutolink = value;
 						await this.plugin.saveSettings();
@@ -1125,7 +1125,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.convertToMakrdownLink)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.convertToMakrdownLink = value;
 						await this.plugin.saveSettings();
@@ -1138,7 +1138,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				.setDesc('')
 				.addToggle((toggle) => {
 					toggle
-						.setValue(this.plugin.settings.ffEmbedFiles)
+						.setValue(this.plugin.settings.contexMenu.replaceLink)
 						.onChange(async (value) => {
 							this.plugin.settings.contexMenu.replaceLink = value;
 							await this.plugin.saveSettings();
@@ -1151,7 +1151,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.embedUnembedLink)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.embedUnembedLink = value;
 						await this.plugin.saveSettings();
@@ -1164,7 +1164,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.deleteLink)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.deleteLink = value;
 						await this.plugin.saveSettings();
@@ -1176,7 +1176,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.createLink)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.createLink = value;
 						await this.plugin.saveSettings();
@@ -1188,7 +1188,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
+					.setValue(this.plugin.settings.contexMenu.createLinkFromClipboard)
 					.onChange(async (value) => {
 						this.plugin.settings.contexMenu.createLinkFromClipboard = value;
 						await this.plugin.saveSettings();
