@@ -250,7 +250,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 				if (linkData) {
 					addTopSeparator();
-					if (linkData.text && linkData.text.content.length > 0) {
+					if (this.settings.contexMenu.editLinkText && linkData.text && linkData.text.content.length > 0) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Edit link text")
@@ -259,7 +259,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 									this.editLinkText(linkData, editor);
 								});
 						});
-					} else if (linkData.link && ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0)) {
+					} else if (this.settings.contexMenu.addLinkText && linkData.link && ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Add link text")
@@ -270,7 +270,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					if (((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0) && linkData.link) {
+					if (this.settings.contexMenu.editLinkDestination && ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0) && linkData.link) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Edit link destination")
@@ -281,7 +281,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					if (linkData.link) {
+					if (this.settings.contexMenu.copyLinkDestination && linkData.link) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Copy link destination")
@@ -293,7 +293,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 					}
 				}
 
-				if ((linkData && ((linkData.type & LinkTypes.Autolink) == 0)) || (selection && HasLinks(selection))) {
+				if (this.settings.contexMenu.unlink && ((linkData && ((linkData.type & LinkTypes.Autolink) == 0)) || (selection && HasLinks(selection)))) {
 					addTopSeparator();
 					menu.addItem((item) => {
 						item
@@ -312,7 +312,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 				if (linkData) {
 					addTopSeparator();
 					if (linkData.type == LinkTypes.Markdown) {
-						if (this.convertLinkUnderCursorToWikilinkHandler(editor, true)) {
+						if (this.settings.contexMenu.convertToWikilink && this.convertLinkUnderCursorToWikilinkHandler(editor, true)) {
 							menu.addItem((item) => {
 								item
 									.setTitle("Convert to wikilink")
@@ -323,7 +323,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 							});
 						}
 
-						if (this.convertLinkUnderCursorToAutolinkHandler(editor, true)) {
+						if (this.settings.contexMenu.convertToAutolink && this.convertLinkUnderCursorToAutolinkHandler(editor, true)) {
 							menu.addItem((item) => {
 								item
 									.setTitle("Convert to autolink")
@@ -334,7 +334,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 							});
 						}
 
-						if (this.settings.ffReplaceLink) {
+						if (this.settings.ffReplaceLink && this.settings.contexMenu.replaceLink) {
 							menu.addItem((item) => {
 								item
 									.setTitle("Replace link")
@@ -345,17 +345,19 @@ export default class ObsidianLinksPlugin extends Plugin {
 							});
 						}
 					} else {
-						menu.addItem((item) => {
-							item
-								.setTitle("Convert to markdown link")
-								.setIcon("rotate-cw")
-								.onClick(async () => {
-									this.convertLinkToMarkdownLink(linkData, editor);
-								});
-						});
+						if (this.settings.contexMenu.convertToMakrdownLink) {
+							menu.addItem((item) => {
+								item
+									.setTitle("Convert to markdown link")
+									.setIcon("rotate-cw")
+									.onClick(async () => {
+										this.convertLinkToMarkdownLink(linkData, editor);
+									});
+							});
+						}
 					}
 
-					if (this.unembedLinkUnderCursorHandler(editor, true)) {
+					if (this.settings.contexMenu.embedUnembedLink && this.unembedLinkUnderCursorHandler(editor, true)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Unembed")
@@ -366,7 +368,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					if (this.embedLinkUnderCursorHandler(editor, true)) {
+					if (this.settings.contexMenu.embedUnembedLink && this.embedLinkUnderCursorHandler(editor, true)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Embed")
@@ -377,18 +379,20 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					menu.addItem((item) => {
-						item
-							.setTitle("Delete")
-							.setIcon("trash-2")
-							.onClick(async () => {
-								this.deleteLink(linkData, editor);
-							});
-					});
+					if (this.settings.contexMenu.deleteLink) {
+						menu.addItem((item) => {
+							item
+								.setTitle("Delete")
+								.setIcon("trash-2")
+								.onClick(async () => {
+									this.deleteLink(linkData, editor);
+								});
+						});
+					}
 
 				} else {
 					addTopSeparator();
-					if (this.createLinkFromSelectionHandler(editor, true)) {
+					if (this.settings.contexMenu.createLink && this.createLinkFromSelectionHandler(editor, true)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Create link")
@@ -398,7 +402,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
-					if (this.createLinkFromClipboardHandler(editor, true)) {
+					if (this.settings.contexMenu.createLinkFromClipboard && this.createLinkFromClipboardHandler(editor, true)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Create link from clipboard")
