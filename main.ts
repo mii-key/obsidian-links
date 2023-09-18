@@ -13,6 +13,21 @@ interface IObsidianLinksSettings {
 	// feature flags
 	ffReplaceLink: boolean;
 	ffEmbedFiles: boolean;
+	contexMenu : {
+		editLinkText: boolean;
+		addLinkText: boolean;
+		editLinkDestination: boolean;
+		copyLinkDestination: boolean;
+		unlink: boolean;
+		convertToWikilink: boolean;
+		convertToAutolink: boolean;
+		convertToMakrdownLink: boolean;
+		replaceLink: boolean;
+		embedUnembedLink: boolean;
+		deleteLink: boolean;
+		createLink: boolean;
+		createLinkFromClipboard: boolean;
+	}
 }
 
 const DEFAULT_SETTINGS: IObsidianLinksSettings = {
@@ -21,7 +36,22 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	showPerformanceNotification: false,
 	//feature flags
 	ffReplaceLink: false,
-	ffEmbedFiles: false
+	ffEmbedFiles: false,
+	contexMenu: {
+		editLinkText: true,
+		addLinkText: true,
+		editLinkDestination: true,
+		copyLinkDestination: true,
+		unlink: true,
+		convertToWikilink: true,
+		convertToAutolink: true,
+		convertToMakrdownLink: true,
+		replaceLink: true,
+		embedUnembedLink: true,
+		deleteLink: true,
+		createLink: true,
+		createLinkFromClipboard: true
+	}
 }
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -1003,6 +1033,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+		// -- Configure context menu
 		containerEl.createEl('h3', { text: 'Context menu' });
 		new Setting(containerEl)
 			.setName('Edit link text')
@@ -1011,8 +1042,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.editLinkText = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1023,8 +1054,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.addLinkText = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1035,8 +1066,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.editLinkDestination = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1047,8 +1078,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.copyLinkDestination = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1060,8 +1091,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.unlink = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1072,8 +1103,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.convertToWikilink = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1084,8 +1115,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.convertToAutolink = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1096,8 +1127,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.convertToMakrdownLink = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1109,8 +1140,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 					toggle
 						.setValue(this.plugin.settings.ffEmbedFiles)
 						.onChange(async (value) => {
-							// this.plugin.settings.ffEmbedFiles = value;
-							// await this.plugin.saveSettings();
+							this.plugin.settings.contexMenu.replaceLink = value;
+							await this.plugin.saveSettings();
 						})
 
 				});
@@ -1122,8 +1153,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.embedUnembedLink = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1135,8 +1166,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.deleteLink = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1147,8 +1178,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.createLink = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
@@ -1159,8 +1190,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 				toggle
 					.setValue(this.plugin.settings.ffEmbedFiles)
 					.onChange(async (value) => {
-						// this.plugin.settings.ffEmbedFiles = value;
-						// await this.plugin.saveSettings();
+						this.plugin.settings.contexMenu.createLinkFromClipboard = value;
+						await this.plugin.saveSettings();
 					})
 
 			});
