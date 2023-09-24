@@ -12,7 +12,6 @@ interface IObsidianLinksSettings {
 	showPerformanceNotification: boolean;
 	// feature flags
 	ffReplaceLink: boolean;
-	ffEmbedFiles: boolean;
 	contexMenu: {
 		editLinkText: boolean;
 		addLinkText: boolean;
@@ -36,7 +35,6 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	showPerformanceNotification: false,
 	//feature flags
 	ffReplaceLink: false,
-	ffEmbedFiles: false,
 	contexMenu: {
 		editLinkText: true,
 		addLinkText: true,
@@ -979,7 +977,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
 		if (checking) {
-			return this.settings.ffEmbedFiles && !!linkData && linkData.embeded && !!linkData.link;
+			return !!linkData && linkData.embeded && !!linkData.link;
 		}
 
 		if (linkData) {
@@ -1001,7 +999,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
 		if (checking) {
-			return this.settings.ffEmbedFiles && !!linkData && !linkData.embeded && !!linkData.link;
+			return !!linkData && !linkData.embeded && !!linkData.link;
 		}
 
 		if (linkData) {
@@ -1221,34 +1219,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 		earlyAccessDescription.createEl('span', {
 			text: " to be fixed."
 		});
-
-		// feature embed/unembed
-
-		new Setting(containerEl)
-			.setName("Embed/unembed files")
-			.setDesc("Adds ability to embed/unembed files.")
-			.setClass("setting-item--insider-feature1")
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.ffEmbedFiles)
-					.onChange(async (value) => {
-						this.plugin.settings.ffEmbedFiles = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-
-		const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
-
-		if (feature2SettingDesc) {
-			feature2SettingDesc.appendText(' see ');
-			feature2SettingDesc.appendChild(
-				createEl('a', {
-					href: 'https://github.com/mii-key/obsidian-links#embed--unembed-files',
-					text: 'docs'
-				}));
-			feature2SettingDesc.appendText('.');
-		}
 
 		// ----- Early access feature1
 
