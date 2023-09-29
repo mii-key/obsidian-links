@@ -1,10 +1,15 @@
 // import { requestUrl } from 'obsidian';
 
-class Position {
+import exp from "constants";
+import { RegExPatterns } from "./RegExPatterns";
+
+const LinkEmbededChar = '!';
+
+export class Position {
     constructor(public start: number, public end: number) { }
 }
 
-class TextPart {
+export class TextPart {
     constructor(public content: string, public position: Position) { }
 }
 
@@ -13,47 +18,120 @@ export enum LinkTypes {
     Markdown = 1,
     Wiki = 2,
     Html = 4,
-    Autolink = 8
+    Autolink = 8,
+    PlainUrl = 16
 }
 
-type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes.Autolink;
+type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes.Autolink | LinkTypes.PlainUrl;
 
 
 export class LinkData extends TextPart {
-    embeded : boolean = false;
-
-    constructor(public type: LinkType, content: string, position: Position, public link?: TextPart, public text?: TextPart) {
+    constructor(public type: LinkType, content: string, position: Position, public link?: TextPart, public text?: TextPart, public embedded: boolean = false) {
         super(content, position);
         this.type = type;
     }
+}
+
+function parseMarkdownLink(regExp: RegExp, match: RegExpMatchArray, raw: string, embeddedChar?: string, text?: string, destination?: string): LinkData {
+    if (match.index === undefined) {
+        throw new Error("match: index must be defined.");
+    }
+    const linkData = new LinkData(LinkTypes.Markdown, raw, new Position(match.index, match.index + raw.length));
+    linkData.embedded = embeddedChar === LinkEmbededChar;
+    if (text) {
+        const textIdx = raw.indexOf(text);
+        linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
+    }
+    if (destination) {
+        const linkIdx = raw.indexOf(destination, linkData.text ? linkData.text.position.end : raw.lastIndexOf('(') + 1)
+        const wrappedInAngleBrackets = destination[0] === '<' && destination[destination.length - 1] === '>';
+        linkData.link = wrappedInAngleBrackets ?
+            new TextPart(destination.substring(1, destination.length - 1), new Position(linkIdx + 1, linkIdx + destination.length - 1))
+            : new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
+    }
+
+    return linkData;
+}
+
+function parseWikiLink(regExp: RegExp, match: RegExpMatchArray, raw: string, embeddedChar?: string, text?: string, destination?: string): LinkData {
+    if (match.index === undefined) {
+        throw new Error("match: index must be defined.");
+    }
+    const linkData = new LinkData(LinkTypes.Wiki, raw, new Position(match.index, match.index + raw.length));
+    linkData.embedded = embeddedChar === LinkEmbededChar;
+    if (text) {
+        const textIdx = raw.lastIndexOf(text);
+        linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
+    }
+    if (destination) {
+        const linkIdx = raw.indexOf(destination)
+        linkData.link = new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
+    }
+
+    return linkData;
+}
+
+function parseAutolink(regExp: RegExp, match: RegExpMatchArray, raw: string, destination: string): LinkData {
+    if (match.index === undefined) {
+        throw new Error("match: index must be defined.")
+    }
+    if (!destination) {
+        throw new Error("destination must not be empty")
+    }
+    const linkData = new LinkData(LinkTypes.Autolink, raw, new Position(match.index, match.index + raw.length));
+    const destinationStartIdx = raw.indexOf(destination)
+    linkData.link = new TextPart(destination, new Position(destinationStartIdx, destinationStartIdx + destination.length))
+
+    return linkData;
+}
+
+function parseHtmlLink(regExp: RegExp, match: RegExpMatchArray, raw: string, text?: string, destination?: string): LinkData {
+    if (match.index === undefined) {
+        throw new Error("match: index must be defined.");
+    }
+    const linkData = new LinkData(LinkTypes.Html, raw, new Position(match.index, match.index + raw.length));
+    if (text) {
+        const textIdx = raw.lastIndexOf(text);
+        linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
+    }
+    if (destination) {
+        const linkIdx = raw.indexOf(destination)
+        linkData.link = new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
+    }
+
+    return linkData;
+}
+
+function parsePlainUrl(regExp: RegExp, match: RegExpMatchArray, raw: string, destination: string): LinkData {
+    if (match.index === undefined) {
+        throw new Error("match: index must be defined.")
+    }
+    if (!destination) {
+        throw new Error("destination must not be empty")
+    }
+    const linkData = new LinkData(LinkTypes.PlainUrl, raw, new Position(match.index, match.index + raw.length));
+    linkData.link = new TextPart(destination, new Position(0, destination.length))
+
+    return linkData;
 }
 
 //TODO: refactor
 export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): LinkData | undefined {
     // eslint-disable-next-line no-useless-escape
     const wikiLinkRegEx = /(!?)\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
-    const mdLinkRegEx = /(!?)\[([^\]\[]*)\]\(([^)(]*)\)/gmi
+    // const mdLinkRegEx = /(!?)\[([^\]\[]*)\]\(([^)(]*)\)/gmi
+    const mdLinkRegEx = new RegExp(RegExPatterns.Markdownlink.source, 'gmi');
     const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
     const autolinkRegEx1 = /<([a-z]+:\/\/[^>]+)>/gmi;
     const autolinkRegEx = /(<([a-zA-Z]{2,32}:[^>]+)>)|(<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>)/gmi;
-    
+
     let match;
 
     if ((linkType & LinkTypes.Wiki)) {
         while ((match = wikiLinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= wikiLinkRegEx.lastIndex) {
-                const [raw, exclamationMark, url, , text] = match;
-                const linkData = new LinkData(LinkTypes.Wiki, raw, new Position(match.index, wikiLinkRegEx.lastIndex));
-                linkData.embeded = exclamationMark === '!';
-                if (url) {
-                    const linkIdx = raw.indexOf(url)
-                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
-                }
-                if (text !== undefined) {
-                    const textIdx = text ? raw.indexOf(text, (linkData.link ? linkData.link.position.end : raw.indexOf('|')) + 1) : raw.length - 2;
-                    linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
-                }
-
+                const [raw, exclamationMark, destination, , text] = match
+                const linkData = parseWikiLink(wikiLinkRegEx, match, raw, exclamationMark, text, destination)
                 return linkData;
             }
         }
@@ -62,21 +140,8 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
     if ((linkType & LinkTypes.Markdown)) {
         while ((match = mdLinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= mdLinkRegEx.lastIndex) {
-                const [raw, exclamationMark, text, url] = match;
-                const linkData = new LinkData(LinkTypes.Markdown, raw, new Position(match.index, mdLinkRegEx.lastIndex));
-                linkData.embeded = exclamationMark === '!';
-                if (text) {
-                    const textIdx = raw.indexOf(text);
-                    linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
-                }
-                if (url) {
-                    const linkIdx = raw.indexOf(url, linkData.text ? linkData.text.position.end : raw.lastIndexOf('(') + 1)
-                    const wrappedInAngleBrackets = url[0] === '<' && url[url.length - 1] === '>';
-                    linkData.link = wrappedInAngleBrackets ?
-                        new TextPart(url.substring(1, url.length - 1), new Position(linkIdx + 1, linkIdx + url.length - 1))
-                        : new TextPart(url, new Position(linkIdx, linkIdx + url.length))
-                }
-
+                const [raw, exclamationMark, text, destination] = match;
+                const linkData = parseMarkdownLink(mdLinkRegEx, match, raw, exclamationMark, text, destination);
                 return linkData;
             }
         }
@@ -86,17 +151,8 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
         while ((match = htmlLinkRegEx.exec(text))) {
             if (startPos >= match.index && endPos <= htmlLinkRegEx.lastIndex) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const [raw, url, text] = match;
-                const linkData = new LinkData(LinkTypes.Html, raw, new Position(match.index, htmlLinkRegEx.lastIndex));
-                if (url) {
-                    const linkIdx = raw.indexOf(url)
-                    linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
-                }
-                if (text) {
-                    const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('>') + 1);
-                    linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
-                }
-
+                const [raw, destination, text] = match;
+                const linkData = parseHtmlLink(mdLinkRegEx, match, raw, text, destination);
                 return linkData;
             }
         }
@@ -107,14 +163,8 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
             if (startPos >= match.index && endPos <= autolinkRegEx.lastIndex) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const [raw, urlAutolink, urlDestination, mailAutolink, mailDestination] = match;
-                const linkData = new LinkData(LinkTypes.Autolink, raw, new Position(match.index, autolinkRegEx.lastIndex));
-                if (urlDestination) {
-                    const linkIdx = raw.indexOf(urlDestination);
-                    linkData.link = new TextPart(urlDestination, new Position(linkIdx, linkIdx + urlDestination.length));
-                } else if(mailDestination) {
-                    const linkIdx = raw.indexOf(mailDestination);
-                    linkData.link = new TextPart(mailDestination, new Position(linkIdx, linkIdx + mailDestination.length));
-                }
+                const linkData = parseAutolink(autolinkRegEx, match, raw, 
+                    urlDestination ? urlDestination : mailDestination)
                 return linkData;
             }
         }
@@ -282,4 +332,44 @@ export function decodeHtmlEntities(text: string): string {
         const entry = charByHe.get(he);
         return entry ?? match;
     });
+}
+
+export function findLinks(text: string): Array<LinkData> {
+    const linksRegex = new RegExp(`${RegExPatterns.Markdownlink.source}|${RegExPatterns.Wikilink.source}` +
+        `|${RegExPatterns.AutolinkUrl.source}|${RegExPatterns.AutolinkMail.source}` +
+        `|${RegExPatterns.Htmllink.source}|${RegExPatterns.PlainUrl.source}` 
+        //+ `|${RegExPatterns.AbsoluteUri.source}`
+        , "gmi");
+
+    let match;
+    const links: Array<LinkData> = new Array<LinkData>;
+
+    while ((match = linksRegex.exec(text))) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [rawMatch, mdLinkEmbeded, mdLinkText, mdLinkDestination,
+            wikiLinkEmbeded, wikiLinkDestination, wikiLinkTextRaw, wikiLinkText,
+            autoLinkUrlDestination, autoLinkMailDestination,
+            htmlLinkDestination, htmlLinkText,
+            plainUrl] = match;
+
+        if (rawMatch.indexOf("](") >= 0 || mdLinkEmbeded || mdLinkText || mdLinkDestination) {
+            const linkData = parseMarkdownLink(linksRegex, match, rawMatch, mdLinkEmbeded, mdLinkText, mdLinkDestination);
+            links.push(linkData);
+        } else if (rawMatch.indexOf("[[") >= 0 || wikiLinkEmbeded || wikiLinkDestination || wikiLinkText) {
+            const linkData = parseWikiLink(linksRegex, match, rawMatch, wikiLinkEmbeded, wikiLinkText, wikiLinkDestination);
+            links.push(linkData);
+        } else if (rawMatch.startsWith('<a')) {
+            const linkData = parseHtmlLink(linksRegex, match, rawMatch,
+                htmlLinkText, htmlLinkDestination);
+            links.push(linkData)
+        } else if (rawMatch[0] === '<') {
+            const linkData = parseAutolink(linksRegex, match, rawMatch,
+                autoLinkUrlDestination ? autoLinkUrlDestination : autoLinkMailDestination)
+            links.push(linkData)
+        } else if(plainUrl){
+            const linkData = parsePlainUrl(linksRegex, match, rawMatch, plainUrl)
+            links.push(linkData)
+        }
+    }
+    return links;
 }

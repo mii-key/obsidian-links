@@ -10,8 +10,12 @@ interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
 	titleSeparator: string;
 	showPerformanceNotification: boolean;
+
 	// feature flags
 	ffReplaceLink: boolean;
+	ffConvertAllToMdlinks: boolean;
+
+	//context menu
 	contexMenu: {
 		editLinkText: boolean;
 		addLinkText: boolean;
@@ -33,8 +37,12 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
 	titleSeparator: " • ",
 	showPerformanceNotification: false,
+
 	//feature flags
 	ffReplaceLink: false,
+	ffConvertAllToMdlinks: false,
+
+	//context menu
 	contexMenu: {
 		editLinkText: true,
 		addLinkText: true,
@@ -194,6 +202,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
 		});
 
+		if (this.settings.ffConvertAllToMdlinks) {
+			this.addCommand({
+				id: 'editor-convert-all-links-to-markdown',
+				name: 'Convert all links to Markdown links',
+				icon: "link",
+				editorCheckCallback: (checking, editor, ctx) => this.convertLinksToMarkdown(editor, LinkTypes.All, checking)
+			});
+		}
 		this.addCommand({
 			id: 'editor-unembed-mdlink',
 			name: 'Unembed link',
@@ -229,12 +245,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 				this.app.workspace.on('editor-paste', (evt, editor, view) => this.onEditorPaste(evt, editor, view))
 			);
 
-			//TODO: temp command.
-			this.addCommand({
-				id: 'editor-replace-markdown-targets-in-note',
-				name: '#Replace markdown link in notes',
-				editorCallback: (editor: Editor, view: MarkdownView) => this.replaceMarkdownTargetsInNote()
-			});
+			if (this.settings.ffReplaceLink) {
+				//TODO: temp command.
+				this.addCommand({
+					id: 'editor-replace-markdown-targets-in-note',
+					name: '#Replace markdown link in notes',
+					editorCallback: (editor: Editor, view: MarkdownView) => this.replaceMarkdownTargetsInNote()
+				});
+			}
 		}
 
 		this.registerEvent(
@@ -542,7 +560,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 
 			//TODO: use const for !
-			const embededSymbol = linkData.embeded ? '!' : ''
+			const embededSymbol = linkData.embedded ? '!' : ''
 			rawLinkText = `${embededSymbol}[${text}](${destination})`
 		}
 
@@ -574,7 +592,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const link = linkData.type === LinkTypes.Markdown ? (linkData.link ? decodeURI(linkData.link.content) : "") : linkData.link;
 		const text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
 		//TODO: use const for !
-		const embededSymbol = linkData.embeded ? '!' : '';
+		const embededSymbol = linkData.embedded ? '!' : '';
 		const rawText = `${embededSymbol}[[${link}${text}]]`;
 		editor.replaceRange(
 			rawText,
@@ -977,7 +995,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
 		if (checking) {
-			return !!linkData && linkData.embeded && !!linkData.link;
+			return !!linkData && linkData.embedded && !!linkData.link;
 		}
 
 		if (linkData) {
@@ -986,7 +1004,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	unembedLinkUnderCursor(linkData: LinkData, editor: Editor) {
-		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && linkData.embeded) {
+		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && linkData.embedded) {
 			editor.replaceRange(
 				linkData.content.substring(1),
 				editor.offsetToPos(linkData.position.start),
@@ -999,7 +1017,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
 		if (checking) {
-			return !!linkData && !linkData.embeded && !!linkData.link;
+			return !!linkData && !linkData.embedded && !!linkData.link;
 		}
 
 		if (linkData) {
@@ -1008,12 +1026,22 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	embedLinkUnderCursor(linkData: LinkData, editor: Editor) {
-		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && !linkData.embeded) {
+		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && !linkData.embedded) {
 			editor.replaceRange(
 				'!' + linkData.content,
 				editor.offsetToPos(linkData.position.start),
 				editor.offsetToPos(linkData.position.end));
 		}
+	}
+
+	convertLinksToMarkdown(editor: Editor, sourceLinkTypes: LinkTypes, checking = false): boolean | void {
+		// TODO: no check for now
+		if (checking) {
+			return true;
+		}
+
+		//TODO:
+
 	}
 }
 
