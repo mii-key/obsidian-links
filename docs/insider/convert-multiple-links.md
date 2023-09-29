@@ -2,6 +2,9 @@
 
 Enable in settings:
 
+> **Note**
+> Restart required
+
 ![Convert multiple links settings](/docs/img/convert-all-links-settings.png)
 
 ### Convert multiple links to markdown links
