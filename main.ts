@@ -1,10 +1,9 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl, moment } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks, findLinks } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
 import { RegExPatterns } from 'RegExPatterns';
-
 
 interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
@@ -13,7 +12,7 @@ interface IObsidianLinksSettings {
 
 	// feature flags
 	ffReplaceLink: boolean;
-	ffConvertAllToMdlinks: boolean;
+	ffMultipleLinkConversion: boolean;
 
 	//context menu
 	contexMenu: {
@@ -40,7 +39,7 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 
 	//feature flags
 	ffReplaceLink: false,
-	ffConvertAllToMdlinks: false,
+	ffMultipleLinkConversion: false,
 
 	//context menu
 	contexMenu: {
@@ -202,7 +201,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
 		});
 
-		if (this.settings.ffConvertAllToMdlinks) {
+		if (this.settings.ffMultipleLinkConversion) {
 			this.addCommand({
 				id: 'editor-convert-all-links-to-markdown',
 				name: 'Convert all links to Markdown links',
@@ -210,6 +209,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 				editorCheckCallback: (checking, editor, ctx) => this.convertLinksToMarkdown(editor, LinkTypes.All, checking)
 			});
 		}
+
 		this.addCommand({
 			id: 'editor-unembed-mdlink',
 			name: 'Unembed link',
@@ -526,7 +526,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	async convertLinkToMarkdownLink(linkData: LinkData, editor: Editor) {
+	//TODO: refactor
+	async convertLinkToMarkdownLink(linkData: LinkData, editor: Editor, setCursor: boolean = true, linkOffset: number = 0) {
 		let text = linkData.text ? linkData.text.content : "";
 		const link = linkData.link ? linkData.link.content : "";
 
@@ -537,7 +538,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		let destination = "";
 
 		const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-		if (linkData.type === LinkTypes.Autolink && linkData.link && urlRegEx.test(linkData.link.content)) {
+		if ((linkData.type === LinkTypes.Autolink || linkData.type === LinkTypes.PlainUrl) && linkData.link && urlRegEx.test(linkData.link.content)) {
 			const notice = new Notice("Getting title ...", 0);
 			try {
 				text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
@@ -566,12 +567,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 		editor.replaceRange(
 			rawLinkText,
-			editor.offsetToPos(linkData.position.start),
-			editor.offsetToPos(linkData.position.end));
-		if (text) {
-			editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
-		} else {
-			editor.setCursor(editor.offsetToPos(linkData.position.start + 1));
+			editor.offsetToPos(linkOffset + linkData.position.start),
+			editor.offsetToPos(linkOffset + linkData.position.end));
+		if (setCursor) {
+			if (text) {
+				editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
+			} else {
+				editor.setCursor(editor.offsetToPos(linkData.position.start + 1));
+			}
 		}
 	}
 
@@ -1035,13 +1038,23 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	convertLinksToMarkdown(editor: Editor, sourceLinkTypes: LinkTypes, checking = false): boolean | void {
-		// TODO: no check for now
+		const selection = editor.getSelection()
+		const text = selection || editor.getValue();
+		const links = findLinks(text);
+		const notMdlinks = links ? links.filter(x => x.type != LinkTypes.Markdown) : []
+
 		if (checking) {
-			return true;
+			return notMdlinks.length > 0
 		}
 
-		//TODO:
+		const selectionOffset = selection ? editor.posToOffset(editor.getCursor('from')) : 0;
 
+		(async () => {
+			for (let i = notMdlinks.length - 1; i >= 0; i--) {
+				const link = notMdlinks[i]
+				await this.convertLinkToMarkdownLink(link, editor, false, selectionOffset)
+			}
+		})();
 	}
 }
 
@@ -1295,6 +1308,33 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 			text: " and influence the direction of development."
 		});
 
+		// feature convert multiple links to markdown
+
+		new Setting(containerEl)
+			.setName("Convert multiple links to markdown links")
+			.setDesc("Convert multiple links in document or selection to markdown links.")
+			.setClass("setting-item--insider-feature2")
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.ffMultipleLinkConversion)
+					.onChange(async (value) => {
+						this.plugin.settings.ffMultipleLinkConversion = value;
+						await this.plugin.saveSettings();
+					})
+
+			});
+
+		const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
+
+		if (feature2SettingDesc) {
+			feature2SettingDesc.appendText(' see ');
+			feature2SettingDesc.appendChild(
+				createEl('a', {
+					href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-multiple-links.md',
+					text: 'docs'
+				}));
+			feature2SettingDesc.appendText('.');
+		}
 
 		// // feature embed/unembed
 
