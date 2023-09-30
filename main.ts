@@ -17,7 +17,7 @@ interface IObsidianLinksSettings {
 	//context menu
 	contexMenu: {
 		editLinkText: boolean;
-		addLinkText: boolean;
+		setLinkText: boolean;
 		editLinkDestination: boolean;
 		copyLinkDestination: boolean;
 		unlink: boolean;
@@ -44,7 +44,7 @@ const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	//context menu
 	contexMenu: {
 		editLinkText: true,
-		addLinkText: true,
+		setLinkText: true,
 		editLinkDestination: true,
 		copyLinkDestination: true,
 		unlink: true,
@@ -165,10 +165,10 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'editor-add-link-text',
-			name: 'Add link text',
+			id: 'editor-set-link-text',
+			name: 'Set link text',
 			icon: "text-cursor-input",
-			editorCheckCallback: (checking, editor, ctx) => this.addLinkTextUnderCursorHandler(editor, checking)
+			editorCheckCallback: (checking, editor, ctx) => this.setLinkTextUnderCursorHandler(editor, checking)
 		});
 
 		this.addCommand({
@@ -275,13 +275,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 									this.editLinkText(linkData, editor);
 								});
 						});
-					} else if (this.settings.contexMenu.addLinkText && linkData.link && ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0)) {
+					} 
+					if (this.settings.contexMenu.setLinkText && this.setLinkTextUnderCursorHandler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Add link text")
+								.setTitle("Set link text")
 								.setIcon("text-cursor-input")
 								.onClick(async () => {
-									this.addLinkText(linkData, editor);
+									this.setLinkText(linkData, editor);
 								});
 						});
 					}
@@ -758,8 +759,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return true;
 	}
 
-	async addLinkText(linkData: LinkData, editor: Editor) {
-		if (!linkData.link || (linkData.text && linkData.text.content !== "")) {
+	async setLinkText(linkData: LinkData, editor: Editor) {
+		if (!linkData.link) {
 			return;
 		}
 
@@ -776,7 +777,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 			textStart++;
 			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
-		} else if (linkData.type == LinkTypes.Markdown) {
+		} else if (linkData.type == LinkTypes.Markdown && !(linkData.text && linkData.text.content !== "")) {
 			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
 			let text = "";
 			if (urlRegEx.test(linkData.link.content)) {
@@ -803,18 +804,18 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	addLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
+	setLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
 		if (checking) {
 			return !!linkData
 				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
-				&& (!linkData.text || !linkData?.text.content);
+				&& (!linkData.text || !linkData?.text.content || linkData.type === LinkTypes.Wiki);
 		}
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
 			// with timeout, only specified region is selected.
 			setTimeout(() => {
-				this.addLinkText(linkData, editor);
+				this.setLinkText(linkData, editor);
 			}, 500);
 		}
 	}
@@ -1073,7 +1074,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 		containerEl.createEl('h3', { text: 'General settings' });
 		new Setting(containerEl)
 			.setName('Title separator')
-			.setDesc('String used as headings separator in \'Add link text\' command.')
+			.setDesc('String used as headings separator in \'Set link text\' command.')
 			.addText(text => text
 				.setValue(this.plugin.settings.titleSeparator)
 				.onChange(async (value) => {
@@ -1096,13 +1097,13 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
 			});
 		new Setting(containerEl)
-			.setName('Add link text')
+			.setName('Set link text')
 			.setDesc('')
 			.addToggle((toggle) => {
 				toggle
-					.setValue(this.plugin.settings.contexMenu.addLinkText)
+					.setValue(this.plugin.settings.contexMenu.setLinkText)
 					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.addLinkText = value;
+						this.plugin.settings.contexMenu.setLinkText = value;
 						await this.plugin.saveSettings();
 					})
 
