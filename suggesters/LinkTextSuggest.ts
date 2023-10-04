@@ -71,12 +71,19 @@ export class LinkTextSuggest extends EditorSuggest<string> {
 			}
 			textStartOffset++;
 			editor.setSelection(editor.offsetToPos(textStartOffset), editor.offsetToPos(textStartOffset + suggestion.length));
-			this.suggestContext.provideSuggestions = false;
+			this.suggestContext.clearLinkData();
 
-		} else if (this.suggestContext.linkData?.type == LinkTypes.Markdown){
+
+		} else if (linkData?.type == LinkTypes.Markdown){
 			const editor = this.context.editor;
-			const textStartOffset = this.suggestContext.linkData?.position.start + 1;
-			editor.replaceRange(suggestion, editor?.offsetToPos(textStartOffset));
+			const textStartOffset = linkData?.position.start + 1;
+
+			if(linkData.text?.content){
+				editor.replaceRange(suggestion, editor?.offsetToPos(textStartOffset), 
+					editor?.offsetToPos(textStartOffset + linkData.text?.content.length));
+			} else{
+				editor.replaceRange(suggestion, editor?.offsetToPos(textStartOffset));
+			}
 			editor.setSelection(editor.offsetToPos(textStartOffset), editor.offsetToPos(textStartOffset + suggestion.length));
 			
 			this.suggestContext.clearLinkData();
