@@ -1,12 +1,12 @@
 {
 	"name": "links",
-	"version": "1.5.2",
+	"version": "1.5.3",
 	"description": "Manipulate links in Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json package.json",
+		"version": "node version-bump.mjs && git add manifest.json versions.json package.json && git commit -m \"update version\"",
 		"test": "jest",
 		"test-watch": "jest --watch",
 		"clean": "rmdir /s /q node_modules",
