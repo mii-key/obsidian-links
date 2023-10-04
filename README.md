@@ -12,7 +12,7 @@ Manipulate links in Obsidian (https://obsidian.md).
   - [Remove links from headings](#remove-links-from-headings)
   - [Edit link text](#edit-link-text)
   - [Edit link destination](#edit-link-destination)
-  - [Add link text](#add-link-text)
+  - [Set link text](#set-link-text)
   - [Create link from selection](#create-link-from-selection)
   - [Create link from clipboard](#create-link-from-clipboard)
   - [Convert autolink to markdown link](#convert-autolink-to-markdown-link)
@@ -182,35 +182,35 @@ Select link text and place cursor at the end of the text
 
 </details>
 
-## Add link text
-Add link text, select it and place cursor at the end of the text. 
+## Set link text
+Change or add link text, select it and place cursor at the end of the text. 
 Link text depends on the kind of a link. 
-For local notes text will be either file name of the note or popup with suggested link texts. Title separator can be specified in setting. 
-For external http[s] links, page content is requested and link text is set to the title (content of `<title/>` element) of the page.
+For local notes text will be either file name of the note or popup with suggested link texts. Title separator can be specified in the plugin setting. 
+For external http[s] links, page content is requested and link text is set to the title (content of `<title/>` element) of the requested page content.
 
 
-- Command palette: **Add link text**
-- Context menu: **Add link text**
+- Command palette: **Set link text**
+- Context menu: **Set link text**
 
 
 <details>
-<summary>Demo. Link to local note</summary>
+<summary>Demo. Link to a local note</summary>
 
-![Link to local note](docs/img/add-link-text-local.gif)
+![Link to local note](docs/img/set-link-text-local.gif)
 
 </details>
 
 <details>
-<summary>Demo. Link to a heading in local note</summary>
+<summary>Demo. Link to a heading in a local note</summary>
 
-![Link to a heading in local note](docs/img/add-link-text-local-heading.gif)
+![Link to a heading in local note](docs/img/set-link-text-local-heading.gif)
 
 </details>
 
 <details>
 <summary>Demo. External link</summary>
 
-![External link](docs/img/add-link-text-external.gif)
+![External link](docs/img/set-link-text-external.gif)
 
 </details>
 

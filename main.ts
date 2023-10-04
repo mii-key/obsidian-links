@@ -275,7 +275,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 									this.editLinkText(linkData, editor);
 								});
 						});
-					} 
+					}
 					if (this.settings.contexMenu.setLinkText && this.setLinkTextUnderCursorHandler(editor, true)) {
 						menu.addItem((item) => {
 							item
@@ -771,25 +771,27 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const text = getFileName(linkData.link?.content);
 			let textStart = linkData.position.start + linkData.link.position.end;
 			if (linkData.text) {
-				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(linkData.text.content.length+1));
+				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(linkData.text.content.length + 1));
 			} else {
 				editor.replaceRange("|" + text, editor.offsetToPos(textStart));
 			}
 			textStart++;
 			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
-		} else if (linkData.type == LinkTypes.Markdown && !(linkData.text && linkData.text.content !== "")) {
+		} else if (linkData.type == LinkTypes.Markdown) {
 			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
 			let text = "";
 			if (urlRegEx.test(linkData.link.content)) {
-				const notice = new Notice("Getting title ...", 0);
-				try {
-					text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
-				}
-				catch (error) {
-					new Notice(error);
-				}
-				finally {
-					notice.hide();
+				if (!(linkData.text && linkData.text.content !== "")) {
+					const notice = new Notice("Getting title ...", 0);
+					try {
+						text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
+					}
+					catch (error) {
+						new Notice(error);
+					}
+					finally {
+						notice.hide();
+					}
 				}
 			} else {
 				if (this.showLinkTextSuggestions(linkData, editor)) {
@@ -809,8 +811,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		if (checking) {
 			return !!linkData
 				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
-				&& !!linkData.link?.content 
-				&& (!linkData.text || !linkData?.text.content || (linkData.type === LinkTypes.Wiki && linkData.link.content.contains('#')));
+				&& !!linkData.link?.content
+				&& (!linkData.text || !linkData?.text.content || linkData.link.content.contains('#'));
 		}
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
