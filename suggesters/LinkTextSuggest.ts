@@ -53,6 +53,7 @@ export class LinkTextSuggest extends EditorSuggest<string> {
 		outer.createDiv({ cls: "ES-tags" }).setText(`${suggestion}`);
 	}
 
+	// TODO: refactor
 	selectSuggestion(suggestion: string): void {
 		if (!this.context?.editor || !this.suggestContext.linkData?.link) {
 			return;
@@ -62,8 +63,9 @@ export class LinkTextSuggest extends EditorSuggest<string> {
 			const editor = this.context.editor;
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			let textStartOffset = linkData.position.start + linkData.link!.position.end;
-			if(linkData.text){
-				editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset), editor?.offsetToPos(textStartOffset + 1));
+			if(linkData.text?.content){
+				editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset), 
+					editor?.offsetToPos(textStartOffset + linkData.text?.content.length + 1));
 			} else{
 				editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset));
 			}
