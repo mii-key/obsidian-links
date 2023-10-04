@@ -771,7 +771,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const text = getFileName(linkData.link?.content);
 			let textStart = linkData.position.start + linkData.link.position.end;
 			if (linkData.text) {
-				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(textStart + 1));
+				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(linkData.text.content.length+1));
 			} else {
 				editor.replaceRange("|" + text, editor.offsetToPos(textStart));
 			}
@@ -809,7 +809,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		if (checking) {
 			return !!linkData
 				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
-				&& (!linkData.text || !linkData?.text.content || linkData.type === LinkTypes.Wiki);
+				&& !!linkData.link?.content 
+				&& (!linkData.text || !linkData?.text.content || (linkData.type === LinkTypes.Wiki && linkData.link.content.contains('#')));
 		}
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
