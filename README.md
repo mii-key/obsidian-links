@@ -185,7 +185,7 @@ Select link text and place cursor at the end of the text
 ## Set link text
 Change or add link text, select it and place cursor at the end of the text. 
 Link text depends on the kind of a link. 
-For local notes text will be either file name of the note or popup with suggested link texts. Title separator can be specified in the plugin setting. 
+For local notes text will be either file name of the note or popup with suggested link texts. Title separator can be specified in the plugin settings. 
 For external http[s] links, page content is requested and link text is set to the title (content of `<title/>` element) of the requested page content.
 
 
