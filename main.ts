@@ -5,6 +5,7 @@ import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
 import { RegExPatterns } from 'RegExPatterns';
 import { UnlinkLinkCommand } from 'commands/UnlinkLinkCommand';
+import { DeleteLinkCommand } from 'commands/DeleteLinkCommand';
 
 interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
@@ -113,16 +114,17 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 		this.addCommand({
 			id: unlinkCommand.id,
-			name: unlinkCommand.displayName,
+			name: unlinkCommand.displayNameCommand,
 			icon: unlinkCommand.icon,
 			editorCheckCallback: (checking, editor, ctx) => unlinkCommand.handler(editor, checking)
 		});
 
+		const deleteLinkCommand = new DeleteLinkCommand();
 		this.addCommand({
-			id: 'editor-delete-link',
-			name: 'Delete link',
-			icon: "trash-2",
-			editorCheckCallback: (checking, editor, ctx) => this.deleteLinkUnderCursorHandler(editor, checking)
+			id: deleteLinkCommand.id,
+			name: deleteLinkCommand.displayNameCommand,
+			icon: deleteLinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => deleteLinkCommand.handler(editor, checking)
 		});
 
 		this.addCommand({
@@ -313,12 +315,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 					}
 				}
 
-
+				// TODO: use found link
 				if (this.settings.contexMenu.unlink && unlinkCommand.handler(editor, true)) {
 					addTopSeparator();
 					menu.addItem((item) => {
 						item
-							.setTitle(unlinkCommand.displayName)
+							.setTitle(unlinkCommand.displayNameContextMenu)
 							.setIcon(unlinkCommand.icon)
 							.onClick(() => {
 								unlinkCommand.handler(editor, false)
@@ -396,13 +398,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					if (this.settings.contexMenu.deleteLink) {
+					//TODO: use found link
+					if (this.settings.contexMenu.deleteLink && deleteLinkCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Delete")
-								.setIcon("trash-2")
+								.setTitle(deleteLinkCommand.displayNameContextMenu)
+								.setIcon(deleteLinkCommand.icon)
 								.onClick(async () => {
-									this.deleteLink(linkData, editor);
+									deleteLinkCommand.handler(editor, false);
 								});
 						});
 					}
@@ -457,25 +460,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		return findLink(text, cursorOffset, cursorOffset)
-	}
-
-	deleteLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html);
-		if (checking) {
-			return !!linkData;
-		}
-		if (linkData) {
-			this.deleteLink(linkData, editor);
-		}
-	}
-
-	deleteLink(linkData: LinkData, editor: Editor) {
-		editor.replaceRange(
-			'',
-			editor.offsetToPos(linkData.position.start),
-			editor.offsetToPos(linkData.position.end));
 	}
 
 	convertLinkUnderCursorToMarkdownLinkHandler(editor: Editor, checking: boolean): boolean | void {

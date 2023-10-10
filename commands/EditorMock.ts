@@ -45,6 +45,33 @@ export type EditorCommandName = 'goUp' | 'goDown' | 'goLeft' | 'goRight' | 'goSt
 export interface EditorTransaction {}
 
 export class EditorMock {
+    constructor() {
+        this.getValue = this.__mocks.getValue
+        this.getCursor = this.__mocks.getCursor
+        this.posToOffset = this.__mocks.posToOffset
+        this.offsetToPos = this.__mocks.offsetToPos
+        this.replaceRange = this.__mocks.replaceRange
+        this.getSelection = this.__mocks.getSelection
+        this.replaceSelection = this.__mocks.replaceSelection
+    }
+    __mocks : {
+        getValue : jest.Mock
+        getCursor : jest.Mock
+        posToOffset : jest.Mock
+        offsetToPos : jest.Mock
+        replaceRange : jest.Mock
+        getSelection : jest.Mock
+        replaceSelection : jest.Mock
+    } = {
+        getValue : jest.fn(),
+        getCursor : jest.fn(),
+        posToOffset : jest.fn(),
+        offsetToPos : jest.fn(),
+        replaceRange : jest.fn(),
+        getSelection : jest.fn(),
+        replaceSelection : jest.fn()
+
+    }
     refresh(): void {
         throw new Error('Method not implemented.');
     }

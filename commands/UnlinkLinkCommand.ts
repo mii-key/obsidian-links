@@ -4,7 +4,8 @@ import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
 
 export class UnlinkLinkCommand implements ICommand {
     id: string = 'editor-unlink-link';
-    displayName: string = 'Unlink';
+    displayNameCommand: string = 'Unlink';
+    displayNameContextMenu: string = 'Unlink';
     icon: string = 'unlink';
 
     handler(editor: Editor, checking: boolean) : boolean | void {
