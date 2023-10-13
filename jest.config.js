@@ -8,4 +8,5 @@ module.exports = {
     "verbose": true,
     "collectCoverage": false,
     "collectCoverageFrom": ['**/*.{ts,jsx}'],
+    "coveragePathIgnorePatterns": ["/node_modules/", "/commands/.+Mock.ts", "/commands/ObsidianProxy.ts", "main.ts"]
 }

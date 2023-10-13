@@ -10,6 +10,7 @@ import { ConvertLinkToMdlinkCommand } from 'commands/ConvertLinkToMdlinkCommand'
 import { ObsidianProxy } from 'commands/ObsidianProxy';
 import { ConvertAllLinksToMdlinksCommand } from 'commands/ConvertAllLinksToMdlinksCommand';
 import { ICommand } from 'commands/ICommand';
+import { RemoveLinksFromHeadingsCommand } from 'commands/RemoveLinksFromHeadingsCommand';
 
 interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
@@ -171,11 +172,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
 		});
 
+		const removeLinksFromHeadingsCommand = new RemoveLinksFromHeadingsCommand();
+
 		this.addCommand({
-			id: 'editor-remove-links-from-headings',
-			name: 'Remove links from headings',
-			icon: "unlink",
-			editorCheckCallback: (checking, editor, ctx) => this.removeLinksFromHeadingsHandler(editor, checking)
+			id: removeLinksFromHeadingsCommand.id,
+			name: removeLinksFromHeadingsCommand.displayNameCommand,
+			icon: removeLinksFromHeadingsCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => removeLinksFromHeadingsCommand.handler(editor, checking)
 		});
 
 		this.addCommand({
@@ -546,27 +549,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const text = mdView.getViewData();
 			const result = replaceAllHtmlLinks(text)
 			mdView.setViewData(result, false);
-		}
-	}
-
-	removeLinksFromHeadingsHandler(editor: Editor, checking: boolean): boolean | void {
-		const selection = editor.getSelection();
-
-		if (selection) {
-			if (checking) {
-				return HasLinksInHeadings(selection);
-			}
-			const result = removeLinksFromHeadings(selection);
-			editor.replaceSelection(result);
-		} else {
-			const text = editor.getValue();
-			if (checking) {
-				return !!text && HasLinksInHeadings(text);
-			}
-			if (text) {
-				const result = removeLinksFromHeadings(text);
-				editor.setValue(result);
-			}
 		}
 	}
 

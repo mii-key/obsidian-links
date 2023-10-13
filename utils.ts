@@ -211,7 +211,7 @@ export function replaceAllHtmlLinks(text: string): string {
 const headingWithLinksRegEx = /^(#+ .*)(?:(\[(.*)\]\((.*)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))(.*)$/gm
 
 export function HasLinksInHeadings(text: string): boolean {
-    return headingWithLinksRegEx.test(text);
+    return new RegExp(headingWithLinksRegEx.source, 'gm').test(text);
 }
 
 

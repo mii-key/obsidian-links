@@ -275,7 +275,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
             //
         })
 
-    test.only.each(
+    test.each(
         [
             {
                 name: "html - href in '",
