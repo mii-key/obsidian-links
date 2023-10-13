@@ -6,6 +6,6 @@ module.exports = {
     ],
     "moduleFileExtensions": ['ts', 'js', 'mjs', 'cjs', 'jsx', 'tsx', 'json', 'node'],
     "verbose": true,
-    "collectCoverage": true,
+    "collectCoverage": false,
     "collectCoverageFrom": ['**/*.{ts,jsx}'],
 }
