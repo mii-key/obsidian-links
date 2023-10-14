@@ -3,11 +3,15 @@ import { RemoveLinksFromHeadingsCommand } from './RemoveLinksFromHeadingsCommand
 
 import { EditorMock } from './EditorMock'
 import exp from 'constants';
+import { WikilinkDestinationReplacement } from '../utils';
 
 describe('RemoveLinksFromHeadingsCommand test', () => {
 
     test('status - text: no links in the headings - command disabled', () => {
-        const cmd = new RemoveLinksFromHeadingsCommand()
+        const options = {
+			internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination
+		};
+        const cmd = new RemoveLinksFromHeadingsCommand(options)
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('# heading1\nsome text\n# heading2\nsome text')
         //
@@ -18,7 +22,10 @@ describe('RemoveLinksFromHeadingsCommand test', () => {
     })
 
     test('status - selection: no links in the headings - command disabled', () => {
-        const cmd = new RemoveLinksFromHeadingsCommand()
+        const options = {
+			internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination
+		};
+        const cmd = new RemoveLinksFromHeadingsCommand(options)
         const editor = new EditorMock()
         editor.__mocks.getSelection.mockReturnValue('# heading1\nsome text\n# heading2\nsome text')
         //
@@ -59,7 +66,10 @@ describe('RemoveLinksFromHeadingsCommand test', () => {
         ]
     )
         ('status - text: heading contains [$name] - command enabled', ({ name, text }) => {
-            const cmd = new RemoveLinksFromHeadingsCommand()
+            const options = {
+                internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination
+            };
+            const cmd = new RemoveLinksFromHeadingsCommand(options)
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
@@ -102,7 +112,10 @@ describe('RemoveLinksFromHeadingsCommand test', () => {
         ]
     )
         ('status - selection: heading contains [$name] - command enabled', ({ name, text }) => {
-            const cmd = new RemoveLinksFromHeadingsCommand()
+            const options = {
+                internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination
+            };
+            const cmd = new RemoveLinksFromHeadingsCommand(options)
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
 
@@ -155,7 +168,10 @@ describe('RemoveLinksFromHeadingsCommand test', () => {
         ]
     )
         ('remove links - text: heading with [$name] - success', ({ name, text, expected }) => {
-            const cmd = new RemoveLinksFromHeadingsCommand()
+            const options = {
+                internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination
+            };
+            const cmd = new RemoveLinksFromHeadingsCommand(options)
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             //
@@ -206,7 +222,10 @@ describe('RemoveLinksFromHeadingsCommand test', () => {
         ]
     )
         ('remove links - selection: heading with [$name] - success', ({ name, text, expected }) => {
-            const cmd = new RemoveLinksFromHeadingsCommand()
+            const options = {
+                internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination
+            };
+            const cmd = new RemoveLinksFromHeadingsCommand(options)
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
             //

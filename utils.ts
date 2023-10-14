@@ -1,4 +1,4 @@
-// import { requestUrl } from 'obsidian';
+// import { requestUrl } from 'obsidian';WikilinkDestinationReplacement
 
 import exp from "constants";
 import { RegExPatterns } from "./RegExPatterns";
@@ -214,9 +214,17 @@ export function HasLinksInHeadings(text: string): boolean {
     return new RegExp(headingWithLinksRegEx.source, 'gm').test(text);
 }
 
+export enum WikilinkDestinationReplacement {
+    Destination = 'Destination',
+    LowestNoteHeading = 'LowestNoteHeading'
+}
+
+export interface RemoveLinksFromHeadingsOptions {
+    internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement;
+}
 
 //TODO: refactor
-export function removeLinksFromHeadings(text: string): string {
+export function removeLinksFromHeadings(text: string, options: RemoveLinksFromHeadingsOptions): string {
     // eslint-disable-next-line no-useless-escape
 
     const result = text.replace(headingWithLinksRegEx, (match, start, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlUrl, htmlText, end, offset) => {
@@ -224,7 +232,25 @@ export function removeLinksFromHeadings(text: string): string {
         if (rawMdLink) {
             linkText = mdText ? mdText : "";
         } else if (rawWikiLink) {
-            linkText = wkText ? wkText : wkLink;
+            if(wkText){
+                linkText = wkText;
+            } else{
+                // default
+                linkText = wkLink;
+
+                switch(options.internalWikilinkWithoutTextReplacement){
+                    case WikilinkDestinationReplacement.LowestNoteHeading:{
+                        let idx = 0;
+                        if(wkLink && (idx = wkLink.lastIndexOf('#')) > 0 && idx + 1 <= wkLink.length){
+                            const subheading = wkLink.substring(idx + 1);
+                            if(subheading){
+                                linkText = subheading;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
         } else if (rawHtmlLink) {
             linkText = htmlText ? htmlText : ""
         }

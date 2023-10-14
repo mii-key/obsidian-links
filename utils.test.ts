@@ -1,5 +1,5 @@
 import exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, HasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, HasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, WikilinkDestinationReplacement } from './utils';
 import { expect, test } from '@jest/globals';
 
 describe("Utils tests", () => {
@@ -343,7 +343,10 @@ describe("Utils tests", () => {
         const hasLinks = HasLinksInHeadings(input);
         if (expected) {
             expect(hasLinks).toBeTruthy();
-            const result = removeLinksFromHeadings(input);
+            const options = {
+                internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination
+            };
+            const result = removeLinksFromHeadings(input, options);
             expect(result).toBe(expected);
         } else {
             expect(hasLinks).toBeFalsy();
