@@ -326,17 +326,17 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
-        // const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
+        const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
 
-        // if (feature3SettingDesc) {
-        // 	feature3SettingDesc.appendText(' see ');
-        // 	feature3SettingDesc.appendChild(
-        // 		createEl('a', {
-        // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-multiple-links.md',
-        // 			text: 'docs'
-        // 		}));
-        // 		feature3SettingDesc.appendText('.');
-        // }
+        if (feature3SettingDesc) {
+        	feature3SettingDesc.appendText(' see ');
+        	feature3SettingDesc.appendChild(
+        		createEl('a', {
+        			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/configure-remove-links-from-headings.md',
+        			text: 'docs'
+        		}));
+        		feature3SettingDesc.appendText('.');
+        }
 
         // // feature embed/unembed
 
