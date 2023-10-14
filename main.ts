@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl, moment } from 'obsidian';
+import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl, moment, RequestUrlParam, RequestUrlResponsePromise } from 'obsidian';
 import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks, findLinks } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
@@ -6,63 +6,18 @@ import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
 import { RegExPatterns } from 'RegExPatterns';
 import { UnlinkLinkCommand } from 'commands/UnlinkLinkCommand';
 import { DeleteLinkCommand } from 'commands/DeleteLinkCommand';
+import { ConvertLinkToMdlinkCommand } from 'commands/ConvertLinkToMdlinkCommand';
+import { ObsidianProxy } from 'commands/ObsidianProxy';
+import { ConvertAllLinksToMdlinksCommand } from 'commands/ConvertAllLinksToMdlinksCommand';
+import { ICommand } from 'commands/ICommand';
+import { RemoveLinksFromHeadingsCommand } from 'commands/RemoveLinksFromHeadingsCommand';
+import { DEFAULT_SETTINGS, IObsidianLinksSettings } from 'settings';
+import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
 
-interface IObsidianLinksSettings {
-	linkReplacements: { source: string, target: string }[];
-	titleSeparator: string;
-	showPerformanceNotification: boolean;
-
-	// feature flags
-	ffReplaceLink: boolean;
-	ffMultipleLinkConversion: boolean;
-
-	//context menu
-	contexMenu: {
-		editLinkText: boolean;
-		setLinkText: boolean;
-		editLinkDestination: boolean;
-		copyLinkDestination: boolean;
-		unlink: boolean;
-		convertToWikilink: boolean;
-		convertToAutolink: boolean;
-		convertToMakrdownLink: boolean;
-		replaceLink: boolean;
-		embedUnembedLink: boolean;
-		deleteLink: boolean;
-		createLink: boolean;
-		createLinkFromClipboard: boolean;
-	}
-}
-
-const DEFAULT_SETTINGS: IObsidianLinksSettings = {
-	linkReplacements: [],
-	titleSeparator: " • ",
-	showPerformanceNotification: false,
-
-	//feature flags
-	ffReplaceLink: false,
-	ffMultipleLinkConversion: false,
-
-	//context menu
-	contexMenu: {
-		editLinkText: true,
-		setLinkText: true,
-		editLinkDestination: true,
-		copyLinkDestination: true,
-		unlink: true,
-		convertToWikilink: true,
-		convertToAutolink: true,
-		convertToMakrdownLink: true,
-		replaceLink: true,
-		embedUnembedLink: true,
-		deleteLink: true,
-		createLink: true,
-		createLinkFromClipboard: true
-	}
-}
 
 export default class ObsidianLinksPlugin extends Plugin {
 	settings: IObsidianLinksSettings;
+	obsidianProxy: ObsidianProxy;
 
 	readonly EmailScheme: string = "mailto:";
 	generateLinkTextOnEdit = true;
@@ -89,8 +44,17 @@ export default class ObsidianLinksPlugin extends Plugin {
 				this.linkData = undefined;
 				this.titles = [];
 			}
-
 		};
+
+		this.obsidianProxy = new ObsidianProxy();
+	}
+
+	createNotice(message: string | DocumentFragment, timeout?: number): Notice {
+		return new Notice(message, timeout);
+	}
+
+	requestUrl(request: RequestUrlParam | string): RequestUrlResponsePromise {
+		return requestUrl(request);
 	}
 
 	measurePerformance(func: Function): number {
@@ -127,11 +91,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => deleteLinkCommand.handler(editor, checking)
 		});
 
+		const convertLinkToMdlinkCommand: ICommand = new ConvertLinkToMdlinkCommand(this.obsidianProxy);
+
 		this.addCommand({
-			id: 'editor-convert-link-to-mdlink',
-			name: 'Convert to Markdown link',
-			icon: "rotate-cw",
-			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToMarkdownLinkHandler(editor, checking)
+			id: convertLinkToMdlinkCommand.id,
+			name: convertLinkToMdlinkCommand.displayNameCommand,
+			icon: convertLinkToMdlinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => convertLinkToMdlinkCommand.handler(editor, checking)
 		});
 
 		this.addCommand({
@@ -155,11 +121,20 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
 		});
 
+		const settings = this.settings;
+		const options = {
+			get internalWikilinkWithoutTextReplacement() {
+				return settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement;
+			} 
+		};
+
+		const removeLinksFromHeadingsCommand = new RemoveLinksFromHeadingsCommand(options);
+
 		this.addCommand({
-			id: 'editor-remove-links-from-headings',
-			name: 'Remove links from headings',
-			icon: "unlink",
-			editorCheckCallback: (checking, editor, ctx) => this.removeLinksFromHeadingsHandler(editor, checking)
+			id: removeLinksFromHeadingsCommand.id,
+			name: removeLinksFromHeadingsCommand.displayNameCommand,
+			icon: removeLinksFromHeadingsCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => removeLinksFromHeadingsCommand.handler(editor, checking)
 		});
 
 		this.addCommand({
@@ -207,32 +182,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		if (this.settings.ffMultipleLinkConversion) {
+			const convertAllLinksToMdlinksCommand = new ConvertAllLinksToMdlinksCommand(this.obsidianProxy)
 			this.addCommand({
-				id: 'editor-convert-all-links-to-markdown',
-				name: 'Convert all links to Markdown links',
-				icon: "link",
-				editorCheckCallback: (checking, editor, ctx) => this.convertLinksToMarkdown(editor, LinkTypes.All, checking)
+				id: convertAllLinksToMdlinksCommand.id,
+				name: convertAllLinksToMdlinksCommand.displayNameCommand,
+				icon: convertAllLinksToMdlinksCommand.icon,
+				editorCheckCallback: (checking, editor, ctx) => convertAllLinksToMdlinksCommand.handler(editor, checking)
 			});
 		}
-
-		this.addCommand({
-			id: 'editor-unembed-mdlink',
-			name: 'Unembed link',
-			icon: "file-output",
-			editorCheckCallback: (checking, editor, ctx) => this.unembedLinkUnderCursorHandler(editor, checking)
-		});
-
-		this.addCommand({
-			id: 'editor-embed-mdlink',
-			name: 'Embed link',
-			icon: "file-input",
-			editorCheckCallback: (checking, editor, ctx) => this.embedLinkUnderCursorHandler(editor, checking)
-		});
-
-
-		// this.registerEvent(
-		// 	this.app.workspace.on("file-open", this.convertHtmlLinksToMdLinks)
-		// )
 
 		if (this.settings.ffReplaceLink) {
 			this.registerEvent(
@@ -364,16 +321,18 @@ export default class ObsidianLinksPlugin extends Plugin {
 							});
 						}
 					} else {
-						if (this.settings.contexMenu.convertToMakrdownLink) {
+						if (this.settings.contexMenu.convertToMakrdownLink && convertLinkToMdlinkCommand.handler(editor, true)) {
 							menu.addItem((item) => {
 								item
-									.setTitle("Convert to markdown link")
-									.setIcon("rotate-cw")
+									.setTitle(convertLinkToMdlinkCommand.displayNameContextMenu)
+									.setIcon(convertLinkToMdlinkCommand.icon)
 									.onClick(async () => {
-										this.convertLinkToMarkdownLink(linkData, editor);
+										//TODO: use found link
+										convertLinkToMdlinkCommand.handler(editor, false);
 									});
 							});
 						}
+
 					}
 
 					if (this.settings.contexMenu.embedUnembedLink && this.unembedLinkUnderCursorHandler(editor, true)) {
@@ -436,8 +395,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 			})
 		);
-
-
 	}
 
 	onunload() {
@@ -460,70 +417,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		return findLink(text, cursorOffset, cursorOffset)
-	}
-
-	convertLinkUnderCursorToMarkdownLinkHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.Autolink)
-		if (checking) {
-			return !!linkData;
-		}
-		if (linkData) {
-			this.convertLinkToMarkdownLink(linkData, editor);
-		}
-	}
-
-	//TODO: refactor
-	async convertLinkToMarkdownLink(linkData: LinkData, editor: Editor, setCursor: boolean = true, linkOffset: number = 0) {
-		let text = linkData.text ? linkData.text.content : "";
-		const link = linkData.link ? linkData.link.content : "";
-
-		if (linkData.type === LinkTypes.Wiki && !text) {
-			text = link;
-		}
-
-		let destination = "";
-
-		const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-		if ((linkData.type === LinkTypes.Autolink || linkData.type === LinkTypes.PlainUrl) && linkData.link && urlRegEx.test(linkData.link.content)) {
-			const notice = new Notice("Getting title ...", 0);
-			try {
-				text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
-			}
-			catch (error) {
-				new Notice(error);
-			}
-			finally {
-				notice.hide();
-			}
-		}
-
-		let rawLinkText = "";
-		if (linkData.type === LinkTypes.Autolink && linkData.link && RegExPatterns.Email.test(linkData.link.content)) {
-			rawLinkText = `[${text}](${this.EmailScheme}${linkData.link.content})`;
-		} else {
-			destination = encodeURI(link);
-			if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
-				destination = `<${destination.replace(/%20/g, " ")}>`;
-			}
-
-			//TODO: use const for !
-			const embededSymbol = linkData.embedded ? '!' : ''
-			rawLinkText = `${embededSymbol}[${text}](${destination})`
-		}
-
-		editor.replaceRange(
-			rawLinkText,
-			editor.offsetToPos(linkOffset + linkData.position.start),
-			editor.offsetToPos(linkOffset + linkData.position.end));
-		if (setCursor) {
-			if (text) {
-				editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
-			} else {
-				editor.setCursor(editor.offsetToPos(linkData.position.start + 1));
-			}
-		}
 	}
 
 	convertLinkUnderCursorToWikilinkHandler(editor: Editor, checking: boolean): boolean | void {
@@ -612,27 +505,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const text = mdView.getViewData();
 			const result = replaceAllHtmlLinks(text)
 			mdView.setViewData(result, false);
-		}
-	}
-
-	removeLinksFromHeadingsHandler(editor: Editor, checking: boolean): boolean | void {
-		const selection = editor.getSelection();
-
-		if (selection) {
-			if (checking) {
-				return HasLinksInHeadings(selection);
-			}
-			const result = removeLinksFromHeadings(selection);
-			editor.replaceSelection(result);
-		} else {
-			const text = editor.getValue();
-			if (checking) {
-				return !!text && HasLinksInHeadings(text);
-			}
-			if (text) {
-				const result = removeLinksFromHeadings(text);
-				editor.setValue(result);
-			}
 		}
 	}
 
@@ -988,334 +860,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	convertLinksToMarkdown(editor: Editor, sourceLinkTypes: LinkTypes, checking = false): boolean | void {
-		const selection = editor.getSelection()
-		const text = selection || editor.getValue();
-		const links = findLinks(text);
-		const notMdlinks = links ? links.filter(x => x.type != LinkTypes.Markdown) : []
-
-		if (checking) {
-			return notMdlinks.length > 0
-		}
-
-		const selectionOffset = selection ? editor.posToOffset(editor.getCursor('from')) : 0;
-
-		(async () => {
-			for (let i = notMdlinks.length - 1; i >= 0; i--) {
-				const link = notMdlinks[i]
-				await this.convertLinkToMarkdownLink(link, editor, false, selectionOffset)
-			}
-		})();
-	}
 }
 
-export class ObsidianLinksSettingTab extends PluginSettingTab {
-	plugin: ObsidianLinksPlugin;
-	constructor(app: App, plugin: ObsidianLinksPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const { containerEl } = this;
-
-		containerEl.empty();
-
-		containerEl.createEl('h3', { text: 'General settings' });
-		new Setting(containerEl)
-			.setName('Title separator')
-			.setDesc('String used as headings separator in \'Set link text\' command.')
-			.addText(text => text
-				.setValue(this.plugin.settings.titleSeparator)
-				.onChange(async (value) => {
-					this.plugin.settings.titleSeparator = value;
-					await this.plugin.saveSettings();
-				}));
-
-		// -- Configure context menu
-		containerEl.createEl('h3', { text: 'Context menu' });
-		new Setting(containerEl)
-			.setName('Edit link text')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.editLinkText)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.editLinkText = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		new Setting(containerEl)
-			.setName('Set link text')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.setLinkText)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.setLinkText = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		new Setting(containerEl)
-			.setName('Edit link destination')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.editLinkDestination)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.editLinkDestination = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		new Setting(containerEl)
-			.setName('Copy link destination')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.copyLinkDestination)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.copyLinkDestination = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-
-		new Setting(containerEl)
-			.setName('Unlink')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.unlink)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.unlink = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		new Setting(containerEl)
-			.setName('Convert to wikilink')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.convertToWikilink)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.convertToWikilink = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		new Setting(containerEl)
-			.setName('Convert to autolink')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.convertToAutolink)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.convertToAutolink = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		new Setting(containerEl)
-			.setName('Convert to markdown link')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.convertToMakrdownLink)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.convertToMakrdownLink = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		if (this.plugin.settings.ffReplaceLink) {
-			new Setting(containerEl)
-				.setName('Replace link')
-				.setDesc('')
-				.addToggle((toggle) => {
-					toggle
-						.setValue(this.plugin.settings.contexMenu.replaceLink)
-						.onChange(async (value) => {
-							this.plugin.settings.contexMenu.replaceLink = value;
-							await this.plugin.saveSettings();
-						})
-
-				});
-		}
-		new Setting(containerEl)
-			.setName('Embed/Unembed')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.embedUnembedLink)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.embedUnembedLink = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-
-		new Setting(containerEl)
-			.setName('Delete')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.deleteLink)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.deleteLink = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		new Setting(containerEl)
-			.setName('Create link')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.createLink)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.createLink = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-		new Setting(containerEl)
-			.setName('Create link from clipboard')
-			.setDesc('')
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.contexMenu.createLinkFromClipboard)
-					.onChange(async (value) => {
-						this.plugin.settings.contexMenu.createLinkFromClipboard = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-
-		// ------ Early access features -----------------
-
-		containerEl.createEl('h3', { text: 'Early access features' });
-		const earlyAccessDescription = containerEl.createEl('p');
-		earlyAccessDescription.createEl('span', {
-			text: "Almost finished features with some "
-		});
-
-		earlyAccessDescription.createEl('a', {
-			href: 'https://github.com/mii-key/obsidian-links/issues',
-			text: 'bugs'
-		});
-
-		earlyAccessDescription.createEl('span', {
-			text: " to be fixed."
-		});
-
-		// ----- Early access feature1
-
-		// new Setting(containerEl)
-		// 	.setName("Early access feature1")
-		// 	.setDesc("Feature description")
-		// 	.setClass("setting-item--eaccess-feature1")
-		// 	.addToggle((toggle) => {
-		// 		toggle
-		// 			.setValue(this.plugin.settings.ffEarlyAccessFeature1)
-		// 			.onChange(async (value) => {
-		// 				this.plugin.settings.ffEarlyAccessFeature1 = value;
-		// 				await this.plugin.saveSettings();
-		// 			})
-		// 	});
-
-		// const earlyAccessFeature1SettingDesc = containerEl.querySelector(".setting-item--eaccess-feature1 .setting-item-description");
-		// if (earlyAccessFeature1SettingDesc) {
-		// 	earlyAccessFeature1SettingDesc.appendText(' see ');
-		// 	earlyAccessFeature1SettingDesc.appendChild(
-		// 		createEl('a', {
-		// 			href: 'https://github.com/mii-key/obsidian-links#readme',
-		// 			text: 'docs'
-		// 		}));
-		// 	earlyAccessFeature1SettingDesc.appendText('.');
-		// }
-		// ----------
-
-		// ------ Insider features -----------------
-
-		containerEl.createEl('h3', { text: 'Insider features' });
-
-		const insiderDescription = containerEl.createEl('p');
-
-
-		insiderDescription.createEl('span', {
-			text: "Incomplete features currently under development. Enable these features to "
-		});
-
-		insiderDescription.createEl('a', {
-			href: 'https://github.com/mii-key/obsidian-links/issues',
-			text: 'provide your input'
-		});
-
-		insiderDescription.createEl('span', {
-			text: " and influence the direction of development."
-		});
-
-		// feature convert multiple links to markdown
-
-		new Setting(containerEl)
-			.setName("Convert multiple links to markdown links")
-			.setDesc("Convert multiple links in document or selection to markdown links.")
-			.setClass("setting-item--insider-feature2")
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.ffMultipleLinkConversion)
-					.onChange(async (value) => {
-						this.plugin.settings.ffMultipleLinkConversion = value;
-						await this.plugin.saveSettings();
-					})
-
-			});
-
-		const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
-
-		if (feature2SettingDesc) {
-			feature2SettingDesc.appendText(' see ');
-			feature2SettingDesc.appendChild(
-				createEl('a', {
-					href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-multiple-links.md',
-					text: 'docs'
-				}));
-			feature2SettingDesc.appendText('.');
-		}
-
-		// // feature embed/unembed
-
-		// new Setting(containerEl)
-		// 	.setName("Embed/unembed files")
-		// 	.setDesc("Adds ability to embed/unembed files.")
-		// 	.setClass("setting-item--insider-feature2")
-		// 	.addToggle((toggle) => {
-		// 		toggle
-		// 			.setValue(this.plugin.settings.ffEmbedFiles)
-		// 			.onChange(async (value) => {
-		// 				this.plugin.settings.ffEmbedFiles = value;
-		// 				await this.plugin.saveSettings();
-		// 			})
-
-		// 	});
-
-		// const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
-
-		// if (feature2SettingDesc) {
-		// 	feature2SettingDesc.appendText(' see ');
-		// 	feature2SettingDesc.appendChild(
-		// 		createEl('a', {
-		// 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/embed-unembed-files.md',
-		// 			text: 'docs'
-		// 		}));
-		// 	feature2SettingDesc.appendText('.');
-		// }
-	}
-}
 
 
 

@@ -1,4 +1,4 @@
-import {Editor} from 'obsidian'
+import {Editor, MarkdownFileInfo, MarkdownView} from 'obsidian'
 
 export interface ICommand {
     id: string;

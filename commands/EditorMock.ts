@@ -1,5 +1,7 @@
 //import { Editor, EditorCommandName, EditorPosition, EditorRange, EditorSelection, EditorSelectionOrCaret, EditorTransaction } from "obsidian";
 
+/* istanbul ignore file */
+
 export interface EditorPosition {
     /** @public */
     line: number;
@@ -47,6 +49,7 @@ export interface EditorTransaction {}
 export class EditorMock {
     constructor() {
         this.getValue = this.__mocks.getValue
+        this.setValue = this.__mocks.setValue
         this.getCursor = this.__mocks.getCursor
         this.posToOffset = this.__mocks.posToOffset
         this.offsetToPos = this.__mocks.offsetToPos
@@ -56,6 +59,7 @@ export class EditorMock {
     }
     __mocks : {
         getValue : jest.Mock
+        setValue : jest.Mock
         getCursor : jest.Mock
         posToOffset : jest.Mock
         offsetToPos : jest.Mock
@@ -64,6 +68,7 @@ export class EditorMock {
         replaceSelection : jest.Mock
     } = {
         getValue : jest.fn(),
+        setValue : jest.fn(),
         getCursor : jest.fn(),
         posToOffset : jest.fn(),
         offsetToPos : jest.fn(),
