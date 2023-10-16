@@ -72,7 +72,7 @@ Unlink single link or all links in a selection.
 
 ## Convert wikilink or html link to markdown link
 
-Convert a wikilink or HTML link to a markdown link. If a wiki link contains spaces a destination of a markdown link will be places in <>. HTML link must be expanded.
+Convert a wikilink or HTML link to a markdown link. If a wiki link contains spaces a destination of a markdown link will be places in `<>`. HTML link must be expanded.
 
 - Command palette: **Convert to markdown link**
 - Context menu: **Convert to markdown link**
