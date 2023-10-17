@@ -13,6 +13,7 @@ import { ICommand } from 'commands/ICommand';
 import { RemoveLinksFromHeadingsCommand } from 'commands/RemoveLinksFromHeadingsCommand';
 import { DEFAULT_SETTINGS, IObsidianLinksSettings } from 'settings';
 import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
+import { ConvertLinkToWikilinkCommand } from 'commands/ConvertLinkToWikilinkCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -100,11 +101,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => convertLinkToMdlinkCommand.handler(editor, checking)
 		});
 
+		const convertLinkToWikilinkCommand = new ConvertLinkToWikilinkCommand();
+
 		this.addCommand({
-			id: 'editor-convert-link-to-wikilink',
-			name: 'Convert to Wikilink',
-			icon: "rotate-cw",
-			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToWikilinkHandler(editor, checking)
+			id: convertLinkToWikilinkCommand.id,
+			name: convertLinkToWikilinkCommand.displayNameCommand,
+			icon: convertLinkToWikilinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => convertLinkToWikilinkCommand.handler(editor, checking)
 		});
 
 		this.addCommand({
@@ -288,13 +291,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 				if (linkData) {
 					addTopSeparator();
 					if (linkData.type == LinkTypes.Markdown) {
-						if (this.settings.contexMenu.convertToWikilink && this.convertLinkUnderCursorToWikilinkHandler(editor, true)) {
+						if (this.settings.contexMenu.convertToWikilink && convertLinkToWikilinkCommand.handler(editor, true)) {
 							menu.addItem((item) => {
 								item
-									.setTitle("Convert to wikilink")
-									.setIcon("rotate-cw")
+									.setTitle(convertLinkToWikilinkCommand.displayNameContextMenu)
+									.setIcon(convertLinkToWikilinkCommand.icon)
 									.onClick(async () => {
-										this.convertLinkToWikiLink(linkData, editor);
+										convertLinkToWikilinkCommand.handler(editor, false);
 									});
 							});
 						}
@@ -417,31 +420,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		return findLink(text, cursorOffset, cursorOffset)
-	}
-
-	convertLinkUnderCursorToWikilinkHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown | LinkTypes.Html);
-		if (checking) {
-			return !!linkData && linkData.link && !linkData.link.content.trim().startsWith(this.EmailScheme);
-		}
-
-		if (linkData) {
-			this.convertLinkToWikiLink(linkData, editor);
-		}
-	}
-
-	convertLinkToWikiLink(linkData: LinkData, editor: Editor) {
-		const link = linkData.type === LinkTypes.Markdown ? (linkData.link ? decodeURI(linkData.link.content) : "") : linkData.link;
-		const text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
-		//TODO: use const for !
-		const embededSymbol = linkData.embedded ? '!' : '';
-		const rawText = `${embededSymbol}[[${link}${text}]]`;
-		editor.replaceRange(
-			rawText,
-			editor.offsetToPos(linkData.position.start),
-			editor.offsetToPos(linkData.position.end));
 	}
 
 	convertLinkUnderCursorToAutolinkHandler(editor: Editor, checking: boolean): boolean | void {
