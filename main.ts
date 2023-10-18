@@ -14,6 +14,7 @@ import { RemoveLinksFromHeadingsCommand } from 'commands/RemoveLinksFromHeadings
 import { DEFAULT_SETTINGS, IObsidianLinksSettings } from 'settings';
 import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
 import { ConvertLinkToWikilinkCommand } from 'commands/ConvertLinkToWikilinkCommand';
+import { ConvertLinkToAutolinkCommand } from 'commands/ConvertLinkToAutolinkCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -76,7 +77,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 
 		const unlinkCommand = new UnlinkLinkCommand();
-
 		this.addCommand({
 			id: unlinkCommand.id,
 			name: unlinkCommand.displayNameCommand,
@@ -93,7 +93,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		const convertLinkToMdlinkCommand: ICommand = new ConvertLinkToMdlinkCommand(this.obsidianProxy);
-
 		this.addCommand({
 			id: convertLinkToMdlinkCommand.id,
 			name: convertLinkToMdlinkCommand.displayNameCommand,
@@ -102,7 +101,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		const convertLinkToWikilinkCommand = new ConvertLinkToWikilinkCommand();
-
 		this.addCommand({
 			id: convertLinkToWikilinkCommand.id,
 			name: convertLinkToWikilinkCommand.displayNameCommand,
@@ -110,11 +108,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => convertLinkToWikilinkCommand.handler(editor, checking)
 		});
 
+		const convertLinkToAutolinkCommand = new ConvertLinkToAutolinkCommand();
 		this.addCommand({
-			id: 'editor-convert-link-to-autolink',
-			name: 'Convert to Autolink',
-			icon: "rotate-cw",
-			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToAutolinkHandler(editor, checking)
+			id: convertLinkToAutolinkCommand.id,
+			name: convertLinkToAutolinkCommand.displayNameCommand,
+			icon: convertLinkToAutolinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => convertLinkToAutolinkCommand.handler(editor, checking)
 		});
 
 		this.addCommand({
@@ -302,13 +301,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 							});
 						}
 
-						if (this.settings.contexMenu.convertToAutolink && this.convertLinkUnderCursorToAutolinkHandler(editor, true)) {
+						if (this.settings.contexMenu.convertToAutolink && convertLinkToAutolinkCommand.handler(editor, true)) {
 							menu.addItem((item) => {
 								item
-									.setTitle("Convert to autolink")
-									.setIcon("rotate-cw")
+									.setTitle(convertLinkToAutolinkCommand.displayNameContextMenu)
+									.setIcon(convertLinkToAutolinkCommand.icon)
 									.onClick(async () => {
-										this.convertLinkToAutolink(linkData, editor);
+										convertLinkToAutolinkCommand.handler(editor, false);
 									});
 							});
 						}
@@ -422,41 +421,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return findLink(text, cursorOffset, cursorOffset)
 	}
 
-	convertLinkUnderCursorToAutolinkHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown);
-		if (checking) {
-			return !!linkData
-				&& linkData.link?.content != undefined
-				&& (RegExPatterns.AbsoluteUri.test(linkData.link.content)
-					|| linkData.link.content.startsWith(this.EmailScheme))
-		}
-		if (linkData) {
-			this.convertLinkToAutolink(linkData, editor);
-		}
-	}
-
-	async convertLinkToAutolink(linkData: LinkData, editor: Editor) {
-		if (linkData.type === LinkTypes.Markdown
-			&& linkData.link?.content) {
-			let rawLinkText;
-			if (linkData.link.content.startsWith(this.EmailScheme)) {
-				rawLinkText = `<${linkData.link.content.substring(this.EmailScheme.length)}>`;
-			} else if (RegExPatterns.AbsoluteUri.test(linkData.link.content)) {
-				rawLinkText = `<${linkData.link.content}>`;
-			}
-
-			if (rawLinkText) {
-				editor.replaceRange(
-					rawLinkText,
-					editor.offsetToPos(linkData.position.start),
-					editor.offsetToPos(linkData.position.end));
-
-				editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
-			}
-		}
-	}
+	
 
 	copyLinkUnderCursorToClipboardHandler(editor: Editor, checking: boolean): boolean | void {
 		const text = editor.getValue();
