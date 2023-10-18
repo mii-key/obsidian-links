@@ -57,12 +57,16 @@ export class ObsidianProxyMock {
             hide: jest.Mock
         }
         requestUrlMock: jest.Mock
+        clipboardWriteText: jest.Mock
+        clipboardReadText: jest.Mock
     } = {
         NoticeMock : {
             setMessage: jest.fn(),
             hide: jest.fn()
         },
-        requestUrlMock: jest.fn()
+        requestUrlMock: jest.fn(),
+        clipboardWriteText: jest.fn(),
+        clipboardReadText: jest.fn()
     }
 
     createNotice(message: string | DocumentFragment, timeout?: number) : Notice {
@@ -71,5 +75,13 @@ export class ObsidianProxyMock {
 
     requestUrl(request: RequestUrlParam | string): RequestUrlResponsePromise {
         return this.__mocks.requestUrlMock()
+    }
+
+    clipboardWriteText(text: string): void{
+        this.__mocks.clipboardWriteText();
+    }
+    
+    clipboardReadText() : Promise<string>{
+        return this.__mocks.clipboardReadText();
     }
 }

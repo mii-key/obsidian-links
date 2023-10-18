@@ -15,6 +15,7 @@ import { DEFAULT_SETTINGS, IObsidianLinksSettings } from 'settings';
 import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
 import { ConvertLinkToWikilinkCommand } from 'commands/ConvertLinkToWikilinkCommand';
 import { ConvertLinkToAutolinkCommand } from 'commands/ConvertLinkToAutolinkCommand';
+import { CopyLinkDestinationToClipboardCommand } from 'commands/CopyLinkDestinationToClipboardCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -116,11 +117,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => convertLinkToAutolinkCommand.handler(editor, checking)
 		});
 
+		const copyLinkDestinationToClipboardCommand = new CopyLinkDestinationToClipboardCommand(this.obsidianProxy);
 		this.addCommand({
-			id: 'editor-copy-link-to-clipboard',
-			name: 'Copy link destination',
-			icon: "copy",
-			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
+			id: copyLinkDestinationToClipboardCommand.id,
+			name: copyLinkDestinationToClipboardCommand.id,
+			icon: copyLinkDestinationToClipboardCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => copyLinkDestinationToClipboardCommand.handler(editor, checking)
 		});
 
 		const settings = this.settings;
@@ -131,7 +133,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		};
 
 		const removeLinksFromHeadingsCommand = new RemoveLinksFromHeadingsCommand(options);
-
 		this.addCommand({
 			id: removeLinksFromHeadingsCommand.id,
 			name: removeLinksFromHeadingsCommand.displayNameCommand,
@@ -262,13 +263,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					if (this.settings.contexMenu.copyLinkDestination && linkData.link) {
+					if (this.settings.contexMenu.copyLinkDestination && copyLinkDestinationToClipboardCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Copy link destination")
-								.setIcon("copy")
+								.setTitle(copyLinkDestinationToClipboardCommand.displayNameContextMenu)
+								.setIcon(copyLinkDestinationToClipboardCommand.icon)
 								.onClick(async () => {
-									this.copyLinkUnderCursorToClipboard(linkData);
+									copyLinkDestinationToClipboardCommand.handler(editor, false);
 								});
 						});
 					}
@@ -419,27 +420,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		return findLink(text, cursorOffset, cursorOffset)
-	}
-
-	
-
-	copyLinkUnderCursorToClipboardHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html);
-		if (checking) {
-			return !!linkData && !!linkData.link;
-		}
-		if (linkData) {
-			this.copyLinkUnderCursorToClipboard(linkData);
-		}
-	}
-
-	copyLinkUnderCursorToClipboard(linkData: LinkData) {
-		if (linkData?.link) {
-			navigator.clipboard.writeText(linkData.link?.content);
-			new Notice("Link destination copied to your clipboard");
-		}
 	}
 
 	convertHtmlLinksToMdLinks = () => {

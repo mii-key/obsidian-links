@@ -9,4 +9,12 @@ export class ObsidianProxy {
     requestUrl(request: RequestUrlParam | string): RequestUrlResponsePromise {
         return requestUrl(request)
     }
+
+    clipboardWriteText(text: string): void{
+        navigator.clipboard.writeText(text);
+    }
+    
+    clipboardReadText() : Promise<string>{
+        return navigator.clipboard.readText();
+    }
 }
