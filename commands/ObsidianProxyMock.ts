@@ -59,6 +59,8 @@ export class ObsidianProxyMock {
         requestUrlMock: jest.Mock
         clipboardWriteText: jest.Mock
         clipboardReadText: jest.Mock
+        createNotice: jest.Mock
+
     } = {
         NoticeMock : {
             setMessage: jest.fn(),
@@ -66,11 +68,21 @@ export class ObsidianProxyMock {
         },
         requestUrlMock: jest.fn(),
         clipboardWriteText: jest.fn(),
-        clipboardReadText: jest.fn()
+        clipboardReadText: jest.fn(),
+        createNotice: jest.fn()
+
+    }
+
+    constructor(){
+        this.clipboardWriteText = this.__mocks.clipboardWriteText;
+        this.clipboardReadText = this.__mocks.clipboardReadText;
+        this.__mocks.createNotice.mockReturnValue(this.__mocks.NoticeMock);
+        this.createNotice = this.__mocks.createNotice;
     }
 
     createNotice(message: string | DocumentFragment, timeout?: number) : Notice {
-        return this.__mocks.NoticeMock;
+        // return this.__mocks.NoticeMock;
+        throw new Error('Method not implemented.');
     }
 
     requestUrl(request: RequestUrlParam | string): RequestUrlResponsePromise {
@@ -78,10 +90,10 @@ export class ObsidianProxyMock {
     }
 
     clipboardWriteText(text: string): void{
-        this.__mocks.clipboardWriteText();
+        throw new Error('Method not implemented.');
     }
     
     clipboardReadText() : Promise<string>{
-        return this.__mocks.clipboardReadText();
+        throw new Error('Method not implemented.');
     }
 }

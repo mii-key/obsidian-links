@@ -62,7 +62,7 @@ describe('CopyLinkDestinationToClipboardCommand test', () => {
 
         })
 
-    test.only.each(
+    test.each(
         [
             {
                 name: "html - href in '",
@@ -101,12 +101,9 @@ describe('CopyLinkDestinationToClipboardCommand test', () => {
             //
             cmd.handler(editor, false)
             //
-            expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
-            expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe('')
-
-            expect(editor.__mocks.offsetToPos.mock.calls).toHaveLength(2)
-            expect(editor.__mocks.offsetToPos.mock.calls[0][0]).toBe(0)
-            expect(editor.__mocks.offsetToPos.mock.calls[1][0]).toBe(text.length)
+            expect(obsidianProxy.__mocks.clipboardWriteText.mock.calls).toHaveLength(1)
+            expect(obsidianProxy.__mocks.clipboardWriteText.mock.calls[0][0]).toBe(expected)
+            expect(obsidianProxy.__mocks.createNotice.mock.calls).toHaveLength(1)
         })
 
 })
