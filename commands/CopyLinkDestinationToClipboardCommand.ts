@@ -18,7 +18,7 @@ export class CopyLinkDestinationToClipboardCommand implements ICommand {
     handler(editor: Editor, checking: boolean) : boolean | void {
         const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html);
+		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Autolink);
 		if (checking) {
 			return !!linkData && !!linkData.link;
 		}
