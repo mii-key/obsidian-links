@@ -18,6 +18,7 @@ import { ConvertLinkToAutolinkCommand } from 'commands/ConvertLinkToAutolinkComm
 import { CopyLinkDestinationToClipboardCommand } from 'commands/CopyLinkDestinationToClipboardCommand';
 import { EditLinkTextCommand } from 'commands/EditLinkTextCommand';
 import { EditLinkDestinationCommand } from 'commands/EditLinkDestinationCommand';
+import { CreateLinkFromSelectionCommand } from 'commands/CreateLinkFromSelectionCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -175,11 +176,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			});
 		}
 
+		const createLinkFromSelectionCommand = new CreateLinkFromSelectionCommand();
 		this.addCommand({
-			id: 'editor-create-link-from-selection',
-			name: 'Create link',
-			icon: "link",
-			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromSelectionHandler(editor, checking)
+			id: createLinkFromSelectionCommand.id,
+			name: createLinkFromSelectionCommand.displayNameCommand,
+			icon: createLinkFromSelectionCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => createLinkFromSelectionCommand.handler(editor, checking)
 		});
 
 		this.addCommand({
@@ -379,13 +381,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 				} else {
 					addTopSeparator();
-					if (this.settings.contexMenu.createLink && this.createLinkFromSelectionHandler(editor, true)) {
+					if (this.settings.contexMenu.createLink && createLinkFromSelectionCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Create link")
 								.setIcon("link")
 								.onClick(async () => {
-									this.createLinkFromSelectionHandler(editor);
+									createLinkFromSelectionCommand.handler(editor, false);
 								});
 						});
 					}
@@ -579,18 +581,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			totalCount += count;
 		});
 		return [targetText, totalCount];
-	}
-
-	createLinkFromSelectionHandler(editor: Editor, checking = false): boolean | void {
-		const selection = editor.getSelection();
-
-		if (checking) {
-			return !!selection;
-		}
-
-		const linkStart = editor.posToOffset(editor.getCursor('from'));
-		editor.replaceSelection(`[[|${selection}]]`);
-		editor.setCursor(editor.offsetToPos(linkStart + 2));
 	}
 
 	onEditorPaste(evt: ClipboardEvent, editor: Editor, view: MarkdownView | MarkdownFileInfo) {
