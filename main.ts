@@ -17,6 +17,7 @@ import { ConvertLinkToWikilinkCommand } from 'commands/ConvertLinkToWikilinkComm
 import { ConvertLinkToAutolinkCommand } from 'commands/ConvertLinkToAutolinkCommand';
 import { CopyLinkDestinationToClipboardCommand } from 'commands/CopyLinkDestinationToClipboardCommand';
 import { EditLinkTextCommand } from 'commands/EditLinkTextCommand';
+import { EditLinkDestinationCommand } from 'commands/EditLinkDestinationCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -142,7 +143,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		const editLinkTextCommand = new EditLinkTextCommand();
-
 		this.addCommand({
 			id: editLinkTextCommand.id,
 			name: editLinkTextCommand.displayNameCommand,
@@ -157,11 +157,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => this.setLinkTextUnderCursorHandler(editor, checking)
 		});
 
+
+		const editLinkDestinationCommand = new EditLinkDestinationCommand();
 		this.addCommand({
-			id: 'editor-edit-link-destination',
-			name: 'Edit link destination',
-			icon: "text-cursor-input",
-			editorCheckCallback: (checking, editor, ctx) => this.editLinkDestinationUnderCursorHandler(editor, checking)
+			id: editLinkDestinationCommand.id,
+			name: editLinkDestinationCommand.displayNameCommand,
+			icon: editLinkDestinationCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => editLinkDestinationCommand.handler(editor, checking)
 		});
 
 		if (this.settings.ffReplaceLink) {
@@ -255,13 +257,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					if (this.settings.contexMenu.editLinkDestination && ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0) && linkData.link) {
+					if (this.settings.contexMenu.editLinkDestination && editLinkDestinationCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Edit link destination")
 								.setIcon("text-cursor-input")
 								.onClick(async () => {
-									this.editLinkDestination(linkData, editor);
+									editLinkDestinationCommand.handler(editor, false);
 								});
 						});
 					}
@@ -432,35 +434,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const result = replaceAllHtmlLinks(text)
 			mdView.setViewData(result, false);
 		}
-	}
-
-	editLinkDestinationUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
-		const linkData = this.getLink(editor);
-		if (checking) {
-			return !!linkData
-				&& ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0)
-				&& !!linkData.link;
-		}
-
-
-		if (linkData) {
-			// workaround: if executed from command palette, whole link is selected.
-			// with timeout, only specified region is selected.
-			setTimeout(() => {
-				this.editLinkDestination(linkData, editor);
-			}, 500);
-		}
-	}
-
-	editLinkDestination(linkData: LinkData, editor: Editor) {
-		if (linkData.link) {
-			const start = linkData.position.start + linkData.link.position.start;
-			const end = linkData.position.start + linkData.link.position.end;
-			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
-		} 
-		// else if (this.generateLinkTextOnEdit) {
-		// 	//TODO: 
-		// }
 	}
 
 	showLinkTextSuggestions(linkData: LinkData, editor: Editor): boolean {

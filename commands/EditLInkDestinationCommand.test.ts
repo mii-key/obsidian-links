@@ -1,12 +1,12 @@
 import { expect, test } from '@jest/globals';
-import { EditLinkTextCommand } from './EditLinkTextCommand';
+import { EditLinkDestinationCommand } from './EditLinkDestinationCommand';
 
 import { EditorMock } from './EditorMock'
 
-describe('EditLinkTextCommand test', () => {
+describe('EditLinkDestinationCommand test', () => {
 
     test('status - cursor on text - command disabled', () => {
-        const cmd = new EditLinkTextCommand()
+        const cmd = new EditLinkDestinationCommand()
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
         editor.__mocks.posToOffset.mockReturnValue(1)
@@ -37,7 +37,7 @@ describe('EditLinkTextCommand test', () => {
             {
                 name: "mdlink empty text",
                 text: "[](google.com)",
-                expected: false
+                expected: true
             },
             {
                 name: "wikilink",
@@ -47,17 +47,17 @@ describe('EditLinkTextCommand test', () => {
             {
                 name: "wikilink empty text",
                 text: "[[google.com]]",
-                expected: false
+                expected: true
             },
             {
                 name: "autolink",
                 text: "<https://google.com>",
-                expected: false
+                expected: true
             }
         ]
     )
         ('status - cursor on [$name] - command enabled: $expected', ({ name, text, expected }) => {
-            const cmd = new EditLinkTextCommand()
+            const cmd = new EditLinkDestinationCommand()
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.posToOffset.mockReturnValue(1)
@@ -74,31 +74,43 @@ describe('EditLinkTextCommand test', () => {
             {
                 name: "html - href in '",
                 text: "<a href='google.com'>google1</a>",
-                selectionStart: "<a href='google.com'>".length,
-                selectionEnd: "<a href='google.com'>google1".length
+                selectionStart: "<a href='".length,
+                selectionEnd: "<a href='google.com".length
             },
             {
                 name: "html - href in \"",
                 text: "<a href=\"google.com\">google1</a>",
-                selectionStart: "<a href=\"google.com\">".length,
-                selectionEnd: "<a href=\"google.com\">google1".length
+                selectionStart: "<a href=\"".length,
+                selectionEnd: "<a href=\"google.com".length
             },
             {
                 name: "mdlink",
                 text: "[google](google.com)",
-                selectionStart: "[".length,
-                selectionEnd: "[google".length
+                selectionStart: "[google](".length,
+                selectionEnd: "[google](google.com".length
             },
             {
                 name: "wikilink",
                 text: "[[google.com|google]]",
-                selectionStart: "[[google.com|".length,
-                selectionEnd: "[[google.com|google".length
+                selectionStart: "[[".length,
+                selectionEnd: "[[google.com".length
+            },
+            {
+                name: "wikilink empty text",
+                text: "[[google.com]]",
+                selectionStart: "[[".length,
+                selectionEnd: "[[google.com".length
+            },
+            {
+                name: "autolink",
+                text: "<https://google.com>",
+                selectionStart: "<".length,
+                selectionEnd: "<https://google.com".length
             }
         ]
     )
         ('select text - cursor on [$name] - success', ({ name, text, selectionStart, selectionEnd }, done) => {
-            const cmd = new EditLinkTextCommand()
+            const cmd = new EditLinkDestinationCommand()
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.posToOffset.mockReturnValue(0)
