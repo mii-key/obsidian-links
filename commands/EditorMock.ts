@@ -55,6 +55,7 @@ export class EditorMock {
         this.offsetToPos = this.__mocks.offsetToPos
         this.replaceRange = this.__mocks.replaceRange
         this.getSelection = this.__mocks.getSelection
+        this.setSelection = this.__mocks.setSelection
         this.replaceSelection = this.__mocks.replaceSelection
     }
     __mocks : {
@@ -65,6 +66,7 @@ export class EditorMock {
         offsetToPos : jest.Mock
         replaceRange : jest.Mock
         getSelection : jest.Mock
+        setSelection : jest.Mock
         replaceSelection : jest.Mock
     } = {
         getValue : jest.fn(),
@@ -74,6 +76,7 @@ export class EditorMock {
         offsetToPos : jest.fn(),
         replaceRange : jest.fn(),
         getSelection : jest.fn(),
+        setSelection : jest.fn(),
         replaceSelection : jest.fn()
 
     }

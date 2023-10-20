@@ -16,6 +16,7 @@ import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
 import { ConvertLinkToWikilinkCommand } from 'commands/ConvertLinkToWikilinkCommand';
 import { ConvertLinkToAutolinkCommand } from 'commands/ConvertLinkToAutolinkCommand';
 import { CopyLinkDestinationToClipboardCommand } from 'commands/CopyLinkDestinationToClipboardCommand';
+import { EditLinkTextCommand } from 'commands/EditLinkTextCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -23,7 +24,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	obsidianProxy: ObsidianProxy;
 
 	readonly EmailScheme: string = "mailto:";
-	generateLinkTextOnEdit = true;
+	
 	linkTextSuggestContext: ILinkTextSuggestContext;
 
 
@@ -140,11 +141,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => removeLinksFromHeadingsCommand.handler(editor, checking)
 		});
 
+		const editLinkTextCommand = new EditLinkTextCommand();
+
 		this.addCommand({
-			id: 'editor-edit-link-text',
-			name: 'Edit link text',
-			icon: "text-cursor-input",
-			editorCheckCallback: (checking, editor, ctx) => this.editLinkTextUnderCursorHandler(editor, checking)
+			id: editLinkTextCommand.id,
+			name: editLinkTextCommand.displayNameCommand,
+			icon: editLinkTextCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => editLinkTextCommand.handler(editor, checking)
 		});
 
 		this.addCommand({
@@ -231,13 +234,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 				if (linkData) {
 					addTopSeparator();
-					if (this.settings.contexMenu.editLinkText && linkData.text && linkData.text.content.length > 0) {
+					if (this.settings.contexMenu.editLinkText && editLinkTextCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Edit link text")
-								.setIcon("text-cursor-input")
+								.setTitle(editLinkTextCommand.displayNameContextMenu)
+								.setIcon(editLinkTextCommand.icon)
 								.onClick(async () => {
-									this.editLinkText(linkData, editor);
+									editLinkTextCommand.handler(editor, false);
 								});
 						});
 					}
@@ -431,31 +434,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
-	editLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
-		const linkData = this.getLink(editor);
-		if (checking) {
-			return !!linkData && !!linkData.text;
-		}
-
-		if (linkData) {
-			// workaround: if executed from command palette, whole link is selected.
-			// with timeout, only specified region is selected.
-			setTimeout(() => {
-				this.editLinkText(linkData, editor);
-			}, 500);
-		}
-	}
-
-	editLinkText(linkData: LinkData, editor: Editor) {
-		if (linkData.text) {
-			const start = linkData.position.start + linkData.text.position.start;
-			const end = linkData.position.start + linkData.text.position.end;
-			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
-		} else if (this.generateLinkTextOnEdit) {
-			//TODO: 
-		}
-	}
-
 	editLinkDestinationUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
 		const linkData = this.getLink(editor);
 		if (checking) {
@@ -479,9 +457,10 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const start = linkData.position.start + linkData.link.position.start;
 			const end = linkData.position.start + linkData.link.position.end;
 			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
-		} else if (this.generateLinkTextOnEdit) {
-			//TODO: 
-		}
+		} 
+		// else if (this.generateLinkTextOnEdit) {
+		// 	//TODO: 
+		// }
 	}
 
 	showLinkTextSuggestions(linkData: LinkData, editor: Editor): boolean {
