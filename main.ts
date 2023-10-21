@@ -19,6 +19,7 @@ import { CopyLinkDestinationToClipboardCommand } from 'commands/CopyLinkDestinat
 import { EditLinkTextCommand } from 'commands/EditLinkTextCommand';
 import { EditLinkDestinationCommand } from 'commands/EditLinkDestinationCommand';
 import { CreateLinkFromSelectionCommand } from 'commands/CreateLinkFromSelectionCommand';
+import { CreateLinkFromClipboardCommand } from 'commands/CreateLinkFromClipboardCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -184,11 +185,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => createLinkFromSelectionCommand.handler(editor, checking)
 		});
 
+		const createLinkFromClipboardCommand = new CreateLinkFromClipboardCommand(this.obsidianProxy);
 		this.addCommand({
-			id: 'editor-create-link-from-clipboard',
-			name: 'Create link from clipboard',
-			icon: "link",
-			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
+			id: createLinkFromClipboardCommand.id,
+			name: createLinkFromClipboardCommand.displayNameCommand,
+			icon: createLinkFromClipboardCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => createLinkFromClipboardCommand.handler(editor, checking)
 		});
 
 		if (this.settings.ffMultipleLinkConversion) {
@@ -391,13 +393,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
-					if (this.settings.contexMenu.createLinkFromClipboard && this.createLinkFromClipboardHandler(editor, true)) {
+					if (this.settings.contexMenu.createLinkFromClipboard && createLinkFromClipboardCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Create link from clipboard")
-								.setIcon("link")
+								.setTitle(createLinkFromClipboardCommand.displayNameContextMenu)
+								.setIcon(createLinkFromClipboardCommand.icon)
 								.onClick(async () => {
-									this.createLinkFromClipboardHandler(editor);
+									createLinkFromClipboardCommand.handler(editor, false);
 								});
 						});
 					}
@@ -638,47 +640,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		if (settingsChanged) {
 			this.saveSettings();
 		}
-	}
-
-	createLinkFromClipboardHandler(editor: Editor, checking = false): boolean | void {
-		// TODO: no check for now
-		if (checking) {
-			return true;
-		}
-
-		(async () => {
-			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-			const linkDestination = await navigator.clipboard.readText();
-			let linkText = linkDestination;
-			const selection = editor.getSelection();
-
-			if (selection.length == 0 && urlRegEx.test(linkDestination)) {
-				const notice = new Notice("Getting title ...", 0);
-				try {
-					linkText = await getPageTitle(new URL(linkDestination), this.getPageText);
-				}
-				catch (error) {
-					new Notice(error);
-					return;
-				}
-				finally {
-					notice.hide();
-				}
-			}
-
-			let posRangeStart = editor.getCursor();
-			let posRangeEnd = posRangeStart;
-			if (selection.length > 0) {
-				posRangeStart = editor.getCursor('from');
-				posRangeEnd = editor.getCursor('to');
-				linkText = selection;
-			}
-			const linkRawText = `[${linkText}](${linkDestination})`;
-			const endOffset = editor.posToOffset(posRangeStart) + linkRawText.length;
-			editor.replaceRange(linkRawText, posRangeStart, posRangeEnd);
-			editor.setCursor(editor.offsetToPos(endOffset));
-
-		})();
 	}
 
 	unembedLinkUnderCursorHandler(editor: Editor, checking: boolean = false): boolean | void {

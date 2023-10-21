@@ -51,6 +51,7 @@ export class EditorMock {
         this.getValue = this.__mocks.getValue
         this.setValue = this.__mocks.setValue
         this.getCursor = this.__mocks.getCursor
+        this.setCursor = this.__mocks.setCursor
         this.posToOffset = this.__mocks.posToOffset
         this.offsetToPos = this.__mocks.offsetToPos
         this.replaceRange = this.__mocks.replaceRange
@@ -62,6 +63,7 @@ export class EditorMock {
         getValue : jest.Mock
         setValue : jest.Mock
         getCursor : jest.Mock
+        setCursor : jest.Mock
         posToOffset : jest.Mock
         offsetToPos : jest.Mock
         replaceRange : jest.Mock
@@ -72,6 +74,7 @@ export class EditorMock {
         getValue : jest.fn(),
         setValue : jest.fn(),
         getCursor : jest.fn(),
+        setCursor : jest.fn(),
         posToOffset : jest.fn(),
         offsetToPos : jest.fn(),
         replaceRange : jest.fn(),
