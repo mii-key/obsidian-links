@@ -1,6 +1,7 @@
 # Obsidian Links <!-- omit in toc -->
 
-Manipulate links in Obsidian (https://obsidian.md).
+
+Manipulate links in [Obsidian](https://obsidian.md).
 
 - [Features](#features)
   - [Unlink](#unlink)
