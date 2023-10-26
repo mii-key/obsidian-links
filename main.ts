@@ -22,6 +22,7 @@ import { CreateLinkFromSelectionCommand } from 'commands/CreateLinkFromSelection
 import { CreateLinkFromClipboardCommand } from 'commands/CreateLinkFromClipboardCommand';
 import { SetLinkTextCommand } from 'commands/SetLinkTextCommand';
 import { EmbedLinkCommand } from 'commands/EmbedLinkCommand';
+import { UnembedLinkCommand } from 'commands/UnembedLinkCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -205,6 +206,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => embedLinkCommand.handler(editor, checking)
 		});
 
+		const unembedLinkCommand = new UnembedLinkCommand();
+		this.addCommand({
+			id: unembedLinkCommand.id,
+			name: unembedLinkCommand.displayNameCommand,
+			icon: unembedLinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => unembedLinkCommand.handler(editor, checking)
+		});
+
 		if (this.settings.ffMultipleLinkConversion) {
 			const convertAllLinksToMdlinksCommand = new ConvertAllLinksToMdlinksCommand(this.obsidianProxy)
 			this.addCommand({
@@ -359,13 +368,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 					}
 
-					if (this.settings.contexMenu.embedUnembedLink && this.unembedLinkUnderCursorHandler(editor, true)) {
+					if (this.settings.contexMenu.embedUnembedLink && unembedLinkCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Unembed")
-								.setIcon("file-output")
+								.setTitle(unembedLinkCommand.displayNameContextMenu)
+								.setIcon(unembedLinkCommand.icon)
 								.onClick(async () => {
-									this.unembedLinkUnderCursorHandler(editor);
+									unembedLinkCommand.handler(editor, false);
 								});
 						});
 					}
@@ -562,28 +571,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 		if (settingsChanged) {
 			this.saveSettings();
-		}
-	}
-
-	unembedLinkUnderCursorHandler(editor: Editor, checking: boolean = false): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
-		if (checking) {
-			return !!linkData && linkData.embedded && !!linkData.link;
-		}
-
-		if (linkData) {
-			this.unembedLinkUnderCursor(linkData, editor);
-		}
-	}
-
-	unembedLinkUnderCursor(linkData: LinkData, editor: Editor) {
-		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && linkData.embedded) {
-			editor.replaceRange(
-				linkData.content.substring(1),
-				editor.offsetToPos(linkData.position.start),
-				editor.offsetToPos(linkData.position.end));
 		}
 	}
 }
