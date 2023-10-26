@@ -156,9 +156,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 		const setLinkTextCommand = new SetLinkTextCommand(this.obsidianProxy);
 		this.addCommand({
-			id: 'editor-set-link-text',
-			name: 'Set link text',
-			icon: "text-cursor-input",
+			id: setLinkTextCommand.id,
+			name: setLinkTextCommand.displayNameCommand,
+			icon: setLinkTextCommand.icon,
 			editorCheckCallback: (checking, editor, ctx) => setLinkTextCommand.handler(editor, checking)
 		});
 
@@ -256,8 +256,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 					if (this.settings.contexMenu.setLinkText && setLinkTextCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Set link text")
-								.setIcon("text-cursor-input")
+								.setTitle(setLinkTextCommand.displayNameContextMenu)
+								.setIcon(setLinkTextCommand.icon)
 								.onClick(async () => {
 									setLinkTextCommand.handler(editor, false);
 								});
