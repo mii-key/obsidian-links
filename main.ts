@@ -127,7 +127,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const copyLinkDestinationToClipboardCommand = new CopyLinkDestinationToClipboardCommand(this.obsidianProxy);
 		this.addCommand({
 			id: copyLinkDestinationToClipboardCommand.id,
-			name: copyLinkDestinationToClipboardCommand.id,
+			name: copyLinkDestinationToClipboardCommand.displayNameCommand,
 			icon: copyLinkDestinationToClipboardCommand.icon,
 			editorCheckCallback: (checking, editor, ctx) => copyLinkDestinationToClipboardCommand.handler(editor, checking)
 		});
