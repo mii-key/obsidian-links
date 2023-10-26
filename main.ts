@@ -267,8 +267,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 					if (this.settings.contexMenu.editLinkDestination && editLinkDestinationCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Edit link destination")
-								.setIcon("text-cursor-input")
+								.setTitle(editLinkDestinationCommand.displayNameContextMenu)
+								.setIcon(editLinkDestinationCommand.icon)
 								.onClick(async () => {
 									editLinkDestinationCommand.handler(editor, false);
 								});
@@ -389,8 +389,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 					if (this.settings.contexMenu.createLink && createLinkFromSelectionCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Create link")
-								.setIcon("link")
+								.setTitle(createLinkFromSelectionCommand.displayNameContextMenu)
+								.setIcon(createLinkFromSelectionCommand.icon)
 								.onClick(async () => {
 									createLinkFromSelectionCommand.handler(editor, false);
 								});
