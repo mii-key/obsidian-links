@@ -1,3 +1,4 @@
+import { LinkData } from "utils";
 
 export class Notice {
     setMessage(message: string | DocumentFragment): this{
@@ -60,6 +61,7 @@ export class ObsidianProxyMock {
         clipboardWriteText: jest.Mock
         clipboardReadText: jest.Mock
         createNotice: jest.Mock
+        linkTextSuggestContextSetLinkData: jest.Mock
 
     } = {
         NoticeMock : {
@@ -69,8 +71,8 @@ export class ObsidianProxyMock {
         requestUrlMock: jest.fn(),
         clipboardWriteText: jest.fn(),
         clipboardReadText: jest.fn(),
-        createNotice: jest.fn()
-
+        createNotice: jest.fn(),
+        linkTextSuggestContextSetLinkData: jest.fn()
     }
 
     constructor(){
@@ -78,6 +80,7 @@ export class ObsidianProxyMock {
         this.clipboardReadText = this.__mocks.clipboardReadText;
         this.__mocks.createNotice.mockReturnValue(this.__mocks.NoticeMock);
         this.createNotice = this.__mocks.createNotice;
+        this.linkTextSuggestContextSetLinkData = this.__mocks.linkTextSuggestContextSetLinkData;
     }
 
     createNotice(message: string | DocumentFragment, timeout?: number) : Notice {
@@ -94,6 +97,10 @@ export class ObsidianProxyMock {
     }
     
     clipboardReadText() : Promise<string>{
+        throw new Error('Method not implemented.');
+    }
+
+    linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]) : void{
         throw new Error('Method not implemented.');
     }
 }

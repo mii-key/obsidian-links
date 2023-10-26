@@ -83,7 +83,7 @@ describe('CreateLinkFromClipboardCommand test', () => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(selection)
             const linkStart = 1;
-            editor.__mocks.posToOffset.mockReturnValue(linkStart)
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: linkStart})
 
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
@@ -100,11 +100,11 @@ describe('CreateLinkFromClipboardCommand test', () => {
                 try{
                     expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
                     expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
+                    expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(linkStart)
+                    expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(linkStart)
         
                     expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
-
-                    expect(editor.__mocks.offsetToPos.mock.calls).toHaveLength(1)
-                    expect(editor.__mocks.offsetToPos.mock.calls[0][0]).toBe(linkStart + cursurPos)
+                    expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(linkStart + cursurPos)
                     done()
                 }
                 catch(err){

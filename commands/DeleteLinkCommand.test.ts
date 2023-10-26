@@ -9,7 +9,7 @@ describe('DeleteLinkCommand test', () => {
         const cmd = new DeleteLinkCommand()
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.posToOffset.mockReturnValue(1)
+        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
         //
         const result = cmd.handler(editor, true)
         //
@@ -49,8 +49,7 @@ describe('DeleteLinkCommand test', () => {
             const cmd = new DeleteLinkCommand()
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(1)
-
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             //
             const result = cmd.handler(editor, true)
             //
@@ -83,16 +82,14 @@ describe('DeleteLinkCommand test', () => {
             const cmd = new DeleteLinkCommand()
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(0)
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 0})
             //
             cmd.handler(editor, false)
             //
             expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
             expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe('')
-
-            expect(editor.__mocks.offsetToPos.mock.calls).toHaveLength(2)
-            expect(editor.__mocks.offsetToPos.mock.calls[0][0]).toBe(0)
-            expect(editor.__mocks.offsetToPos.mock.calls[1][0]).toBe(text.length)
+            expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(0)
+            expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(text.length)
         })
 
 })

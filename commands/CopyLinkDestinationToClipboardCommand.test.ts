@@ -11,7 +11,7 @@ describe('CopyLinkDestinationToClipboardCommand test', () => {
         const cmd = new CopyLinkDestinationToClipboardCommand(obsidianProxy)
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.posToOffset.mockReturnValue(1)
+        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
         //
         const result = cmd.handler(editor, true)
         //
@@ -52,8 +52,7 @@ describe('CopyLinkDestinationToClipboardCommand test', () => {
             const cmd = new CopyLinkDestinationToClipboardCommand(obsidianProxy)
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(1)
-
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             //
             const result = cmd.handler(editor, true)
             //
@@ -97,7 +96,7 @@ describe('CopyLinkDestinationToClipboardCommand test', () => {
             const cmd = new CopyLinkDestinationToClipboardCommand(obsidianProxy)
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(0)
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             //
             cmd.handler(editor, false)
             //

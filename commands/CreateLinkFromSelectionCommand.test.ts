@@ -42,15 +42,14 @@ describe('CreateLinkFromSelectionCommand test', () => {
         const selection = "some text"
         const linkStart = 1;
         editor.__mocks.getSelection.mockReturnValue(selection)
-        editor.__mocks.posToOffset.mockReturnValue(linkStart)
+        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: linkStart})
         //
         cmd.handler(editor, false)
         //
         expect(editor.__mocks.replaceSelection.mock.calls).toHaveLength(1)
         expect(editor.__mocks.replaceSelection.mock.calls[0][0]).toBe(`[[|${selection}]]`)
-
-        expect(editor.__mocks.offsetToPos.mock.calls).toHaveLength(1)
-        expect(editor.__mocks.offsetToPos.mock.calls[0][0]).toBe(linkStart + 2)
+        expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
+        expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(linkStart + 2)
     })
 
 })

@@ -9,7 +9,7 @@ describe('EditLinkDestinationCommand test', () => {
         const cmd = new EditLinkDestinationCommand()
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.posToOffset.mockReturnValue(1)
+        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
         //
         const result = cmd.handler(editor, true)
         //
@@ -60,8 +60,7 @@ describe('EditLinkDestinationCommand test', () => {
             const cmd = new EditLinkDestinationCommand()
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(1)
-
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             //
             const result = cmd.handler(editor, true)
             //
@@ -113,17 +112,15 @@ describe('EditLinkDestinationCommand test', () => {
             const cmd = new EditLinkDestinationCommand()
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(0)
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             //
             cmd.handler(editor, false)
             //
             setTimeout(() => {
                 try {
                     expect(editor.__mocks.setSelection.mock.calls).toHaveLength(1)
-
-                    expect(editor.__mocks.offsetToPos.mock.calls).toHaveLength(2)
-                    expect(editor.__mocks.offsetToPos.mock.calls[0][0]).toBe(selectionStart)
-                    expect(editor.__mocks.offsetToPos.mock.calls[1][0]).toBe(selectionEnd)
+                    expect(editor.__mocks.setSelection.mock.calls[0][0].ch).toBe(selectionStart)
+                    expect(editor.__mocks.setSelection.mock.calls[0][1].ch).toBe(selectionEnd)
                     done();
                 }
                 catch (err) {

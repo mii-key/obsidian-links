@@ -20,6 +20,7 @@ import { EditLinkTextCommand } from 'commands/EditLinkTextCommand';
 import { EditLinkDestinationCommand } from 'commands/EditLinkDestinationCommand';
 import { CreateLinkFromSelectionCommand } from 'commands/CreateLinkFromSelectionCommand';
 import { CreateLinkFromClipboardCommand } from 'commands/CreateLinkFromClipboardCommand';
+import { SetLinkTextCommand } from 'commands/SetLinkTextCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -53,7 +54,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 		};
 
-		this.obsidianProxy = new ObsidianProxy();
+		this.obsidianProxy = new ObsidianProxy(this.linkTextSuggestContext);
 	}
 
 	createNotice(message: string | DocumentFragment, timeout?: number): Notice {
@@ -152,11 +153,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => editLinkTextCommand.handler(editor, checking)
 		});
 
+
+		const setLinkTextCommand = new SetLinkTextCommand(this.obsidianProxy);
 		this.addCommand({
 			id: 'editor-set-link-text',
 			name: 'Set link text',
 			icon: "text-cursor-input",
-			editorCheckCallback: (checking, editor, ctx) => this.setLinkTextUnderCursorHandler(editor, checking)
+			editorCheckCallback: (checking, editor, ctx) => setLinkTextCommand.handler(editor, checking)
 		});
 
 
@@ -250,13 +253,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 								});
 						});
 					}
-					if (this.settings.contexMenu.setLinkText && this.setLinkTextUnderCursorHandler(editor, true)) {
+					if (this.settings.contexMenu.setLinkText && setLinkTextCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
 								.setTitle("Set link text")
 								.setIcon("text-cursor-input")
 								.onClick(async () => {
-									this.setLinkText(linkData, editor);
+									setLinkTextCommand.handler(editor, false);
 								});
 						});
 					}
@@ -438,95 +441,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const result = replaceAllHtmlLinks(text)
 			mdView.setViewData(result, false);
 		}
-	}
-
-	showLinkTextSuggestions(linkData: LinkData, editor: Editor): boolean {
-		const titles = getLinkTitles(linkData);
-
-		if (titles.length == 0) {
-			return false;
-		}
-		this.linkTextSuggestContext.setLinkData(linkData, titles);
-
-		//trigger suggest
-		const posLinkEnd = editor.offsetToPos(linkData.position.end);
-		editor.setCursor(posLinkEnd);
-		editor.replaceRange(" ", posLinkEnd);
-		editor.replaceRange("", posLinkEnd, editor.offsetToPos(linkData.position.end + 1));
-
-		return true;
-	}
-
-	async setLinkText(linkData: LinkData, editor: Editor) {
-		if (!linkData.link) {
-			return;
-		}
-
-		if (linkData.type == LinkTypes.Wiki) {
-			if (this.showLinkTextSuggestions(linkData, editor)) {
-				return;
-			}
-			const text = getFileName(linkData.link?.content);
-			let textStart = linkData.position.start + linkData.link.position.end;
-			if (linkData.text) {
-				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(linkData.text.content.length + 1));
-			} else {
-				editor.replaceRange("|" + text, editor.offsetToPos(textStart));
-			}
-			textStart++;
-			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
-		} else if (linkData.type == LinkTypes.Markdown) {
-			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-			let text = "";
-			if (urlRegEx.test(linkData.link.content)) {
-				if (!(linkData.text && linkData.text.content !== "")) {
-					const notice = new Notice("Getting title ...", 0);
-					try {
-						text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
-					}
-					catch (error) {
-						new Notice(error);
-					}
-					finally {
-						notice.hide();
-					}
-				}
-			} else {
-				if (this.showLinkTextSuggestions(linkData, editor)) {
-					return;
-				}
-				text = getFileName(decodeURI(linkData.link?.content));
-			}
-			const textStart = linkData.position.start + 1;
-			editor.setSelection(editor.offsetToPos(textStart));
-			editor.replaceSelection(text);
-			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
-		}
-	}
-
-	setLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
-		const linkData = this.getLink(editor);
-		if (checking) {
-			return !!linkData
-				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
-				&& !!linkData.link?.content
-				&& (!linkData.text || !linkData?.text.content || linkData.link.content.contains('#'));
-		}
-		if (linkData) {
-			// workaround: if executed from command palette, whole link is selected.
-			// with timeout, only specified region is selected.
-			setTimeout(() => {
-				this.setLinkText(linkData, editor);
-			}, 500);
-		}
-	}
-
-	async getPageText(url: URL): Promise<string> {
-		const response = await requestUrl({ url: url.toString() });
-		if (response.status !== 200) {
-			throw new Error(`Failed to request '${url}': ${response.status}`);
-		}
-		return response.text;
 	}
 
 	replaceExternalLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {

@@ -10,7 +10,7 @@ describe('ConvertLinkToWikilinkCommand test', () => {
         const cmd = new ConvertLinkToWikilinkCommand()
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.posToOffset.mockReturnValue(1)
+        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
         //
         const result = cmd.handler(editor, true)
         //
@@ -85,7 +85,7 @@ describe('ConvertLinkToWikilinkCommand test', () => {
         ('status - cursor on [$name] - enabled: $expected', ({ name, text, expected}) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(1)
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             const cmd = new ConvertLinkToWikilinkCommand()
             //
             const result = cmd.handler(editor, true)
@@ -126,20 +126,18 @@ describe('ConvertLinkToWikilinkCommand test', () => {
         ('convert link - cursor in selection [$name] - success', ({ name, text, expected, cursurPos }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(1)
-
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             const cmd = new ConvertLinkToWikilinkCommand();
             //
             cmd.handler(editor, false)
             //
             expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
             expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
-
-            expect(editor.__mocks.offsetToPos.mock.calls).toHaveLength(3)
-            expect(editor.__mocks.offsetToPos.mock.calls[0][0]).toBe(0)
-            expect(editor.__mocks.offsetToPos.mock.calls[1][0]).toBe(text.length)
-            //cursor position
-            expect(editor.__mocks.offsetToPos.mock.calls[2][0]).toBe(cursurPos)
+            expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(0)
+            expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(text.length)
+            
+            expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
+            expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(cursurPos)
 
         })
 

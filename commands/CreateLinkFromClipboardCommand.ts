@@ -2,6 +2,7 @@ import { Editor } from "obsidian";
 import { ICommand } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, getPageTitle, removeLinks } from "../utils";
 import { ObsidianProxy } from "./ObsidianProxy";
+import { IObsidianProxy } from "./IObsidianProxy";
 
 export class CreateLinkFromClipboardCommand implements ICommand {
 	id: string = 'editor-create-link-from-clipboard';
@@ -9,11 +10,11 @@ export class CreateLinkFromClipboardCommand implements ICommand {
 	displayNameContextMenu: string = 'Create link from clipboard';
 	icon: string = 'link';
 
-	obsidianProxy: ObsidianProxy;
+	obsidianProxy: IObsidianProxy;
 	callback: ((error: Error | null, data: any) => void) | undefined
 
 
-	constructor(obsidianProxy: ObsidianProxy, callback: ((error: Error | null, data: any) => void) | undefined = undefined){
+	constructor(obsidianProxy: IObsidianProxy, callback: ((error: Error | null, data: any) => void) | undefined = undefined){
 		this.obsidianProxy = obsidianProxy;
 		this.callback = callback;
 	}
