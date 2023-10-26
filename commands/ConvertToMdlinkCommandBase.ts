@@ -5,11 +5,11 @@ import { RegExPatterns } from "../RegExPatterns";
 
 export abstract class ConvertToMdlinkCommandBase {
 
-    obdisianProxy: IObsidianProxy;
+    obsidianProxy: IObsidianProxy;
     readonly EmailScheme: string = "mailto:";
 
     constructor(obsidianProxy: IObsidianProxy) {
-        this.obdisianProxy = obsidianProxy;
+        this.obsidianProxy = obsidianProxy;
     }
 
     async convertLinkToMarkdownLink(linkData: LinkData, editor: Editor, setCursor: boolean = true, linkOffset: number = 0) {
@@ -24,12 +24,12 @@ export abstract class ConvertToMdlinkCommandBase {
 
         const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
         if ((linkData.type === LinkTypes.Autolink || linkData.type === LinkTypes.PlainUrl) && linkData.link && urlRegEx.test(linkData.link.content)) {
-            const notice = this.obdisianProxy.createNotice("Getting title ...", 0);
+            const notice = this.obsidianProxy.createNotice("Getting title ...", 0);
             try {
                 text = await getPageTitle(new URL(linkData.link.content), this.getPageText.bind(this));
             }
             catch (error) {
-                this.obdisianProxy.createNotice(error);
+                this.obsidianProxy.createNotice(error);
             }
             finally {
                 notice.hide();
@@ -64,7 +64,7 @@ export abstract class ConvertToMdlinkCommandBase {
     }
 
     async getPageText(url: URL): Promise<string> {
-        const response = await this.obdisianProxy.requestUrl({ url: url.toString() });
+        const response = await this.obsidianProxy.requestUrl({ url: url.toString() });
         if (response.status !== 200) {
             throw new Error(`Failed to request '${url}': ${response.status}`);
         }

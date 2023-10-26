@@ -28,19 +28,13 @@ export class ConvertLinkToMdlinkCommand extends ConvertToMdlinkCommandBase imple
 		if (linkData) {
 			this.convertLinkToMarkdownLink(linkData, editor)
 				.then(() => {
-					if (this.callback) {
-						this.callback(null, undefined);
-					}
+					this.callback?.(null, undefined);
 				})
 				.catch((err) => {
-					if (this.callback) {
-						this.callback(err, undefined);
-					}
+					this.callback?.(err, undefined);
 				});
-		} else{
-			if(this.callback){
-				this.callback(new Error('link not found'), null);
-			}
+		} else {
+			this.callback?.(new Error('link not found'), null);
 		}
 	}
 }

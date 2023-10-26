@@ -1,3 +1,4 @@
+import { LinkData } from "utils";
 
 export class Notice {
     setMessage(message: string | DocumentFragment): this{
@@ -57,19 +58,49 @@ export class ObsidianProxyMock {
             hide: jest.Mock
         }
         requestUrlMock: jest.Mock
+        clipboardWriteText: jest.Mock
+        clipboardReadText: jest.Mock
+        createNotice: jest.Mock
+        linkTextSuggestContextSetLinkData: jest.Mock
+
     } = {
         NoticeMock : {
             setMessage: jest.fn(),
             hide: jest.fn()
         },
-        requestUrlMock: jest.fn()
+        requestUrlMock: jest.fn(),
+        clipboardWriteText: jest.fn(),
+        clipboardReadText: jest.fn(),
+        createNotice: jest.fn(),
+        linkTextSuggestContextSetLinkData: jest.fn()
+    }
+
+    constructor(){
+        this.clipboardWriteText = this.__mocks.clipboardWriteText;
+        this.clipboardReadText = this.__mocks.clipboardReadText;
+        this.__mocks.createNotice.mockReturnValue(this.__mocks.NoticeMock);
+        this.createNotice = this.__mocks.createNotice;
+        this.linkTextSuggestContextSetLinkData = this.__mocks.linkTextSuggestContextSetLinkData;
     }
 
     createNotice(message: string | DocumentFragment, timeout?: number) : Notice {
-        return this.__mocks.NoticeMock;
+        // return this.__mocks.NoticeMock;
+        throw new Error('Method not implemented.');
     }
 
     requestUrl(request: RequestUrlParam | string): RequestUrlResponsePromise {
         return this.__mocks.requestUrlMock()
+    }
+
+    clipboardWriteText(text: string): void{
+        throw new Error('Method not implemented.');
+    }
+    
+    clipboardReadText() : Promise<string>{
+        throw new Error('Method not implemented.');
+    }
+
+    linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]) : void{
+        throw new Error('Method not implemented.');
     }
 }

@@ -13,6 +13,16 @@ import { ICommand } from 'commands/ICommand';
 import { RemoveLinksFromHeadingsCommand } from 'commands/RemoveLinksFromHeadingsCommand';
 import { DEFAULT_SETTINGS, IObsidianLinksSettings } from 'settings';
 import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
+import { ConvertLinkToWikilinkCommand } from 'commands/ConvertLinkToWikilinkCommand';
+import { ConvertLinkToAutolinkCommand } from 'commands/ConvertLinkToAutolinkCommand';
+import { CopyLinkDestinationToClipboardCommand } from 'commands/CopyLinkDestinationToClipboardCommand';
+import { EditLinkTextCommand } from 'commands/EditLinkTextCommand';
+import { EditLinkDestinationCommand } from 'commands/EditLinkDestinationCommand';
+import { CreateLinkFromSelectionCommand } from 'commands/CreateLinkFromSelectionCommand';
+import { CreateLinkFromClipboardCommand } from 'commands/CreateLinkFromClipboardCommand';
+import { SetLinkTextCommand } from 'commands/SetLinkTextCommand';
+import { EmbedLinkCommand } from 'commands/EmbedLinkCommand';
+import { UnembedLinkCommand } from 'commands/UnembedLinkCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -20,7 +30,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	obsidianProxy: ObsidianProxy;
 
 	readonly EmailScheme: string = "mailto:";
-	generateLinkTextOnEdit = true;
+
 	linkTextSuggestContext: ILinkTextSuggestContext;
 
 
@@ -46,7 +56,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 		};
 
-		this.obsidianProxy = new ObsidianProxy();
+		this.obsidianProxy = new ObsidianProxy(this.linkTextSuggestContext);
 	}
 
 	createNotice(message: string | DocumentFragment, timeout?: number): Notice {
@@ -75,7 +85,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 
 		const unlinkCommand = new UnlinkLinkCommand();
-
 		this.addCommand({
 			id: unlinkCommand.id,
 			name: unlinkCommand.displayNameCommand,
@@ -92,7 +101,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		});
 
 		const convertLinkToMdlinkCommand: ICommand = new ConvertLinkToMdlinkCommand(this.obsidianProxy);
-
 		this.addCommand({
 			id: convertLinkToMdlinkCommand.id,
 			name: convertLinkToMdlinkCommand.displayNameCommand,
@@ -100,36 +108,38 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => convertLinkToMdlinkCommand.handler(editor, checking)
 		});
 
+		const convertLinkToWikilinkCommand = new ConvertLinkToWikilinkCommand();
 		this.addCommand({
-			id: 'editor-convert-link-to-wikilink',
-			name: 'Convert to Wikilink',
-			icon: "rotate-cw",
-			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToWikilinkHandler(editor, checking)
+			id: convertLinkToWikilinkCommand.id,
+			name: convertLinkToWikilinkCommand.displayNameCommand,
+			icon: convertLinkToWikilinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => convertLinkToWikilinkCommand.handler(editor, checking)
 		});
 
+		const convertLinkToAutolinkCommand = new ConvertLinkToAutolinkCommand();
 		this.addCommand({
-			id: 'editor-convert-link-to-autolink',
-			name: 'Convert to Autolink',
-			icon: "rotate-cw",
-			editorCheckCallback: (checking, editor, ctx) => this.convertLinkUnderCursorToAutolinkHandler(editor, checking)
+			id: convertLinkToAutolinkCommand.id,
+			name: convertLinkToAutolinkCommand.displayNameCommand,
+			icon: convertLinkToAutolinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => convertLinkToAutolinkCommand.handler(editor, checking)
 		});
 
+		const copyLinkDestinationToClipboardCommand = new CopyLinkDestinationToClipboardCommand(this.obsidianProxy);
 		this.addCommand({
-			id: 'editor-copy-link-to-clipboard',
-			name: 'Copy link destination',
-			icon: "copy",
-			editorCheckCallback: (checking, editor, ctx) => this.copyLinkUnderCursorToClipboardHandler(editor, checking)
+			id: copyLinkDestinationToClipboardCommand.id,
+			name: copyLinkDestinationToClipboardCommand.displayNameCommand,
+			icon: copyLinkDestinationToClipboardCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => copyLinkDestinationToClipboardCommand.handler(editor, checking)
 		});
 
 		const settings = this.settings;
 		const options = {
 			get internalWikilinkWithoutTextReplacement() {
 				return settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement;
-			} 
+			}
 		};
 
 		const removeLinksFromHeadingsCommand = new RemoveLinksFromHeadingsCommand(options);
-
 		this.addCommand({
 			id: removeLinksFromHeadingsCommand.id,
 			name: removeLinksFromHeadingsCommand.displayNameCommand,
@@ -137,25 +147,30 @@ export default class ObsidianLinksPlugin extends Plugin {
 			editorCheckCallback: (checking, editor, ctx) => removeLinksFromHeadingsCommand.handler(editor, checking)
 		});
 
+		const editLinkTextCommand = new EditLinkTextCommand();
 		this.addCommand({
-			id: 'editor-edit-link-text',
-			name: 'Edit link text',
-			icon: "text-cursor-input",
-			editorCheckCallback: (checking, editor, ctx) => this.editLinkTextUnderCursorHandler(editor, checking)
+			id: editLinkTextCommand.id,
+			name: editLinkTextCommand.displayNameCommand,
+			icon: editLinkTextCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => editLinkTextCommand.handler(editor, checking)
 		});
 
+
+		const setLinkTextCommand = new SetLinkTextCommand(this.obsidianProxy);
 		this.addCommand({
-			id: 'editor-set-link-text',
-			name: 'Set link text',
-			icon: "text-cursor-input",
-			editorCheckCallback: (checking, editor, ctx) => this.setLinkTextUnderCursorHandler(editor, checking)
+			id: setLinkTextCommand.id,
+			name: setLinkTextCommand.displayNameCommand,
+			icon: setLinkTextCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => setLinkTextCommand.handler(editor, checking)
 		});
 
+
+		const editLinkDestinationCommand = new EditLinkDestinationCommand();
 		this.addCommand({
-			id: 'editor-edit-link-destination',
-			name: 'Edit link destination',
-			icon: "text-cursor-input",
-			editorCheckCallback: (checking, editor, ctx) => this.editLinkDestinationUnderCursorHandler(editor, checking)
+			id: editLinkDestinationCommand.id,
+			name: editLinkDestinationCommand.displayNameCommand,
+			icon: editLinkDestinationCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => editLinkDestinationCommand.handler(editor, checking)
 		});
 
 		if (this.settings.ffReplaceLink) {
@@ -167,18 +182,36 @@ export default class ObsidianLinksPlugin extends Plugin {
 			});
 		}
 
+		const createLinkFromSelectionCommand = new CreateLinkFromSelectionCommand();
 		this.addCommand({
-			id: 'editor-create-link-from-selection',
-			name: 'Create link',
-			icon: "link",
-			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromSelectionHandler(editor, checking)
+			id: createLinkFromSelectionCommand.id,
+			name: createLinkFromSelectionCommand.displayNameCommand,
+			icon: createLinkFromSelectionCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => createLinkFromSelectionCommand.handler(editor, checking)
 		});
 
+		const createLinkFromClipboardCommand = new CreateLinkFromClipboardCommand(this.obsidianProxy);
 		this.addCommand({
-			id: 'editor-create-link-from-clipboard',
-			name: 'Create link from clipboard',
-			icon: "link",
-			editorCheckCallback: (checking, editor, ctx) => this.createLinkFromClipboardHandler(editor, checking)
+			id: createLinkFromClipboardCommand.id,
+			name: createLinkFromClipboardCommand.displayNameCommand,
+			icon: createLinkFromClipboardCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => createLinkFromClipboardCommand.handler(editor, checking)
+		});
+
+		const embedLinkCommand = new EmbedLinkCommand();
+		this.addCommand({
+			id: embedLinkCommand.id,
+			name: embedLinkCommand.displayNameCommand,
+			icon: embedLinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => embedLinkCommand.handler(editor, checking)
+		});
+
+		const unembedLinkCommand = new UnembedLinkCommand();
+		this.addCommand({
+			id: unembedLinkCommand.id,
+			name: unembedLinkCommand.displayNameCommand,
+			icon: unembedLinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => unembedLinkCommand.handler(editor, checking)
 		});
 
 		if (this.settings.ffMultipleLinkConversion) {
@@ -228,45 +261,45 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 				if (linkData) {
 					addTopSeparator();
-					if (this.settings.contexMenu.editLinkText && linkData.text && linkData.text.content.length > 0) {
+					if (this.settings.contexMenu.editLinkText && editLinkTextCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Edit link text")
-								.setIcon("text-cursor-input")
+								.setTitle(editLinkTextCommand.displayNameContextMenu)
+								.setIcon(editLinkTextCommand.icon)
 								.onClick(async () => {
-									this.editLinkText(linkData, editor);
+									editLinkTextCommand.handler(editor, false);
 								});
 						});
 					}
-					if (this.settings.contexMenu.setLinkText && this.setLinkTextUnderCursorHandler(editor, true)) {
+					if (this.settings.contexMenu.setLinkText && setLinkTextCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Set link text")
-								.setIcon("text-cursor-input")
+								.setTitle(setLinkTextCommand.displayNameContextMenu)
+								.setIcon(setLinkTextCommand.icon)
 								.onClick(async () => {
-									this.setLinkText(linkData, editor);
-								});
-						});
-					}
-
-					if (this.settings.contexMenu.editLinkDestination && ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0) && linkData.link) {
-						menu.addItem((item) => {
-							item
-								.setTitle("Edit link destination")
-								.setIcon("text-cursor-input")
-								.onClick(async () => {
-									this.editLinkDestination(linkData, editor);
+									setLinkTextCommand.handler(editor, false);
 								});
 						});
 					}
 
-					if (this.settings.contexMenu.copyLinkDestination && linkData.link) {
+					if (this.settings.contexMenu.editLinkDestination && editLinkDestinationCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Copy link destination")
-								.setIcon("copy")
+								.setTitle(editLinkDestinationCommand.displayNameContextMenu)
+								.setIcon(editLinkDestinationCommand.icon)
 								.onClick(async () => {
-									this.copyLinkUnderCursorToClipboard(linkData);
+									editLinkDestinationCommand.handler(editor, false);
+								});
+						});
+					}
+
+					if (this.settings.contexMenu.copyLinkDestination && copyLinkDestinationToClipboardCommand.handler(editor, true)) {
+						menu.addItem((item) => {
+							item
+								.setTitle(copyLinkDestinationToClipboardCommand.displayNameContextMenu)
+								.setIcon(copyLinkDestinationToClipboardCommand.icon)
+								.onClick(async () => {
+									copyLinkDestinationToClipboardCommand.handler(editor, false);
 								});
 						});
 					}
@@ -288,24 +321,24 @@ export default class ObsidianLinksPlugin extends Plugin {
 				if (linkData) {
 					addTopSeparator();
 					if (linkData.type == LinkTypes.Markdown) {
-						if (this.settings.contexMenu.convertToWikilink && this.convertLinkUnderCursorToWikilinkHandler(editor, true)) {
+						if (this.settings.contexMenu.convertToWikilink && convertLinkToWikilinkCommand.handler(editor, true)) {
 							menu.addItem((item) => {
 								item
-									.setTitle("Convert to wikilink")
-									.setIcon("rotate-cw")
+									.setTitle(convertLinkToWikilinkCommand.displayNameContextMenu)
+									.setIcon(convertLinkToWikilinkCommand.icon)
 									.onClick(async () => {
-										this.convertLinkToWikiLink(linkData, editor);
+										convertLinkToWikilinkCommand.handler(editor, false);
 									});
 							});
 						}
 
-						if (this.settings.contexMenu.convertToAutolink && this.convertLinkUnderCursorToAutolinkHandler(editor, true)) {
+						if (this.settings.contexMenu.convertToAutolink && convertLinkToAutolinkCommand.handler(editor, true)) {
 							menu.addItem((item) => {
 								item
-									.setTitle("Convert to autolink")
-									.setIcon("rotate-cw")
+									.setTitle(convertLinkToAutolinkCommand.displayNameContextMenu)
+									.setIcon(convertLinkToAutolinkCommand.icon)
 									.onClick(async () => {
-										this.convertLinkToAutolink(linkData, editor);
+										convertLinkToAutolinkCommand.handler(editor, false);
 									});
 							});
 						}
@@ -335,24 +368,24 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 					}
 
-					if (this.settings.contexMenu.embedUnembedLink && this.unembedLinkUnderCursorHandler(editor, true)) {
+					if (this.settings.contexMenu.embedUnembedLink && unembedLinkCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Unembed")
-								.setIcon("file-output")
+								.setTitle(unembedLinkCommand.displayNameContextMenu)
+								.setIcon(unembedLinkCommand.icon)
 								.onClick(async () => {
-									this.unembedLinkUnderCursorHandler(editor);
+									unembedLinkCommand.handler(editor, false);
 								});
 						});
 					}
 
-					if (this.settings.contexMenu.embedUnembedLink && this.embedLinkUnderCursorHandler(editor, true)) {
+					if (this.settings.contexMenu.embedUnembedLink && embedLinkCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Embed")
-								.setIcon("file-input")
+								.setTitle(embedLinkCommand.displayNameContextMenu)
+								.setIcon(embedLinkCommand.icon)
 								.onClick(async () => {
-									this.embedLinkUnderCursorHandler(editor);
+									embedLinkCommand.handler(editor, false);
 								});
 						});
 					}
@@ -371,23 +404,23 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 				} else {
 					addTopSeparator();
-					if (this.settings.contexMenu.createLink && this.createLinkFromSelectionHandler(editor, true)) {
+					if (this.settings.contexMenu.createLink && createLinkFromSelectionCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Create link")
-								.setIcon("link")
+								.setTitle(createLinkFromSelectionCommand.displayNameContextMenu)
+								.setIcon(createLinkFromSelectionCommand.icon)
 								.onClick(async () => {
-									this.createLinkFromSelectionHandler(editor);
+									createLinkFromSelectionCommand.handler(editor, false);
 								});
 						});
 					}
-					if (this.settings.contexMenu.createLinkFromClipboard && this.createLinkFromClipboardHandler(editor, true)) {
+					if (this.settings.contexMenu.createLinkFromClipboard && createLinkFromClipboardCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Create link from clipboard")
-								.setIcon("link")
+								.setTitle(createLinkFromClipboardCommand.displayNameContextMenu)
+								.setIcon(createLinkFromClipboardCommand.icon)
 								.onClick(async () => {
-									this.createLinkFromClipboardHandler(editor);
+									createLinkFromClipboardCommand.handler(editor, false);
 								});
 						});
 					}
@@ -419,86 +452,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return findLink(text, cursorOffset, cursorOffset)
 	}
 
-	convertLinkUnderCursorToWikilinkHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown | LinkTypes.Html);
-		if (checking) {
-			return !!linkData && linkData.link && !linkData.link.content.trim().startsWith(this.EmailScheme);
-		}
-
-		if (linkData) {
-			this.convertLinkToWikiLink(linkData, editor);
-		}
-	}
-
-	convertLinkToWikiLink(linkData: LinkData, editor: Editor) {
-		const link = linkData.type === LinkTypes.Markdown ? (linkData.link ? decodeURI(linkData.link.content) : "") : linkData.link;
-		const text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
-		//TODO: use const for !
-		const embededSymbol = linkData.embedded ? '!' : '';
-		const rawText = `${embededSymbol}[[${link}${text}]]`;
-		editor.replaceRange(
-			rawText,
-			editor.offsetToPos(linkData.position.start),
-			editor.offsetToPos(linkData.position.end));
-	}
-
-	convertLinkUnderCursorToAutolinkHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown);
-		if (checking) {
-			return !!linkData
-				&& linkData.link?.content != undefined
-				&& (RegExPatterns.AbsoluteUri.test(linkData.link.content)
-					|| linkData.link.content.startsWith(this.EmailScheme))
-		}
-		if (linkData) {
-			this.convertLinkToAutolink(linkData, editor);
-		}
-	}
-
-	async convertLinkToAutolink(linkData: LinkData, editor: Editor) {
-		if (linkData.type === LinkTypes.Markdown
-			&& linkData.link?.content) {
-			let rawLinkText;
-			if (linkData.link.content.startsWith(this.EmailScheme)) {
-				rawLinkText = `<${linkData.link.content.substring(this.EmailScheme.length)}>`;
-			} else if (RegExPatterns.AbsoluteUri.test(linkData.link.content)) {
-				rawLinkText = `<${linkData.link.content}>`;
-			}
-
-			if (rawLinkText) {
-				editor.replaceRange(
-					rawLinkText,
-					editor.offsetToPos(linkData.position.start),
-					editor.offsetToPos(linkData.position.end));
-
-				editor.setCursor(editor.offsetToPos(linkData.position.start + rawLinkText.length));
-			}
-		}
-	}
-
-	copyLinkUnderCursorToClipboardHandler(editor: Editor, checking: boolean): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html);
-		if (checking) {
-			return !!linkData && !!linkData.link;
-		}
-		if (linkData) {
-			this.copyLinkUnderCursorToClipboard(linkData);
-		}
-	}
-
-	copyLinkUnderCursorToClipboard(linkData: LinkData) {
-		if (linkData?.link) {
-			navigator.clipboard.writeText(linkData.link?.content);
-			new Notice("Link destination copied to your clipboard");
-		}
-	}
-
 	convertHtmlLinksToMdLinks = () => {
 		const mdView = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (mdView && mdView.getViewData()) {
@@ -506,148 +459,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			const result = replaceAllHtmlLinks(text)
 			mdView.setViewData(result, false);
 		}
-	}
-
-	editLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
-		const linkData = this.getLink(editor);
-		if (checking) {
-			return !!linkData && !!linkData.text;
-		}
-
-		if (linkData) {
-			// workaround: if executed from command palette, whole link is selected.
-			// with timeout, only specified region is selected.
-			setTimeout(() => {
-				this.editLinkText(linkData, editor);
-			}, 500);
-		}
-	}
-
-	editLinkText(linkData: LinkData, editor: Editor) {
-		if (linkData.text) {
-			const start = linkData.position.start + linkData.text.position.start;
-			const end = linkData.position.start + linkData.text.position.end;
-			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
-		} else if (this.generateLinkTextOnEdit) {
-			//TODO: 
-		}
-	}
-
-	editLinkDestinationUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
-		const linkData = this.getLink(editor);
-		if (checking) {
-			return !!linkData
-				&& ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) != 0)
-				&& !!linkData.link;
-		}
-
-
-		if (linkData) {
-			// workaround: if executed from command palette, whole link is selected.
-			// with timeout, only specified region is selected.
-			setTimeout(() => {
-				this.editLinkDestination(linkData, editor);
-			}, 500);
-		}
-	}
-
-	editLinkDestination(linkData: LinkData, editor: Editor) {
-		if (linkData.link) {
-			const start = linkData.position.start + linkData.link.position.start;
-			const end = linkData.position.start + linkData.link.position.end;
-			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
-		} else if (this.generateLinkTextOnEdit) {
-			//TODO: 
-		}
-	}
-
-	showLinkTextSuggestions(linkData: LinkData, editor: Editor): boolean {
-		const titles = getLinkTitles(linkData);
-
-		if (titles.length == 0) {
-			return false;
-		}
-		this.linkTextSuggestContext.setLinkData(linkData, titles);
-
-		//trigger suggest
-		const posLinkEnd = editor.offsetToPos(linkData.position.end);
-		editor.setCursor(posLinkEnd);
-		editor.replaceRange(" ", posLinkEnd);
-		editor.replaceRange("", posLinkEnd, editor.offsetToPos(linkData.position.end + 1));
-
-		return true;
-	}
-
-	async setLinkText(linkData: LinkData, editor: Editor) {
-		if (!linkData.link) {
-			return;
-		}
-
-		if (linkData.type == LinkTypes.Wiki) {
-			if (this.showLinkTextSuggestions(linkData, editor)) {
-				return;
-			}
-			const text = getFileName(linkData.link?.content);
-			let textStart = linkData.position.start + linkData.link.position.end;
-			if (linkData.text) {
-				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(linkData.text.content.length + 1));
-			} else {
-				editor.replaceRange("|" + text, editor.offsetToPos(textStart));
-			}
-			textStart++;
-			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
-		} else if (linkData.type == LinkTypes.Markdown) {
-			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-			let text = "";
-			if (urlRegEx.test(linkData.link.content)) {
-				if (!(linkData.text && linkData.text.content !== "")) {
-					const notice = new Notice("Getting title ...", 0);
-					try {
-						text = await getPageTitle(new URL(linkData.link.content), this.getPageText);
-					}
-					catch (error) {
-						new Notice(error);
-					}
-					finally {
-						notice.hide();
-					}
-				}
-			} else {
-				if (this.showLinkTextSuggestions(linkData, editor)) {
-					return;
-				}
-				text = getFileName(decodeURI(linkData.link?.content));
-			}
-			const textStart = linkData.position.start + 1;
-			editor.setSelection(editor.offsetToPos(textStart));
-			editor.replaceSelection(text);
-			editor.setSelection(editor.offsetToPos(textStart), editor.offsetToPos(textStart + text.length));
-		}
-	}
-
-	setLinkTextUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
-		const linkData = this.getLink(editor);
-		if (checking) {
-			return !!linkData
-				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
-				&& !!linkData.link?.content
-				&& (!linkData.text || !linkData?.text.content || linkData.link.content.contains('#'));
-		}
-		if (linkData) {
-			// workaround: if executed from command palette, whole link is selected.
-			// with timeout, only specified region is selected.
-			setTimeout(() => {
-				this.setLinkText(linkData, editor);
-			}, 500);
-		}
-	}
-
-	async getPageText(url: URL): Promise<string> {
-		const response = await requestUrl({ url: url.toString() });
-		if (response.status !== 200) {
-			throw new Error(`Failed to request '${url}': ${response.status}`);
-		}
-		return response.text;
 	}
 
 	replaceExternalLinkUnderCursorHandler(editor: Editor, checking: boolean): boolean | void {
@@ -706,18 +517,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return [targetText, totalCount];
 	}
 
-	createLinkFromSelectionHandler(editor: Editor, checking = false): boolean | void {
-		const selection = editor.getSelection();
-
-		if (checking) {
-			return !!selection;
-		}
-
-		const linkStart = editor.posToOffset(editor.getCursor('from'));
-		editor.replaceSelection(`[[|${selection}]]`);
-		editor.setCursor(editor.offsetToPos(linkStart + 2));
-	}
-
 	onEditorPaste(evt: ClipboardEvent, editor: Editor, view: MarkdownView | MarkdownFileInfo) {
 		const html = evt.clipboardData?.getData('text/html');
 		if (html && html.indexOf('<a') > 0) {
@@ -774,92 +573,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			this.saveSettings();
 		}
 	}
-
-	createLinkFromClipboardHandler(editor: Editor, checking = false): boolean | void {
-		// TODO: no check for now
-		if (checking) {
-			return true;
-		}
-
-		(async () => {
-			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-			const linkDestination = await navigator.clipboard.readText();
-			let linkText = linkDestination;
-			const selection = editor.getSelection();
-
-			if (selection.length == 0 && urlRegEx.test(linkDestination)) {
-				const notice = new Notice("Getting title ...", 0);
-				try {
-					linkText = await getPageTitle(new URL(linkDestination), this.getPageText);
-				}
-				catch (error) {
-					new Notice(error);
-					return;
-				}
-				finally {
-					notice.hide();
-				}
-			}
-
-			let posRangeStart = editor.getCursor();
-			let posRangeEnd = posRangeStart;
-			if (selection.length > 0) {
-				posRangeStart = editor.getCursor('from');
-				posRangeEnd = editor.getCursor('to');
-				linkText = selection;
-			}
-			const linkRawText = `[${linkText}](${linkDestination})`;
-			const endOffset = editor.posToOffset(posRangeStart) + linkRawText.length;
-			editor.replaceRange(linkRawText, posRangeStart, posRangeEnd);
-			editor.setCursor(editor.offsetToPos(endOffset));
-
-		})();
-	}
-
-	unembedLinkUnderCursorHandler(editor: Editor, checking: boolean = false): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
-		if (checking) {
-			return !!linkData && linkData.embedded && !!linkData.link;
-		}
-
-		if (linkData) {
-			this.unembedLinkUnderCursor(linkData, editor);
-		}
-	}
-
-	unembedLinkUnderCursor(linkData: LinkData, editor: Editor) {
-		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && linkData.embedded) {
-			editor.replaceRange(
-				linkData.content.substring(1),
-				editor.offsetToPos(linkData.position.start),
-				editor.offsetToPos(linkData.position.end));
-		}
-	}
-
-	embedLinkUnderCursorHandler(editor: Editor, checking: boolean = false): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
-		if (checking) {
-			return !!linkData && !linkData.embedded && !!linkData.link;
-		}
-
-		if (linkData) {
-			this.embedLinkUnderCursor(linkData, editor);
-		}
-	}
-
-	embedLinkUnderCursor(linkData: LinkData, editor: Editor) {
-		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && !linkData.embedded) {
-			editor.replaceRange(
-				'!' + linkData.content,
-				editor.offsetToPos(linkData.position.start),
-				editor.offsetToPos(linkData.position.end));
-		}
-	}
-
 }
 
 

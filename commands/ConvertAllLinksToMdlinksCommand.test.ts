@@ -11,7 +11,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock)
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.posToOffset.mockReturnValue(1)
+        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
         //
         const result = cmd.handler(editor, true)
         //
@@ -25,7 +25,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock)
         const editor = new EditorMock()
         editor.__mocks.getSelection.mockReturnValue('some text')
-        editor.__mocks.posToOffset.mockReturnValue(1)
+        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
         //
         const result = cmd.handler(editor, true)
         //
@@ -70,7 +70,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         ('status - cursor on [$name] - command enabled', ({ name, text }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(1)
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             const obsidianProxyMock = new ObsidianProxyMock()
             const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock)
             //
@@ -117,7 +117,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         ('status - selection with [$name] - command enabled', ({ name, text }) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(1)
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
             const obsidianProxyMock = new ObsidianProxyMock()
             const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock)
             //
@@ -258,11 +258,9 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(expected.length)
                     for (let call = 0; call < expected.length; call++) {
                         expect(editor.__mocks.replaceRange.mock.calls[call][0]).toBe(expected[call].text)
-                        expect(editor.__mocks.offsetToPos.mock.calls).toHaveLength(2 * expected.length)
-                        expect(editor.__mocks.offsetToPos.mock.calls[call * expected.length][0]).toBe(expected[call].start)
-                        expect(editor.__mocks.offsetToPos.mock.calls[call * expected.length + 1][0]).toBe(expected[call].end)
+                        expect(editor.__mocks.replaceRange.mock.calls[call][1].ch).toBe(expected[call].start)
+                        expect(editor.__mocks.replaceRange.mock.calls[call][2].ch).toBe(expected[call].end)
                     }
-
                     done()
                 }
                 catch (err) {
@@ -390,7 +388,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         ('convert all links - selection - success', ({ name, text, expected, cursurPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
-            editor.__mocks.posToOffset.mockReturnValue(0)
+            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 0})
 
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
@@ -406,11 +404,9 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(expected.length)
                     for (let call = 0; call < expected.length; call++) {
                         expect(editor.__mocks.replaceRange.mock.calls[call][0]).toBe(expected[call].text)
-                        expect(editor.__mocks.offsetToPos.mock.calls).toHaveLength(2 * expected.length)
-                        expect(editor.__mocks.offsetToPos.mock.calls[call * expected.length][0]).toBe(expected[call].start)
-                        expect(editor.__mocks.offsetToPos.mock.calls[call * expected.length + 1][0]).toBe(expected[call].end)
+                        expect(editor.__mocks.replaceRange.mock.calls[call][1].ch).toBe(expected[call].start)
+                        expect(editor.__mocks.replaceRange.mock.calls[call][2].ch).toBe(expected[call].end)
                     }
-
                     done()
                 }
                 catch (err) {
