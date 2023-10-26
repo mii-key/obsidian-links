@@ -21,6 +21,7 @@ import { EditLinkDestinationCommand } from 'commands/EditLinkDestinationCommand'
 import { CreateLinkFromSelectionCommand } from 'commands/CreateLinkFromSelectionCommand';
 import { CreateLinkFromClipboardCommand } from 'commands/CreateLinkFromClipboardCommand';
 import { SetLinkTextCommand } from 'commands/SetLinkTextCommand';
+import { EmbedLinkCommand } from 'commands/EmbedLinkCommand';
 
 
 export default class ObsidianLinksPlugin extends Plugin {
@@ -28,7 +29,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	obsidianProxy: ObsidianProxy;
 
 	readonly EmailScheme: string = "mailto:";
-	
+
 	linkTextSuggestContext: ILinkTextSuggestContext;
 
 
@@ -134,7 +135,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const options = {
 			get internalWikilinkWithoutTextReplacement() {
 				return settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement;
-			} 
+			}
 		};
 
 		const removeLinksFromHeadingsCommand = new RemoveLinksFromHeadingsCommand(options);
@@ -194,6 +195,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 			name: createLinkFromClipboardCommand.displayNameCommand,
 			icon: createLinkFromClipboardCommand.icon,
 			editorCheckCallback: (checking, editor, ctx) => createLinkFromClipboardCommand.handler(editor, checking)
+		});
+
+		const embedLinkCommand = new EmbedLinkCommand();
+		this.addCommand({
+			id: embedLinkCommand.id,
+			name: embedLinkCommand.displayNameCommand,
+			icon: embedLinkCommand.icon,
+			editorCheckCallback: (checking, editor, ctx) => embedLinkCommand.handler(editor, checking)
 		});
 
 		if (this.settings.ffMultipleLinkConversion) {
@@ -361,13 +370,13 @@ export default class ObsidianLinksPlugin extends Plugin {
 						});
 					}
 
-					if (this.settings.contexMenu.embedUnembedLink && this.embedLinkUnderCursorHandler(editor, true)) {
+					if (this.settings.contexMenu.embedUnembedLink && embedLinkCommand.handler(editor, true)) {
 						menu.addItem((item) => {
 							item
-								.setTitle("Embed")
-								.setIcon("file-input")
+								.setTitle(embedLinkCommand.displayNameContextMenu)
+								.setIcon(embedLinkCommand.icon)
 								.onClick(async () => {
-									this.embedLinkUnderCursorHandler(editor);
+									embedLinkCommand.handler(editor, false);
 								});
 						});
 					}
@@ -577,29 +586,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 				editor.offsetToPos(linkData.position.end));
 		}
 	}
-
-	embedLinkUnderCursorHandler(editor: Editor, checking: boolean = false): boolean | void {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
-		if (checking) {
-			return !!linkData && !linkData.embedded && !!linkData.link;
-		}
-
-		if (linkData) {
-			this.embedLinkUnderCursor(linkData, editor);
-		}
-	}
-
-	embedLinkUnderCursor(linkData: LinkData, editor: Editor) {
-		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && !linkData.embedded) {
-			editor.replaceRange(
-				'!' + linkData.content,
-				editor.offsetToPos(linkData.position.start),
-				editor.offsetToPos(linkData.position.end));
-		}
-	}
-
 }
 
 
