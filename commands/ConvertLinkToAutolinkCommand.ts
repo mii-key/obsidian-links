@@ -1,19 +1,25 @@
 import { Editor } from "obsidian";
-import { ICommand } from "./ICommand"
+import { CommandBase, Func, ICommand } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
 import { RegExPatterns } from "../RegExPatterns";
 
-export class ConvertLinkToAutolinkCommand implements ICommand {
+export class ConvertLinkToAutolinkCommand extends CommandBase {
 	// TODO: refactor
 	readonly EmailScheme: string = "mailto:";
 
+	constructor(isPresentInContextMenu:Func<boolean> = () => true, isEnabled:Func<boolean> = () => true){
+		super(isPresentInContextMenu, isEnabled);
 
-	id: string = 'editor-convert-link-to-autolink';
-	displayNameCommand: string = 'Convert to Autolink';
-	displayNameContextMenu: string = 'Convert to autolink';
-	icon: string = 'rotate-cw';
+		this.id = 'editor-convert-link-to-autolink';
+		this.displayNameCommand = 'Convert to Autolink';
+		this.displayNameContextMenu = 'Convert to autolink';
+		this.icon = 'rotate-cw';
+	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown);

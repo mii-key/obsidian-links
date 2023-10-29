@@ -11,7 +11,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock)
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
         //
         const result = cmd.handler(editor, true)
         //
@@ -25,7 +25,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock)
         const editor = new EditorMock()
         editor.__mocks.getSelection.mockReturnValue('some text')
-        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
         //
         const result = cmd.handler(editor, true)
         //
@@ -70,7 +70,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         ('status - cursor on [$name] - command enabled', ({ name, text }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
             const obsidianProxyMock = new ObsidianProxyMock()
             const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock)
             //
@@ -117,7 +117,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         ('status - selection with [$name] - command enabled', ({ name, text }) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
             const obsidianProxyMock = new ObsidianProxyMock()
             const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock)
             //
@@ -249,7 +249,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                 status: 200,
                 text: "<title>Google</title>"
             })
-            const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock, (err, data) => {
+            const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
                     return
@@ -388,14 +388,14 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         ('convert all links - selection - success', ({ name, text, expected, cursurPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 0})
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
 
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"
             })
-            const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock, (err, data) => {
+            const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
                     return

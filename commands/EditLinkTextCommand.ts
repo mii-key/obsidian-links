@@ -1,16 +1,23 @@
 import { Editor } from "obsidian";
-import { ICommand  } from "./ICommand"
+import { CommandBase, Func, ICommand  } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
 
-export class EditLinkTextCommand implements ICommand {
-    id: string = 'editor-edit-link-text';
-    displayNameCommand: string = 'Edit link text';
-    displayNameContextMenu: string = 'Edit link text';
-    icon: string = 'text-cursor-input';
-
+export class EditLinkTextCommand extends CommandBase {
 	generateLinkTextOnEdit = true;
 
+	constructor(isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
+		super(isPresentInContextMenu, isEnabled);
+		this.id = 'editor-edit-link-text';
+		this.displayNameCommand = 'Edit link text';
+		this.displayNameContextMenu = 'Edit link text';
+		this.icon = 'text-cursor-input';
+	}
+
     handler(editor: Editor, checking: boolean) : boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
+
         const linkData = this.getLink(editor);
 		if (checking) {
 			return !!linkData && !!linkData.text;

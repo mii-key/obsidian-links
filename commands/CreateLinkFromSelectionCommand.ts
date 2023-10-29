@@ -1,14 +1,23 @@
 import { Editor } from "obsidian";
-import { ICommand  } from "./ICommand"
+import { CommandBase, Func, ICommand  } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
 
-export class CreateLinkFromSelectionCommand implements ICommand {
-    id: string = 'editor-create-link-from-selection';
-    displayNameCommand: string = 'Create link';
-    displayNameContextMenu: string = 'Create link';
-    icon: string = 'link';
+export class CreateLinkFromSelectionCommand extends CommandBase {
+    
+
+	constructor(isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true){
+		super(isPresentInContextMenu, isEnabled);
+		this.id = 'editor-create-link-from-selection';
+		this.displayNameCommand = 'Create link';
+		this.displayNameContextMenu = 'Create link';
+		this.icon = 'link';
+	}
 
     handler(editor: Editor, checking: boolean) : boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
+
 		const selection = editor.getSelection();
 
 		if (checking) {

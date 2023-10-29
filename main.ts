@@ -1,29 +1,12 @@
-import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, PluginSettingTab, Setting, TAbstractFile, htmlToMarkdown, requestUrl, moment, RequestUrlParam, RequestUrlResponsePromise } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkTypes, LinkData, removeLinksFromHeadings, getPageTitle, getLinkTitles, getFileName, replaceMarkdownTarget, HasLinksInHeadings, removeExtention, HasLinks, removeLinks, findLinks } from './utils';
+import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, TAbstractFile, htmlToMarkdown, requestUrl, moment, RequestUrlParam, RequestUrlResponsePromise } from 'obsidian';
+import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtention } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
-import { RegExPatterns } from 'RegExPatterns';
-import { UnlinkLinkCommand } from 'commands/UnlinkLinkCommand';
-import { DeleteLinkCommand } from 'commands/DeleteLinkCommand';
-import { ConvertLinkToMdlinkCommand } from 'commands/ConvertLinkToMdlinkCommand';
 import { ObsidianProxy } from 'commands/ObsidianProxy';
-import { ConvertAllLinksToMdlinksCommand } from 'commands/ConvertAllLinksToMdlinksCommand';
-import { ICommand } from 'commands/ICommand';
-import { RemoveLinksFromHeadingsCommand } from 'commands/RemoveLinksFromHeadingsCommand';
 import { DEFAULT_SETTINGS, IObsidianLinksSettings } from 'settings';
 import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
-import { ConvertLinkToWikilinkCommand } from 'commands/ConvertLinkToWikilinkCommand';
-import { ConvertLinkToAutolinkCommand } from 'commands/ConvertLinkToAutolinkCommand';
-import { CopyLinkDestinationToClipboardCommand } from 'commands/CopyLinkDestinationToClipboardCommand';
-import { EditLinkTextCommand } from 'commands/EditLinkTextCommand';
-import { EditLinkDestinationCommand } from 'commands/EditLinkDestinationCommand';
-import { CreateLinkFromSelectionCommand } from 'commands/CreateLinkFromSelectionCommand';
-import { CreateLinkFromClipboardCommand } from 'commands/CreateLinkFromClipboardCommand';
-import { SetLinkTextCommand } from 'commands/SetLinkTextCommand';
-import { EmbedLinkCommand } from 'commands/EmbedLinkCommand';
-import { UnembedLinkCommand } from 'commands/UnembedLinkCommand';
-
+import { getContextMenuCommands, getPaletteCommands } from 'commands/Commands';
 
 export default class ObsidianLinksPlugin extends Plugin {
 	settings: IObsidianLinksSettings;
@@ -56,7 +39,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 		};
 
-		this.obsidianProxy = new ObsidianProxy(this.linkTextSuggestContext);
+		this.obsidianProxy = new ObsidianProxy(this.linkTextSuggestContext, this.settings);
 	}
 
 	createNotice(message: string | DocumentFragment, timeout?: number): Notice {
@@ -84,94 +67,15 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 		this.registerEditorSuggest(new LinkTextSuggest(this.linkTextSuggestContext));
 
-		const unlinkCommand = new UnlinkLinkCommand();
-		this.addCommand({
-			id: unlinkCommand.id,
-			name: unlinkCommand.displayNameCommand,
-			icon: unlinkCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => unlinkCommand.handler(editor, checking)
-		});
-
-		const deleteLinkCommand = new DeleteLinkCommand();
-		this.addCommand({
-			id: deleteLinkCommand.id,
-			name: deleteLinkCommand.displayNameCommand,
-			icon: deleteLinkCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => deleteLinkCommand.handler(editor, checking)
-		});
-
-		const convertLinkToMdlinkCommand: ICommand = new ConvertLinkToMdlinkCommand(this.obsidianProxy);
-		this.addCommand({
-			id: convertLinkToMdlinkCommand.id,
-			name: convertLinkToMdlinkCommand.displayNameCommand,
-			icon: convertLinkToMdlinkCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => convertLinkToMdlinkCommand.handler(editor, checking)
-		});
-
-		const convertLinkToWikilinkCommand = new ConvertLinkToWikilinkCommand();
-		this.addCommand({
-			id: convertLinkToWikilinkCommand.id,
-			name: convertLinkToWikilinkCommand.displayNameCommand,
-			icon: convertLinkToWikilinkCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => convertLinkToWikilinkCommand.handler(editor, checking)
-		});
-
-		const convertLinkToAutolinkCommand = new ConvertLinkToAutolinkCommand();
-		this.addCommand({
-			id: convertLinkToAutolinkCommand.id,
-			name: convertLinkToAutolinkCommand.displayNameCommand,
-			icon: convertLinkToAutolinkCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => convertLinkToAutolinkCommand.handler(editor, checking)
-		});
-
-		const copyLinkDestinationToClipboardCommand = new CopyLinkDestinationToClipboardCommand(this.obsidianProxy);
-		this.addCommand({
-			id: copyLinkDestinationToClipboardCommand.id,
-			name: copyLinkDestinationToClipboardCommand.displayNameCommand,
-			icon: copyLinkDestinationToClipboardCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => copyLinkDestinationToClipboardCommand.handler(editor, checking)
-		});
-
-		const settings = this.settings;
-		const options = {
-			get internalWikilinkWithoutTextReplacement() {
-				return settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement;
-			}
-		};
-
-		const removeLinksFromHeadingsCommand = new RemoveLinksFromHeadingsCommand(options);
-		this.addCommand({
-			id: removeLinksFromHeadingsCommand.id,
-			name: removeLinksFromHeadingsCommand.displayNameCommand,
-			icon: removeLinksFromHeadingsCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => removeLinksFromHeadingsCommand.handler(editor, checking)
-		});
-
-		const editLinkTextCommand = new EditLinkTextCommand();
-		this.addCommand({
-			id: editLinkTextCommand.id,
-			name: editLinkTextCommand.displayNameCommand,
-			icon: editLinkTextCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => editLinkTextCommand.handler(editor, checking)
-		});
-
-
-		const setLinkTextCommand = new SetLinkTextCommand(this.obsidianProxy);
-		this.addCommand({
-			id: setLinkTextCommand.id,
-			name: setLinkTextCommand.displayNameCommand,
-			icon: setLinkTextCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => setLinkTextCommand.handler(editor, checking)
-		});
-
-
-		const editLinkDestinationCommand = new EditLinkDestinationCommand();
-		this.addCommand({
-			id: editLinkDestinationCommand.id,
-			name: editLinkDestinationCommand.displayNameCommand,
-			icon: editLinkDestinationCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => editLinkDestinationCommand.handler(editor, checking)
-		});
+		const commands = getPaletteCommands(this.obsidianProxy, this.settings);
+		for (let cmd of commands) {
+			this.addCommand({
+				id: cmd.id,
+				name: cmd.displayNameCommand,
+				icon: cmd.icon,
+				editorCheckCallback: (checking, editor, ctx) => cmd.handler(editor, checking)
+			});
+		}
 
 		if (this.settings.ffReplaceLink) {
 			this.addCommand({
@@ -179,48 +83,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 				name: 'Replace link',
 				icon: "pencil",
 				editorCheckCallback: (checking, editor, ctx) => this.replaceExternalLinkUnderCursorHandler(editor, checking)
-			});
-		}
-
-		const createLinkFromSelectionCommand = new CreateLinkFromSelectionCommand();
-		this.addCommand({
-			id: createLinkFromSelectionCommand.id,
-			name: createLinkFromSelectionCommand.displayNameCommand,
-			icon: createLinkFromSelectionCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => createLinkFromSelectionCommand.handler(editor, checking)
-		});
-
-		const createLinkFromClipboardCommand = new CreateLinkFromClipboardCommand(this.obsidianProxy);
-		this.addCommand({
-			id: createLinkFromClipboardCommand.id,
-			name: createLinkFromClipboardCommand.displayNameCommand,
-			icon: createLinkFromClipboardCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => createLinkFromClipboardCommand.handler(editor, checking)
-		});
-
-		const embedLinkCommand = new EmbedLinkCommand();
-		this.addCommand({
-			id: embedLinkCommand.id,
-			name: embedLinkCommand.displayNameCommand,
-			icon: embedLinkCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => embedLinkCommand.handler(editor, checking)
-		});
-
-		const unembedLinkCommand = new UnembedLinkCommand();
-		this.addCommand({
-			id: unembedLinkCommand.id,
-			name: unembedLinkCommand.displayNameCommand,
-			icon: unembedLinkCommand.icon,
-			editorCheckCallback: (checking, editor, ctx) => unembedLinkCommand.handler(editor, checking)
-		});
-
-		if (this.settings.ffMultipleLinkConversion) {
-			const convertAllLinksToMdlinksCommand = new ConvertAllLinksToMdlinksCommand(this.obsidianProxy)
-			this.addCommand({
-				id: convertAllLinksToMdlinksCommand.id,
-				name: convertAllLinksToMdlinksCommand.displayNameCommand,
-				icon: convertAllLinksToMdlinksCommand.icon,
-				editorCheckCallback: (checking, editor, ctx) => convertAllLinksToMdlinksCommand.handler(editor, checking)
 			});
 		}
 
@@ -259,173 +121,36 @@ export default class ObsidianLinksPlugin extends Plugin {
 					addTopSeparator = function () { };
 				}
 
-				if (linkData) {
-					addTopSeparator();
-					if (this.settings.contexMenu.editLinkText && editLinkTextCommand.handler(editor, true)) {
-						menu.addItem((item) => {
-							item
-								.setTitle(editLinkTextCommand.displayNameContextMenu)
-								.setIcon(editLinkTextCommand.icon)
-								.onClick(async () => {
-									editLinkTextCommand.handler(editor, false);
-								});
-						});
-					}
-					if (this.settings.contexMenu.setLinkText && setLinkTextCommand.handler(editor, true)) {
-						menu.addItem((item) => {
-							item
-								.setTitle(setLinkTextCommand.displayNameContextMenu)
-								.setIcon(setLinkTextCommand.icon)
-								.onClick(async () => {
-									setLinkTextCommand.handler(editor, false);
-								});
-						});
-					}
-
-					if (this.settings.contexMenu.editLinkDestination && editLinkDestinationCommand.handler(editor, true)) {
-						menu.addItem((item) => {
-							item
-								.setTitle(editLinkDestinationCommand.displayNameContextMenu)
-								.setIcon(editLinkDestinationCommand.icon)
-								.onClick(async () => {
-									editLinkDestinationCommand.handler(editor, false);
-								});
-						});
-					}
-
-					if (this.settings.contexMenu.copyLinkDestination && copyLinkDestinationToClipboardCommand.handler(editor, true)) {
-						menu.addItem((item) => {
-							item
-								.setTitle(copyLinkDestinationToClipboardCommand.displayNameContextMenu)
-								.setIcon(copyLinkDestinationToClipboardCommand.icon)
-								.onClick(async () => {
-									copyLinkDestinationToClipboardCommand.handler(editor, false);
-								});
-						});
-					}
-				}
-
-				// TODO: use found link
-				if (this.settings.contexMenu.unlink && unlinkCommand.handler(editor, true)) {
-					addTopSeparator();
-					menu.addItem((item) => {
-						item
-							.setTitle(unlinkCommand.displayNameContextMenu)
-							.setIcon(unlinkCommand.icon)
-							.onClick(() => {
-								unlinkCommand.handler(editor, false)
-							});
-					});
-				}
-
-				if (linkData) {
-					addTopSeparator();
-					if (linkData.type == LinkTypes.Markdown) {
-						if (this.settings.contexMenu.convertToWikilink && convertLinkToWikilinkCommand.handler(editor, true)) {
-							menu.addItem((item) => {
-								item
-									.setTitle(convertLinkToWikilinkCommand.displayNameContextMenu)
-									.setIcon(convertLinkToWikilinkCommand.icon)
-									.onClick(async () => {
-										convertLinkToWikilinkCommand.handler(editor, false);
-									});
-							});
-						}
-
-						if (this.settings.contexMenu.convertToAutolink && convertLinkToAutolinkCommand.handler(editor, true)) {
-							menu.addItem((item) => {
-								item
-									.setTitle(convertLinkToAutolinkCommand.displayNameContextMenu)
-									.setIcon(convertLinkToAutolinkCommand.icon)
-									.onClick(async () => {
-										convertLinkToAutolinkCommand.handler(editor, false);
-									});
-							});
-						}
-
-						if (this.settings.ffReplaceLink && this.settings.contexMenu.replaceLink) {
-							menu.addItem((item) => {
-								item
-									.setTitle("Replace link")
-									.setIcon("pencil")
-									.onClick(async () => {
-										this.replaceExternalLink(linkData, editor);
-									});
-							});
-						}
+				const commands = getContextMenuCommands(this.obsidianProxy, this.settings);
+				for (const cmd of commands) {
+					if (cmd == null) {
+						addTopSeparator();
 					} else {
-						if (this.settings.contexMenu.convertToMakrdownLink && convertLinkToMdlinkCommand.handler(editor, true)) {
+						if (cmd.handler(editor, true)) {
 							menu.addItem((item) => {
 								item
-									.setTitle(convertLinkToMdlinkCommand.displayNameContextMenu)
-									.setIcon(convertLinkToMdlinkCommand.icon)
+									.setTitle(cmd.displayNameContextMenu)
+									.setIcon(cmd.icon)
 									.onClick(async () => {
-										//TODO: use found link
-										convertLinkToMdlinkCommand.handler(editor, false);
+										cmd.handler(editor, false);
 									});
 							});
 						}
-
 					}
+				}
 
-					if (this.settings.contexMenu.embedUnembedLink && unembedLinkCommand.handler(editor, true)) {
+				if (linkData) {
+					if (this.settings.ffReplaceLink && this.settings.contexMenu.replaceLink) {
 						menu.addItem((item) => {
 							item
-								.setTitle(unembedLinkCommand.displayNameContextMenu)
-								.setIcon(unembedLinkCommand.icon)
+								.setTitle("Replace link")
+								.setIcon("pencil")
 								.onClick(async () => {
-									unembedLinkCommand.handler(editor, false);
-								});
-						});
-					}
-
-					if (this.settings.contexMenu.embedUnembedLink && embedLinkCommand.handler(editor, true)) {
-						menu.addItem((item) => {
-							item
-								.setTitle(embedLinkCommand.displayNameContextMenu)
-								.setIcon(embedLinkCommand.icon)
-								.onClick(async () => {
-									embedLinkCommand.handler(editor, false);
-								});
-						});
-					}
-
-					//TODO: use found link
-					if (this.settings.contexMenu.deleteLink && deleteLinkCommand.handler(editor, true)) {
-						menu.addItem((item) => {
-							item
-								.setTitle(deleteLinkCommand.displayNameContextMenu)
-								.setIcon(deleteLinkCommand.icon)
-								.onClick(async () => {
-									deleteLinkCommand.handler(editor, false);
-								});
-						});
-					}
-
-				} else {
-					addTopSeparator();
-					if (this.settings.contexMenu.createLink && createLinkFromSelectionCommand.handler(editor, true)) {
-						menu.addItem((item) => {
-							item
-								.setTitle(createLinkFromSelectionCommand.displayNameContextMenu)
-								.setIcon(createLinkFromSelectionCommand.icon)
-								.onClick(async () => {
-									createLinkFromSelectionCommand.handler(editor, false);
-								});
-						});
-					}
-					if (this.settings.contexMenu.createLinkFromClipboard && createLinkFromClipboardCommand.handler(editor, true)) {
-						menu.addItem((item) => {
-							item
-								.setTitle(createLinkFromClipboardCommand.displayNameContextMenu)
-								.setIcon(createLinkFromClipboardCommand.icon)
-								.onClick(async () => {
-									createLinkFromClipboardCommand.handler(editor, false);
+									this.replaceExternalLink(linkData, editor);
 								});
 						});
 					}
 				}
-
 			})
 		);
 	}
@@ -534,7 +259,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 		}
 	}
-
 
 	deleteFileHandler(file: TAbstractFile) {
 		const [pathWithoutExtention, success] = removeExtention(file.path);

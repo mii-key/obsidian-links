@@ -122,7 +122,7 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 status: 200,
                 text: "<title>Google</title>"
             })
-            const cmd = new ConvertLinkToMdlinkCommand(obsidianProxyMock, (err, data) => {
+            const cmd = new ConvertLinkToMdlinkCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if(err){
                     done(err)
                     return

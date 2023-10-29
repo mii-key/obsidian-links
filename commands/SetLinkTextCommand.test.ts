@@ -182,7 +182,7 @@ describe('SetLinkTextCommand test', () => {
                 status: 200,
                 text: "<title>Google</title>"
             })
-            const cmd = new SetLinkTextCommand(obsidianProxyMock, (err, data) => {
+            const cmd = new SetLinkTextCommand(obsidianProxyMock, () => true, () => true,  (err, data) => {
                 if (err) {
                     done(err)
                     return

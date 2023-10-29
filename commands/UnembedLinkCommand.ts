@@ -1,14 +1,22 @@
 import { Editor } from "obsidian";
-import { ICommand  } from "./ICommand"
+import { CommandBase, Func, ICommand  } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
 
-export class UnembedLinkCommand implements ICommand {
-    id: string = 'editor-unembed-link';
-    displayNameCommand: string = 'Unembed link';
-    displayNameContextMenu: string = 'Unembed';
-    icon: string = 'file-output';
+export class UnembedLinkCommand extends CommandBase {
 
+	constructor(isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
+		super(isPresentInContextMenu, isEnabled);
+		this.id = 'editor-unembed-link';
+		this.displayNameCommand = 'Unembed link';
+		this.displayNameContextMenu = 'Unembed';
+		this.icon = 'file-output';
+	}
+	
     handler(editor: Editor, checking: boolean) : boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
+
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);

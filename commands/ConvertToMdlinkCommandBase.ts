@@ -2,13 +2,16 @@ import { LinkData, LinkTypes, getPageTitle } from "../utils";
 import { Editor } from "obsidian";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
+import { CommandBase, Func } from "./ICommand";
 
-export abstract class ConvertToMdlinkCommandBase {
+export abstract class ConvertToMdlinkCommandBase extends CommandBase {
 
     obsidianProxy: IObsidianProxy;
     readonly EmailScheme: string = "mailto:";
 
-    constructor(obsidianProxy: IObsidianProxy) {
+    constructor(obsidianProxy: IObsidianProxy,
+        isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
+        super(isPresentInContextMenu, isEnabled);
         this.obsidianProxy = obsidianProxy;
     }
 

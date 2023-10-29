@@ -1,27 +1,33 @@
 import { Editor } from "obsidian";
-import { ICommand } from "./ICommand"
+import { CommandBase, Func, ICommand } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, getFileName, getLinkTitles, getPageTitle, removeLinks } from "../utils";
 import { ObsidianProxy } from "./ObsidianProxy";
 import { ILinkTextSuggestContext } from "suggesters/ILinkTextSuggestContext";
 import { IObsidianProxy } from "./IObsidianProxy";
 
-export class SetLinkTextCommand implements ICommand {
-	id: string = 'editor-set-link-text';
-	displayNameCommand: string = 'Set link text';
-	displayNameContextMenu: string = 'Set link text';
-	icon: string = 'text-cursor-input';
+export class SetLinkTextCommand extends CommandBase {
 
 	obsidianProxy: IObsidianProxy;
 	callback: ((error: Error | null, data: any) => void) | undefined;
 
-	constructor(
-		obsidianProxy: IObsidianProxy,
+	constructor(obsidianProxy: IObsidianProxy, 
+		isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true,
 		callback: ((error: Error | null, data: any) => void) | undefined = undefined) {
+		super(isPresentInContextMenu, isEnabled);
+		this.id = 'editor-set-link-text';
+		this.displayNameCommand = 'Set link text';
+		this.displayNameContextMenu = 'Set link text';
+		this.icon = 'text-cursor-input';
+
 		this.obsidianProxy = obsidianProxy;
 		this.callback = callback;
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
+
 		const linkData = this.getLink(editor);
 		if (checking) {
 			return !!linkData
