@@ -1,23 +1,31 @@
 import { Editor } from "obsidian";
-import { ICommand } from "./ICommand"
+import { Func, ICommand } from "./ICommand"
 import { LinkTypes, findLink, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from './ConvertToMdlinkCommandBase'
 
 
-export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase implements ICommand {
-	id: string = 'editor-convert-all-links-to-mdlinks';
-	displayNameCommand: string = 'Convert all links to Markdown links';
-	displayNameContextMenu: string = 'Convert all links to Markdown links';
-	icon: string = 'rotate-cw';
+export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase {
+
 	callback: ((error: Error | null, data: any) => void) | undefined
 
-	constructor(obsidianProxy: IObsidianProxy, callback: ((error: Error | null, data: any) => void) | undefined = undefined) {
-		super(obsidianProxy)
+	constructor(obsidianProxy: IObsidianProxy, isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true,
+		callback: ((error: Error | null, data: any) => void) | undefined = undefined,
+	) {
+		super(obsidianProxy, isPresentInContextMenu, isEnabled)
+
+		this.id = 'editor-convert-all-links-to-mdlinks';
+		this.displayNameCommand = 'Convert all links to Markdown links';
+		this.displayNameContextMenu = 'Convert all links to Markdown links';
+		this.icon = 'rotate-cw';
 		this.callback = callback;
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
+
 		const selection = editor.getSelection()
 		const text = selection || editor.getValue();
 		const links = findLinks(text);
@@ -35,15 +43,15 @@ export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase 
 				await this.convertLinkToMarkdownLink(link, editor, false, selectionOffset)
 			}
 		})()
-		.then(() => {
-			if (this.callback) {
-				this.callback(null, undefined);
-			}
-		})
-		.catch((err) => {
-			if (this.callback) {
-				this.callback(err, undefined);
-			}
-		});
+			.then(() => {
+				if (this.callback) {
+					this.callback(null, undefined);
+				}
+			})
+			.catch((err) => {
+				if (this.callback) {
+					this.callback(err, undefined);
+				}
+			});
 	}
 }

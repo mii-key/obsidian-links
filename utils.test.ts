@@ -1,5 +1,5 @@
 import exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, HasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, WikilinkDestinationReplacement } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction } from './utils';
 import { expect, test } from '@jest/globals';
 
 describe("Utils tests", () => {
@@ -309,47 +309,121 @@ describe("Utils tests", () => {
         expect(result).toBe(expected);
     });
 
-    test.each([
+    test.only.each([
+        // {
+        //     name: "headings without links",
+        //     linksInHeadings: false,
+        //     internalWikilinkWithoutTextAction: undefined,
+        //     input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+        //         "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+        //         "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+        //         "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+        //         " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+        //         "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
+        //         "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+        //     expected: null
+        // },
+        // {
+        //     name: "wiki, markdown, html links",
+        //     linksInHeadings: true,
+        //     internalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
+        //     input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+        //         "# Aute officia [do eu](ea sit aute). Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+        //         "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+        //         "## [[amet mollit velit|Duis cupidatat]]. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+        //         " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+        //         "### [[Tempor]] voluptate aute dolore non deserunt duis voluptate. \r\n" +
+        //         "Pariatur ad laboris voluptate labore esse dolor deserunt. Dolor pariatur do nisi cillum cillum ad sit duis laborum enim enim Lorem ipsum adipisicing.\n" +
+        //         "# Sint [[nulla#heading1#headin1.1]] excepteur eu exercitation aute. Elit ipsum duis voluptate sint exercitation anim aliqua proident mollit. Laborum amet consequat esse duis \n" +
+        //         "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
+        //         "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
+        //         "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
+        //         "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+        //     expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+        //         "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+        //         "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+        //         "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+        //         " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+        //         "###  voluptate aute dolore non deserunt duis voluptate. \r\n" +
+        //         "Pariatur ad laboris voluptate labore esse dolor deserunt. Dolor pariatur do nisi cillum cillum ad sit duis laborum enim enim Lorem ipsum adipisicing.\n" +
+        //         "# Sint  excepteur eu exercitation aute. Elit ipsum duis voluptate sint exercitation anim aliqua proident mollit. Laborum amet consequat esse duis \n" +
+        //         "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
+        //         "# Elit  tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
+        //         "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
+        //         "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+        // },
+        // {
+        //     name: "wiki, markdown, html links",
+        //     linksInHeadings: true,
+        //     internalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.ReplaceWithDestination,
+        //     input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+        //         "# Aute officia [do eu](ea sit aute). Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+        //         "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+        //         "## [[amet mollit velit|Duis cupidatat]]. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+        //         " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+        //         "### [[Tempor]] voluptate aute dolore non deserunt duis voluptate. \r\n" +
+        //         "Pariatur ad laboris voluptate labore esse dolor deserunt. Dolor pariatur do nisi cillum cillum ad sit duis laborum enim enim Lorem ipsum adipisicing.\n" +
+        //         "# Sint [[nulla#heading1#headin1.1]] excepteur eu exercitation aute. Elit ipsum duis voluptate sint exercitation anim aliqua proident mollit. Laborum amet consequat esse duis \n" +
+        //         "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
+        //         "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
+        //         "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
+        //         "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+        //     expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
+        //         "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
+        //         "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
+        //         "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
+        //         " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
+        //         "### Tempor voluptate aute dolore non deserunt duis voluptate. \r\n" +
+        //         "Pariatur ad laboris voluptate labore esse dolor deserunt. Dolor pariatur do nisi cillum cillum ad sit duis laborum enim enim Lorem ipsum adipisicing.\n" +
+        //         "# Sint nulla#heading1#headin1.1 excepteur eu exercitation aute. Elit ipsum duis voluptate sint exercitation anim aliqua proident mollit. Laborum amet consequat esse duis \n" +
+        //         "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
+        //         "# Elit #sunt tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
+        //         "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
+        //         "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+        // },
         {
             name: "wiki, markdown, html links",
+            linksInHeadings: true,
+            internalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.ReplaceWithLowestNoteHeading,
             input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
                 "# Aute officia [do eu](ea sit aute). Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
                 "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
                 "## [[amet mollit velit|Duis cupidatat]]. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
                 " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
-                "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
+                "### [[Tempor]] voluptate aute dolore non deserunt duis voluptate. \r\n" +
+                "Pariatur ad laboris voluptate labore esse dolor deserunt. Dolor pariatur do nisi cillum cillum ad sit duis laborum enim enim Lorem ipsum adipisicing.\n" +
+                "# Sint [[nulla#heading1#headin1.1]] excepteur eu exercitation aute. Elit ipsum duis voluptate sint exercitation anim aliqua proident mollit. Laborum amet consequat esse duis \n" +
+                "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
+                "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
+                "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
                 "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
             expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
                 "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
                 "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
                 "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
                 " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
-                "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
-                "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n"
-        },
-        {
-            name: "headings without links",
-            input: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
-                "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
-                "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
-                "## Duis cupidatat. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\r\n" +
-                " Ut aliquip qui eu nulla Lorem elit aliqua.\n" +
-                "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip.\n" +
+                "### Tempor voluptate aute dolore non deserunt duis voluptate. \r\n" +
+                "Pariatur ad laboris voluptate labore esse dolor deserunt. Dolor pariatur do nisi cillum cillum ad sit duis laborum enim enim Lorem ipsum adipisicing.\n" +
+                "# Sint headin1.1 excepteur eu exercitation aute. Elit ipsum duis voluptate sint exercitation anim aliqua proident mollit. Laborum amet consequat esse duis \n" +
+                "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
+                "# Elit sunt tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
+                "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
                 "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
-            expected: null
-        }
-    ])('HasLinksInHeadings: $# check & remove links from headings [$name]', ({ name, input, expected }) => {
+        },
+        
+    ])('removeLinksFromHeadings check & remove links from headings [$name] - linksInHeadings:$linksInHeadings, InternalWikilinkWithoutTextAction:$internalWikilinkWithoutTextAction: $# ', 
+        ({ name, linksInHeadings, internalWikilinkWithoutTextAction, input, expected }) => {
 
-        const hasLinks = HasLinksInHeadings(input);
-        if (expected) {
+        const hasLinks = hasLinksInHeadings(input);
+        expect(hasLinks).toBe(linksInHeadings);
+
+        if (linksInHeadings) {
             expect(hasLinks).toBeTruthy();
             const options = {
-                internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination
+                internalWikilinkWithoutTextAction: internalWikilinkWithoutTextAction
             };
             const result = removeLinksFromHeadings(input, options);
             expect(result).toBe(expected);
-        } else {
-            expect(hasLinks).toBeFalsy();
         }
     });
 

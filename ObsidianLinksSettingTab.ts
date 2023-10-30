@@ -1,6 +1,6 @@
 import ObsidianLinksPlugin from "main";
 import { App, PluginSettingTab, Setting } from "obsidian";
-import { WikilinkDestinationReplacement } from "utils";
+import { InternalWikilinkWithoutTextAction } from "utils";
 
 export class ObsidianLinksSettingTab extends PluginSettingTab {
     plugin: ObsidianLinksPlugin;
@@ -29,23 +29,24 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         const removeLinksFromHeadingCaptionEl = containerEl.createEl('h4', { text: 'Remove links from headings' });
         const settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn = new Setting(containerEl)
-            .setName('Replace internal wikilink without text with')
+            .setName('Internal wikilink without text')
             .addDropdown(dropDown =>
                 dropDown
                     .addOptions({
-                        Destination: "Destination",
-                        LowestNoteHeading: "Lowest heading"
+                        Delete: "Remove",
+                        ReplaceWithDestination: "Replace with destination",
+                        ReplaceWithLowestNoteHeading: "Replace with lowest heading"
                     })
-                    .setValue(WikilinkDestinationReplacement[this.plugin.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement])
+                    .setValue(InternalWikilinkWithoutTextAction[this.plugin.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction])
                     .onChange(async (value: string) => {
-                        this.plugin.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement = value as WikilinkDestinationReplacement;
+                        this.plugin.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction = value as InternalWikilinkWithoutTextAction;
                         await this.plugin.saveSettings();
                     }));
 
-        if (!this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions) {
-            removeLinksFromHeadingCaptionEl.hide();
-            settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.hide();
-        }
+        // if (!this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions) {
+        //     removeLinksFromHeadingCaptionEl.hide();
+        //     settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.hide();
+        // }
 
         // -- Configure context menu
         containerEl.createEl('h3', { text: 'Context menu' });
@@ -303,40 +304,40 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             feature2SettingDesc.appendText('.');
         }
 
-        // feature: options for remove internal wikilink without text replacement
+        // // feature: options for remove internal wikilink without text replacement
 
-        new Setting(containerEl)
-            .setName("Configure `Remove links from heading' command")
-            .setDesc("Configure `Remove links from heading' command behavior.")
-            .setClass("setting-item--insider-feature3")
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions)
-                    .onChange(async (value) => {
-                        this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions = value;
-                        if (value) {
-                            removeLinksFromHeadingCaptionEl.show();
-                            settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.show();
-                        } else {
-                            removeLinksFromHeadingCaptionEl.hide();
-                            settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.hide();
-                        }
-                        await this.plugin.saveSettings();
-                    })
+        // new Setting(containerEl)
+        //     .setName("Configure `Remove links from heading' command")
+        //     .setDesc("Configure `Remove links from heading' command behavior.")
+        //     .setClass("setting-item--insider-feature3")
+        //     .addToggle((toggle) => {
+        //         toggle
+        //             .setValue(this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions)
+        //             .onChange(async (value) => {
+        //                 this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions = value;
+        //                 if (value) {
+        //                     removeLinksFromHeadingCaptionEl.show();
+        //                     settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.show();
+        //                 } else {
+        //                     removeLinksFromHeadingCaptionEl.hide();
+        //                     settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.hide();
+        //                 }
+        //                 await this.plugin.saveSettings();
+        //             })
 
-            });
+        //     });
 
-        const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
+        // const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
 
-        if (feature3SettingDesc) {
-        	feature3SettingDesc.appendText(' see ');
-        	feature3SettingDesc.appendChild(
-        		createEl('a', {
-        			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/configure-remove-links-from-headings.md',
-        			text: 'docs'
-        		}));
-        		feature3SettingDesc.appendText('.');
-        }
+        // if (feature3SettingDesc) {
+        // 	feature3SettingDesc.appendText(' see ');
+        // 	feature3SettingDesc.appendChild(
+        // 		createEl('a', {
+        // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/configure-remove-links-from-headings.md',
+        // 			text: 'docs'
+        // 		}));
+        // 		feature3SettingDesc.appendText('.');
+        // }
 
         // // feature embed/unembed
 

@@ -1,14 +1,22 @@
 import { Editor } from "obsidian";
-import { ICommand  } from "./ICommand"
+import { CommandBase, Func, ICommand  } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
 
-export class UnlinkLinkCommand implements ICommand {
-    id: string = 'editor-unlink-link';
-    displayNameCommand: string = 'Unlink';
-    displayNameContextMenu: string = 'Unlink';
-    icon: string = 'unlink';
+export class UnlinkLinkCommand extends CommandBase {
+
+	constructor(isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
+		super(isPresentInContextMenu, isEnabled);
+		this.id = 'editor-unlink-link';
+		this.displayNameCommand = 'Unlink';
+		this.displayNameContextMenu = 'Unlink';
+		this.icon = 'unlink';
+	}
 
     handler(editor: Editor, checking: boolean) : boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
+
         const selection = editor.getSelection();
 		if (selection) {
 			if (checking) {

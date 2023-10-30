@@ -92,7 +92,7 @@ describe('CreateLinkFromClipboardCommand test', () => {
             })
             obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
 
-            const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock, (err, data) => {
+            const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if(err){
                     done(err)
                     return

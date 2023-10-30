@@ -1,18 +1,23 @@
 import { Editor } from "obsidian";
-import { ICommand } from "./ICommand"
+import { CommandBase, Func, ICommand } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
 
-export class ConvertLinkToWikilinkCommand implements ICommand {
+export class ConvertLinkToWikilinkCommand extends CommandBase {
 	// TODO: refactor
 	readonly EmailScheme: string = "mailto:";
 
-
-	id: string = 'editor-convert-link-to-wikilink';
-	displayNameCommand: string = 'Convert to Wikilink';
-	displayNameContextMenu: string = 'Convert to wikilink';
-	icon: string = 'rotate-cw';
+	constructor(isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
+		super(isPresentInContextMenu, isEnabled)
+		this.id = 'editor-convert-link-to-wikilink';
+		this.displayNameCommand = 'Convert to Wikilink';
+		this.displayNameContextMenu = 'Convert to wikilink';
+		this.icon = 'rotate-cw';
+	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown);

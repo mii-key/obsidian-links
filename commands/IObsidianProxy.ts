@@ -1,4 +1,5 @@
 import { Notice, RequestUrlParam, RequestUrlResponsePromise } from "obsidian";
+import { IObsidianLinksSettings } from "settings";
 import { LinkData } from "utils";
 
 export interface IObsidianProxy {
@@ -7,4 +8,5 @@ export interface IObsidianProxy {
     clipboardWriteText(text: string): void;
     clipboardReadText() : Promise<string>;
     linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]) : void;
+    settings: IObsidianLinksSettings;
 }

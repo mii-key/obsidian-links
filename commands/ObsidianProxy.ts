@@ -1,13 +1,16 @@
 import { App, Notice, RequestUrlParam, RequestUrlResponsePromise, requestUrl } from "obsidian";
+import { IObsidianLinksSettings } from "settings";
 import { ILinkTextSuggestContext } from "suggesters/ILinkTextSuggestContext";
 import { LinkData } from "utils";
 
 export class ObsidianProxy {
 
     linkTextSuggestContext: ILinkTextSuggestContext;
+    settings: IObsidianLinksSettings;
 
-    constructor(linkTextSuggestContext: ILinkTextSuggestContext){
+    constructor(linkTextSuggestContext: ILinkTextSuggestContext, settings: IObsidianLinksSettings){
         this.linkTextSuggestContext = linkTextSuggestContext;
+        this.settings = settings;
     }
 
     createNotice(message: string | DocumentFragment, timeout?: number) : Notice {

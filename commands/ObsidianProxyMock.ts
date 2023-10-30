@@ -1,4 +1,5 @@
-import { LinkData } from "utils";
+import { IObsidianLinksSettings } from "settings";
+import { LinkData, InternalWikilinkWithoutTextAction } from "../utils";
 
 export class Notice {
     setMessage(message: string | DocumentFragment): this{
@@ -73,6 +74,38 @@ export class ObsidianProxyMock {
         clipboardReadText: jest.fn(),
         createNotice: jest.fn(),
         linkTextSuggestContextSetLinkData: jest.fn()
+    }
+
+    settings : IObsidianLinksSettings = {
+        linkReplacements: [],
+        titleSeparator: " • ",
+        showPerformanceNotification: false,
+
+        //TODO: remove
+        removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: "Delete",
+
+        removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
+    
+        //feature flags
+        ffReplaceLink: false,
+        ffMultipleLinkConversion: false,
+    
+        //context menu
+        contexMenu: {
+            editLinkText: true,
+            setLinkText: true,
+            editLinkDestination: true,
+            copyLinkDestination: true,
+            unlink: true,
+            convertToWikilink: true,
+            convertToAutolink: true,
+            convertToMakrdownLink: true,
+            replaceLink: true,
+            embedUnembedLink: true,
+            deleteLink: true,
+            createLink: true,
+            createLinkFromClipboard: true
+        }
     }
 
     constructor(){

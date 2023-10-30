@@ -1,25 +1,30 @@
 import { Editor } from "obsidian";
-import { ICommand } from "./ICommand"
+import { CommandBase, Func, ICommand } from "./ICommand"
 import { HasLinks, LinkData, LinkTypes, findLink, getPageTitle, removeLinks } from "../utils";
 import { ObsidianProxy } from "./ObsidianProxy";
 import { IObsidianProxy } from "./IObsidianProxy";
 
-export class CreateLinkFromClipboardCommand implements ICommand {
-	id: string = 'editor-create-link-from-clipboard';
-	displayNameCommand: string = 'Create link from clipboard';
-	displayNameContextMenu: string = 'Create link from clipboard';
-	icon: string = 'link';
-
+export class CreateLinkFromClipboardCommand extends CommandBase {
 	obsidianProxy: IObsidianProxy;
 	callback: ((error: Error | null, data: any) => void) | undefined
 
 
-	constructor(obsidianProxy: IObsidianProxy, callback: ((error: Error | null, data: any) => void) | undefined = undefined){
+	constructor(obsidianProxy: IObsidianProxy,
+		isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true,
+		callback: ((error: Error | null, data: any) => void) | undefined = undefined) {
+		super(isPresentInContextMenu, isEnabled);
+		this.id = 'editor-create-link-from-clipboard';
+		this.displayNameCommand = 'Create link from clipboard';
+		this.displayNameContextMenu = 'Create link from clipboard';
+		this.icon = 'link';
 		this.obsidianProxy = obsidianProxy;
 		this.callback = callback;
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
+		if(checking && !this.isEnabled()){
+			return false;
+		}
 		// TODO: no check for now
 		if (checking) {
 			return true;
@@ -63,10 +68,10 @@ export class CreateLinkFromClipboardCommand implements ICommand {
 	}
 
 	async getPageText(url: URL): Promise<string> {
-        const response = await this.obsidianProxy.requestUrl({ url: url.toString() });
-        if (response.status !== 200) {
-            throw new Error(`Failed to request '${url}': ${response.status}`);
-        }
-        return response.text;
-    }
+		const response = await this.obsidianProxy.requestUrl({ url: url.toString() });
+		if (response.status !== 200) {
+			throw new Error(`Failed to request '${url}': ${response.status}`);
+		}
+		return response.text;
+	}
 }

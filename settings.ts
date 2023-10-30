@@ -1,15 +1,17 @@
-import { WikilinkDestinationReplacement } from "utils";
+import { InternalWikilinkWithoutTextAction } from "utils";
 
 export interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
 	titleSeparator: string;
 	showPerformanceNotification: boolean;
-	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement;
+	
+	//TODO: remove
+	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: string;
 
+	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction;
 	// feature flags
 	ffReplaceLink: boolean;
 	ffMultipleLinkConversion: boolean;
-	ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions: boolean;
 
 	//context menu
 	contexMenu: {
@@ -33,12 +35,14 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
 	titleSeparator: " • ",
 	showPerformanceNotification: false,
-	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination,
 
+	//TODO: remove
+	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: "Destination",
+
+	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.None,
 	//feature flags
 	ffReplaceLink: false,
 	ffMultipleLinkConversion: false,
-	ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions: false,
 
 	//context menu
 	contexMenu: {
