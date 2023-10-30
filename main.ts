@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, TAbstractFile, htmlToMarkdown, requestUrl, moment, RequestUrlParam, RequestUrlResponsePromise } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtention } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtention, InternalWikilinkWithoutTextAction } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -62,6 +62,21 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		//TODO: remove
+		if(this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction === InternalWikilinkWithoutTextAction.None){
+			switch(this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement){
+				case "Destination":
+					this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction = InternalWikilinkWithoutTextAction.ReplaceWithDestination;
+					break;
+				case "LowestNoteHeading":
+					this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction = InternalWikilinkWithoutTextAction.ReplaceWithLowestNoteHeading;
+					break;
+				default:
+					this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction = InternalWikilinkWithoutTextAction.ReplaceWithDestination;
+			}
+			await this.saveSettings();
+		}
 
 		this.addSettingTab(new ObsidianLinksSettingTab(this.app, this));
 

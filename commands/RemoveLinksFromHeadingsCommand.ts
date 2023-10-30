@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func, ICommand  } from "./ICommand"
-import { HasLinks, HasLinksInHeadings, LinkData, LinkTypes, RemoveLinksFromHeadingsOptions, findLink, removeLinks, removeLinksFromHeadings } from "../utils";
+import { HasLinks, hasLinksInHeadings, LinkData, LinkTypes, RemoveLinksFromHeadingsOptions, findLink, removeLinks, removeLinksFromHeadings } from "../utils";
 
 export class RemoveLinksFromHeadingsCommand extends CommandBase {
 	options: RemoveLinksFromHeadingsOptions;
@@ -23,14 +23,14 @@ export class RemoveLinksFromHeadingsCommand extends CommandBase {
 
 		if (selection) {
 			if (checking) {
-				return HasLinksInHeadings(selection);
+				return hasLinksInHeadings(selection);
 			}
 			const result = removeLinksFromHeadings(selection, this.options);
 			editor.replaceSelection(result);
 		} else {
 			const text = editor.getValue();
 			if (checking) {
-				return !!text && HasLinksInHeadings(text);
+				return !!text && hasLinksInHeadings(text);
 			}
 			if (text) {
 				const result = removeLinksFromHeadings(text, this.options);

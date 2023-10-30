@@ -32,8 +32,8 @@ function createCommands(obsidianProxy:IObsidianProxy, settings: IObsidianLinksSe
     commands.set(CopyLinkDestinationToClipboardCommand.name, 
         new CopyLinkDestinationToClipboardCommand(obsidianProxy, () => settings.contexMenu.copyLinkDestination));
     const options = {
-        get internalWikilinkWithoutTextReplacement() {
-            return settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement;
+        get internalWikilinkWithoutTextAction() {
+            return settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction;
         }
     };
     commands.set(RemoveLinksFromHeadingsCommand.name, new RemoveLinksFromHeadingsCommand(options));

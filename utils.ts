@@ -210,20 +210,25 @@ export function replaceAllHtmlLinks(text: string): string {
 
 const headingWithLinksRegEx = /^(#+ .*)(?:(\[(.*)\]\((.*)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))(.*)$/gm
 
-export function HasLinksInHeadings(text: string): boolean {
+export function hasLinksInHeadings(text: string): boolean {
     return new RegExp(headingWithLinksRegEx.source, 'gm').test(text);
 }
 
-export enum WikilinkDestinationReplacement {
-    Destination = 'Destination',
-    LowestNoteHeading = 'LowestNoteHeading'
+export enum InternalWikilinkWithoutTextAction {
+    //TODO: remove
+    None = "None",
+
+    Delete = 'Delete',
+    ReplaceWithDestination = 'ReplaceWithDestination',
+    ReplaceWithLowestNoteHeading = 'ReplaceWithLowestNoteHeading'
 }
 
 export interface RemoveLinksFromHeadingsOptions {
-    internalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement;
+    internalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction;
 }
 
 //TODO: refactor
+//TODO: fix - works only for 1 link in a heading
 export function removeLinksFromHeadings(text: string, options: RemoveLinksFromHeadingsOptions): string {
     // eslint-disable-next-line no-useless-escape
 
@@ -235,13 +240,13 @@ export function removeLinksFromHeadings(text: string, options: RemoveLinksFromHe
             if(wkText){
                 linkText = wkText;
             } else{
-                // default
+                // default: text = destination
                 linkText = wkLink;
 
-                switch(options.internalWikilinkWithoutTextReplacement){
-                    case WikilinkDestinationReplacement.LowestNoteHeading:{
+                switch(options.internalWikilinkWithoutTextAction){
+                    case InternalWikilinkWithoutTextAction.ReplaceWithLowestNoteHeading:{
                         let idx = 0;
-                        if(wkLink && (idx = wkLink.lastIndexOf('#')) > 0 && idx + 1 <= wkLink.length){
+                        if(wkLink && (idx = wkLink.lastIndexOf('#')) > -1 && idx + 1 <= wkLink.length){
                             const subheading = wkLink.substring(idx + 1);
                             if(subheading){
                                 linkText = subheading;
@@ -249,6 +254,9 @@ export function removeLinksFromHeadings(text: string, options: RemoveLinksFromHe
                         }
                     }
                     break;
+                    case InternalWikilinkWithoutTextAction.Delete:
+                        linkText = '';
+                        break;
                 }
             }
         } else if (rawHtmlLink) {

@@ -1,5 +1,5 @@
 import { IObsidianLinksSettings } from "settings";
-import { LinkData, WikilinkDestinationReplacement } from "../utils";
+import { LinkData, InternalWikilinkWithoutTextAction } from "../utils";
 
 export class Notice {
     setMessage(message: string | DocumentFragment): this{
@@ -80,12 +80,15 @@ export class ObsidianProxyMock {
         linkReplacements: [],
         titleSeparator: " • ",
         showPerformanceNotification: false,
-        removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: WikilinkDestinationReplacement.Destination,
+
+        //TODO: remove
+        removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: "Delete",
+
+        removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
     
         //feature flags
         ffReplaceLink: false,
         ffMultipleLinkConversion: false,
-        ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions: false,
     
         //context menu
         contexMenu: {

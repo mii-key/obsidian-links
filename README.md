@@ -11,6 +11,8 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Convert markdown link to autolink](#convert-markdown-link-to-autolink)
   - [Copy link destination to clipboard](#copy-link-destination-to-clipboard)
   - [Remove links from headings](#remove-links-from-headings)
+    - [Configuration](#configuration)
+      - [Internal wikilink without text](#internal-wikilink-without-text)
   - [Edit link text](#edit-link-text)
   - [Edit link destination](#edit-link-destination)
   - [Set link text](#set-link-text)
@@ -144,7 +146,8 @@ Copy link part of markdown, wiki or html link to the clipboard.
 
 ## Remove links from headings
 
-Remove links from headings in selection or in an entier note.
+Remove links from headings in selection or in an entier note. 
+Each link is replaced with it's text. Links without text are removed. Wikilink without text by default replaced with it's destination.
 
 - Command palette:  **Remove links from headings**
 
@@ -152,6 +155,51 @@ Remove links from headings in selection or in an entier note.
 <summary>Demo</summary>
 
 ![Remove links from headings](docs/img/remove-links-from-headings.gif)
+
+</details>
+
+### Configuration
+
+#### Internal wikilink without text
+
+Available options:
+- Remove
+- Replace with destination   [default]
+- Replace with lowest heading
+
+<details>
+<summary>Demo. Remove</summary>
+Original text:
+
+![Alt text](/docs/img/heading-wikilink-notext-subheadings.png)
+
+After command execution:
+
+![Alt text](/docs/img/heading-wikilink-notext-result-remove.png)
+
+</details>
+
+<details>
+<summary>Demo. Replace with destination</summary>
+Original text:
+
+![Alt text](/docs/img/heading-wikilink-notext-subheadings.png)
+
+After command execution:
+
+![Alt text](/docs/img/heading-wikilink-notext-result-destination.png)
+
+</details>
+
+<details>
+<summary>Demo. Replace with lowest heading</summary>
+Original text:
+
+![Alt text](/docs/img/heading-wikilink-notext-subheadings.png)
+
+After command execution:
+
+![Alt text](/docs/img/heading-wikilink-notext-result-lowest-heading.png)
 
 </details>
 
