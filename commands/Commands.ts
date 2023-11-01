@@ -16,12 +16,13 @@ import { CreateLinkFromClipboardCommand } from "./CreateLinkFromClipboardCommand
 import { EmbedLinkCommand } from "./EmbedLinkCommand";
 import { UnembedLinkCommand } from "./UnembedLinkCommand";
 import { ConvertAllLinksToMdlinksCommand } from "./ConvertAllLinksToMdlinksCommand";
+import { ConvertWikilinksToMdlinksCommand } from "./ConvertWikilinksToMdlinksCommand";
 
 
-var commands : Map<string, ICommand> = new Map<string, ICommand>();
+var commands: Map<string, ICommand> = new Map<string, ICommand>();
 
-function createCommands(obsidianProxy:IObsidianProxy, settings: IObsidianLinksSettings){
-    if(commands.size > 0){
+function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings) {
+    if (commands.size > 0) {
         return;
     }
     commands.set(UnlinkLinkCommand.name, new UnlinkLinkCommand(() => settings.contexMenu.unlink));
@@ -29,7 +30,7 @@ function createCommands(obsidianProxy:IObsidianProxy, settings: IObsidianLinksSe
     commands.set(ConvertLinkToMdlinkCommand.name, new ConvertLinkToMdlinkCommand(obsidianProxy, () => settings.contexMenu.convertToMakrdownLink));
     commands.set(ConvertLinkToWikilinkCommand.name, new ConvertLinkToWikilinkCommand(() => settings.contexMenu.convertToWikilink));
     commands.set(ConvertLinkToAutolinkCommand.name, new ConvertLinkToAutolinkCommand(() => settings.contexMenu.convertToAutolink));
-    commands.set(CopyLinkDestinationToClipboardCommand.name, 
+    commands.set(CopyLinkDestinationToClipboardCommand.name,
         new CopyLinkDestinationToClipboardCommand(obsidianProxy, () => settings.contexMenu.copyLinkDestination));
     const options = {
         get internalWikilinkWithoutTextAction() {
@@ -44,19 +45,20 @@ function createCommands(obsidianProxy:IObsidianProxy, settings: IObsidianLinksSe
     commands.set(CreateLinkFromClipboardCommand.name, new CreateLinkFromClipboardCommand(obsidianProxy, () => settings.contexMenu.createLinkFromClipboard));
     commands.set(EmbedLinkCommand.name, new EmbedLinkCommand(() => settings.contexMenu.embedUnembedLink));
     commands.set(UnembedLinkCommand.name, new UnembedLinkCommand(() => settings.contexMenu.embedUnembedLink));
-    commands.set(ConvertAllLinksToMdlinksCommand.name,  
+    commands.set(ConvertAllLinksToMdlinksCommand.name,
         new ConvertAllLinksToMdlinksCommand(obsidianProxy, () => false,
             () => settings.ffMultipleLinkConversion));
-    
-    const cmd = commands.get(ConvertAllLinksToMdlinksCommand.name);
+    commands.set(ConvertWikilinksToMdlinksCommand.name,
+        new ConvertWikilinksToMdlinksCommand(obsidianProxy, () => false,
+            () => settings.ffMultipleLinkConversion));
 }
 
-export function getPaletteCommands(obsidianProxy:IObsidianProxy, settings: IObsidianLinksSettings) : ICommand[]{
+export function getPaletteCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings): ICommand[] {
     createCommands(obsidianProxy, settings);
     return Array.from(commands.values());
 }
 
-export function getContextMenuCommands(obsidianProxy:IObsidianProxy, settings: IObsidianLinksSettings) : (ICommand | null)[]{
+export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings): (ICommand | null)[] {
     createCommands(obsidianProxy, settings);
 
     const commandNames = [
@@ -80,16 +82,16 @@ export function getContextMenuCommands(obsidianProxy:IObsidianProxy, settings: I
     ];
 
     let contextMenuCommands = [];
-    for(const cmdName of commandNames){
-        if(cmdName == null){
+    for (const cmdName of commandNames) {
+        if (cmdName == null) {
             contextMenuCommands.push(null);
             continue;
         }
         const cmd = commands.get(cmdName);
-        if(cmd && cmd.isEnabled() && cmd.isPresentInContextMenu()){
+        if (cmd && cmd.isEnabled() && cmd.isPresentInContextMenu()) {
             contextMenuCommands.push(cmd);
         }
     }
-    
+
     return contextMenuCommands;
 }
