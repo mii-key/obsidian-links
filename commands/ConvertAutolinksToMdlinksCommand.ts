@@ -5,7 +5,7 @@ import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from './ConvertToMdlinkCommandBase'
 
 
-export class ConvertWikilinksToMdlinksCommand extends ConvertToMdlinkCommandBase {
+export class ConvertAutolinksToMdlinksCommand extends ConvertToMdlinkCommandBase {
 
 	callback: ((error: Error | null, data: any) => void) | undefined
 
@@ -14,9 +14,9 @@ export class ConvertWikilinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 	) {
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
-		this.id = 'editor-convert-wikilinks-to-mdlinks';
-		this.displayNameCommand = 'Convert Wikilinks to Markdown links';
-		this.displayNameContextMenu = 'Convert Wikilinks to Markdown links';
+		this.id = 'editor-convert-autolinks-to-mdlinks';
+		this.displayNameCommand = 'Convert Autolinks to Markdown links';
+		this.displayNameContextMenu = 'Convert Autolinks to Markdown links';
 		this.icon = 'rotate-cw';
 		this.callback = callback;
 	}
@@ -29,17 +29,17 @@ export class ConvertWikilinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 		const selection = editor.getSelection()
 		const text = selection || editor.getValue();
 		const links = findLinks(text);
-		const wikilinks = links ? links.filter(x => x.type == LinkTypes.Wiki) : []
+		const autolinks = links ? links.filter(x => x.type == LinkTypes.Autolink) : []
 
 		if (checking) {
-			return wikilinks.length > 0
+			return this.obsidianProxy.settings.ffMultipleLinkConversion && autolinks.length > 0
 		}
 
 		const selectionOffset = selection ? editor.posToOffset(editor.getCursor('from')) : 0;
 
 		(async () => {
-			for (let i = wikilinks.length - 1; i >= 0; i--) {
-				const link = wikilinks[i]
+			for (let i = autolinks.length - 1; i >= 0; i--) {
+				const link = autolinks[i]
 				await this.convertLinkToMarkdownLink(link, editor, false, selectionOffset)
 			}
 		})()
