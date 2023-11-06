@@ -17,6 +17,7 @@ import { EmbedLinkCommand } from "./EmbedLinkCommand";
 import { UnembedLinkCommand } from "./UnembedLinkCommand";
 import { ConvertAllLinksToMdlinksCommand } from "./ConvertAllLinksToMdlinksCommand";
 import { ConvertWikilinksToMdlinksCommand } from "./ConvertWikilinksToMdlinksCommand";
+import { ConvertAutolinksToMdlinksCommand } from "./ConvertAutolinksToMdlinksCommand";
 
 
 var commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -50,6 +51,9 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
             () => settings.ffMultipleLinkConversion));
     commands.set(ConvertWikilinksToMdlinksCommand.name,
         new ConvertWikilinksToMdlinksCommand(obsidianProxy, () => false,
+            () => settings.ffMultipleLinkConversion));
+    commands.set(ConvertAutolinksToMdlinksCommand.name,
+        new ConvertAutolinksToMdlinksCommand(obsidianProxy, () => false,
             () => settings.ffMultipleLinkConversion));
 }
 

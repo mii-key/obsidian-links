@@ -31,3 +31,8 @@ Convert all supported links in a note or in a selection to markdown links
 Convert multiple wikilinks in a note or in a selection to markdown links
 
 - Command palette: **Convert Wikilinks to Markdown links**
+
+### Convert autolinks to markdown links
+Convert multiple autolinks in a note or in a selection to markdown links
+
+- Command palette: **Convert Autolinks to Markdown links**

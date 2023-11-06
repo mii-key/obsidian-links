@@ -39,7 +39,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			}
 		};
 
-		this.obsidianProxy = new ObsidianProxy(this.linkTextSuggestContext, this.settings);
+		// this.obsidianProxy = new ObsidianProxy(this.linkTextSuggestContext, this.settings);
 	}
 
 	createNotice(message: string | DocumentFragment, timeout?: number): Notice {
@@ -62,6 +62,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+		//TODO:
+		this.obsidianProxy = new ObsidianProxy(this.linkTextSuggestContext, this.settings);
+
 
 		//TODO: remove
 		if(this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction === InternalWikilinkWithoutTextAction.None){
