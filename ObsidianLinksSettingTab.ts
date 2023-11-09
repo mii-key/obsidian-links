@@ -211,6 +211,19 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
+        new Setting(containerEl)
+            .setName('Convert URLs to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertUrlsToMdlinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertUrlsToMdlinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
 
         // ------ Early access features -----------------
 

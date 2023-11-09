@@ -18,6 +18,7 @@ import { UnembedLinkCommand } from "./UnembedLinkCommand";
 import { ConvertAllLinksToMdlinksCommand } from "./ConvertAllLinksToMdlinksCommand";
 import { ConvertWikilinksToMdlinksCommand } from "./ConvertWikilinksToMdlinksCommand";
 import { ConvertAutolinksToMdlinksCommand } from "./ConvertAutolinksToMdlinksCommand";
+import { ConvertUrlsToMdlinksCommand } from "./ConvertUrlsToMdlinksCommand";
 
 
 var commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -55,6 +56,9 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(ConvertAutolinksToMdlinksCommand.name,
         new ConvertAutolinksToMdlinksCommand(obsidianProxy, () => false,
             () => settings.ffMultipleLinkConversion));
+    commands.set(ConvertUrlsToMdlinksCommand.name,
+        new ConvertUrlsToMdlinksCommand(obsidianProxy, () => true,
+            () => settings.ffMultipleLinkConversion));
 }
 
 export function getPaletteCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings): ICommand[] {
@@ -83,6 +87,8 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         null,
         CreateLinkFromSelectionCommand.name,
         CreateLinkFromClipboardCommand.name,
+        null,
+        ConvertUrlsToMdlinksCommand.name
     ];
 
     let contextMenuCommands = [];

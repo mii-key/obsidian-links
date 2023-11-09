@@ -28,6 +28,7 @@ export interface IObsidianLinksSettings {
 		deleteLink: boolean;
 		createLink: boolean;
 		createLinkFromClipboard: boolean;
+		convertUrlsToMdlinks: boolean;
 	}
 }
 
@@ -58,6 +59,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		embedUnembedLink: true,
 		deleteLink: true,
 		createLink: true,
-		createLinkFromClipboard: true
+		createLinkFromClipboard: true,
+		convertUrlsToMdlinks: false,
 	}
 }
