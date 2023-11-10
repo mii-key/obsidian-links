@@ -354,7 +354,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     .onChange(async (value) => {
                         this.plugin.settings.ffMultipleLinkConversion = value;
                         await this.plugin.saveSettings();
-                        console.log('t1')
                         toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
                     })
             });
