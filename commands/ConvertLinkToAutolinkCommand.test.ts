@@ -6,21 +6,13 @@ import { ObsidianProxyMock } from './ObsidianProxyMock';
 
 describe('ConvertLinkToAutolinkCommand test', () => {
 
-    test('status - cursor on text - command disabled', () => {
-        const cmd = new ConvertLinkToAutolinkCommand()
-        const editor = new EditorMock()
-        editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
-        //
-        const result = cmd.handler(editor, true)
-        //
-        expect(result).toBeFalsy()
-        expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
-
-    })
-
     test.each(
         [
+            {
+                name: "text wo/links",
+                text: "some text",
+                expected: false
+            },
             {
                 name: "html - href in '",
                 text: "<a href='google.com'>google1</a>",
