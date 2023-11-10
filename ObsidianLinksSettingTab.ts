@@ -211,7 +211,31 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
-        new Setting(containerEl)
+        const convertAllToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert all links to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertAllLinksToMdLinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertAllLinksToMdLinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+        const convertWikilinksToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert Wikilinks to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertWikilinkToMdLinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertWikilinkToMdLinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+        const convertUrlsMdLinksSettings = new Setting(containerEl)
             .setName('Convert URLs to Markdown links')
             .setDesc('')
             .addToggle((toggle) => {
@@ -224,6 +248,19 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
+        const toggleMultipleLinksConversions = (enabled: boolean) => {
+            if (enabled) {
+                convertAllToMdLinksSettings.settingEl.show();
+                convertWikilinksToMdLinksSettings.settingEl.show();
+                convertUrlsMdLinksSettings.settingEl.show();
+            } else{
+                convertAllToMdLinksSettings.settingEl.hide();
+                convertWikilinksToMdLinksSettings.settingEl.hide();
+                convertUrlsMdLinksSettings.settingEl.hide();
+            }
+        }
+
+        toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
 
         // ------ Early access features -----------------
 
@@ -301,8 +338,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     .onChange(async (value) => {
                         this.plugin.settings.ffMultipleLinkConversion = value;
                         await this.plugin.saveSettings();
+                        console.log('t1')
+                        toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
                     })
-
             });
 
         const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");

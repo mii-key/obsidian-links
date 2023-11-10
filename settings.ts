@@ -28,6 +28,8 @@ export interface IObsidianLinksSettings {
 		deleteLink: boolean;
 		createLink: boolean;
 		createLinkFromClipboard: boolean;
+		convertAllLinksToMdLinks: boolean;
+		convertWikilinkToMdLinks : boolean;
 		convertUrlsToMdlinks: boolean;
 	}
 }
@@ -60,6 +62,8 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		deleteLink: true,
 		createLink: true,
 		createLinkFromClipboard: true,
-		convertUrlsToMdlinks: false,
+		convertAllLinksToMdLinks: false,
+		convertWikilinkToMdLinks : false,
+		convertUrlsToMdlinks: false
 	}
 }

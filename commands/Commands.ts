@@ -47,12 +47,9 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(CreateLinkFromClipboardCommand.name, new CreateLinkFromClipboardCommand(obsidianProxy, () => settings.contexMenu.createLinkFromClipboard));
     commands.set(EmbedLinkCommand.name, new EmbedLinkCommand(() => settings.contexMenu.embedUnembedLink));
     commands.set(UnembedLinkCommand.name, new UnembedLinkCommand(() => settings.contexMenu.embedUnembedLink));
-    commands.set(ConvertAllLinksToMdlinksCommand.name,
-        new ConvertAllLinksToMdlinksCommand(obsidianProxy, () => false));
-    commands.set(ConvertWikilinksToMdlinksCommand.name,
-        new ConvertWikilinksToMdlinksCommand(obsidianProxy, () => false));
-    commands.set(ConvertAutolinksToMdlinksCommand.name,
-        new ConvertAutolinksToMdlinksCommand(obsidianProxy, () => false));
+    commands.set(ConvertAllLinksToMdlinksCommand.name, new ConvertAllLinksToMdlinksCommand(obsidianProxy));
+    commands.set(ConvertWikilinksToMdlinksCommand.name, new ConvertWikilinksToMdlinksCommand(obsidianProxy));
+    commands.set(ConvertAutolinksToMdlinksCommand.name, new ConvertAutolinksToMdlinksCommand(obsidianProxy));
     commands.set(ConvertUrlsToMdlinksCommand.name, new ConvertUrlsToMdlinksCommand(obsidianProxy));
 }
 
@@ -83,6 +80,8 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         CreateLinkFromSelectionCommand.name,
         CreateLinkFromClipboardCommand.name,
         null,
+        ConvertAllLinksToMdlinksCommand.name,
+        ConvertWikilinksToMdlinksCommand.name,
         ConvertUrlsToMdlinksCommand.name
     ];
 

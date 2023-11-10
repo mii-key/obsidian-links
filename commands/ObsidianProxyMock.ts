@@ -105,7 +105,9 @@ export class ObsidianProxyMock {
             deleteLink: true,
             createLink: true,
             createLinkFromClipboard: true,
-            convertUrlsToMdlinks: true,
+            convertAllLinksToMdLinks: true,
+            convertWikilinkToMdLinks: true,
+            convertUrlsToMdlinks: true
         }
     }
 
