@@ -235,7 +235,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
-        const convertUrlsMdLinksSettings = new Setting(containerEl)
+
+        const convertUrlsToMdLinksSettings = new Setting(containerEl)
             .setName('Convert URLs to Markdown links')
             .setDesc('')
             .addToggle((toggle) => {
@@ -248,15 +249,30 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
+        const convertAutolinksToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert Autolinks to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertAutolinksToMdlinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertAutolinksToMdlinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
         const toggleMultipleLinksConversions = (enabled: boolean) => {
             if (enabled) {
                 convertAllToMdLinksSettings.settingEl.show();
                 convertWikilinksToMdLinksSettings.settingEl.show();
-                convertUrlsMdLinksSettings.settingEl.show();
-            } else{
+                convertUrlsToMdLinksSettings.settingEl.show();
+                convertAutolinksToMdLinksSettings.settingEl.show();
+            } else {
                 convertAllToMdLinksSettings.settingEl.hide();
                 convertWikilinksToMdLinksSettings.settingEl.hide();
-                convertUrlsMdLinksSettings.settingEl.hide();
+                convertUrlsToMdLinksSettings.settingEl.hide();
+                convertAutolinksToMdLinksSettings.settingEl.hide();
             }
         }
 

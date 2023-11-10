@@ -15,6 +15,7 @@ export class ConvertAutolinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
 		this.isEnabled = () => this.obsidianProxy.settings.ffMultipleLinkConversion;
+		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.convertAutolinksToMdlinks;
 
 		this.id = 'editor-convert-autolinks-to-mdlinks';
 		this.displayNameCommand = 'Convert Autolinks to Markdown links';

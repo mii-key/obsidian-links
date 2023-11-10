@@ -49,8 +49,8 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(UnembedLinkCommand.name, new UnembedLinkCommand(() => settings.contexMenu.embedUnembedLink));
     commands.set(ConvertAllLinksToMdlinksCommand.name, new ConvertAllLinksToMdlinksCommand(obsidianProxy));
     commands.set(ConvertWikilinksToMdlinksCommand.name, new ConvertWikilinksToMdlinksCommand(obsidianProxy));
-    commands.set(ConvertAutolinksToMdlinksCommand.name, new ConvertAutolinksToMdlinksCommand(obsidianProxy));
     commands.set(ConvertUrlsToMdlinksCommand.name, new ConvertUrlsToMdlinksCommand(obsidianProxy));
+    commands.set(ConvertAutolinksToMdlinksCommand.name, new ConvertAutolinksToMdlinksCommand(obsidianProxy));
 }
 
 export function getPaletteCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings): ICommand[] {
@@ -61,6 +61,7 @@ export function getPaletteCommands(obsidianProxy: IObsidianProxy, settings: IObs
 export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings): (ICommand | null)[] {
     createCommands(obsidianProxy, settings);
 
+    // context menu commands in order; null - separator
     const commandNames = [
         null,
         EditLinkTextCommand.name,
@@ -82,7 +83,8 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         null,
         ConvertAllLinksToMdlinksCommand.name,
         ConvertWikilinksToMdlinksCommand.name,
-        ConvertUrlsToMdlinksCommand.name
+        ConvertUrlsToMdlinksCommand.name,
+        ConvertAutolinksToMdlinksCommand.name
     ];
 
     let contextMenuCommands = [];
