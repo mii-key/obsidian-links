@@ -14,6 +14,8 @@ export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase 
 	) {
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
+		this.isEnabled = () => this.obsidianProxy.settings.ffMultipleLinkConversion;
+		
 		this.id = 'editor-convert-all-links-to-mdlinks';
 		this.displayNameCommand = 'Convert all links to Markdown links';
 		this.displayNameContextMenu = 'Convert all links to Markdown links';

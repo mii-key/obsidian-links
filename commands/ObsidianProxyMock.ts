@@ -88,7 +88,7 @@ export class ObsidianProxyMock {
 
         //feature flags
         ffReplaceLink: false,
-        ffMultipleLinkConversion: false,
+        ffMultipleLinkConversion: true,
 
         //context menu
         contexMenu: {

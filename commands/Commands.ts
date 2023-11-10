@@ -48,17 +48,12 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(EmbedLinkCommand.name, new EmbedLinkCommand(() => settings.contexMenu.embedUnembedLink));
     commands.set(UnembedLinkCommand.name, new UnembedLinkCommand(() => settings.contexMenu.embedUnembedLink));
     commands.set(ConvertAllLinksToMdlinksCommand.name,
-        new ConvertAllLinksToMdlinksCommand(obsidianProxy, () => false,
-            () => settings.ffMultipleLinkConversion));
+        new ConvertAllLinksToMdlinksCommand(obsidianProxy, () => false));
     commands.set(ConvertWikilinksToMdlinksCommand.name,
-        new ConvertWikilinksToMdlinksCommand(obsidianProxy, () => false,
-            () => settings.ffMultipleLinkConversion));
+        new ConvertWikilinksToMdlinksCommand(obsidianProxy, () => false));
     commands.set(ConvertAutolinksToMdlinksCommand.name,
-        new ConvertAutolinksToMdlinksCommand(obsidianProxy, () => false,
-            () => settings.ffMultipleLinkConversion));
-    commands.set(ConvertUrlsToMdlinksCommand.name,
-        new ConvertUrlsToMdlinksCommand(obsidianProxy, () => true,
-            () => settings.ffMultipleLinkConversion));
+        new ConvertAutolinksToMdlinksCommand(obsidianProxy, () => false));
+    commands.set(ConvertUrlsToMdlinksCommand.name, new ConvertUrlsToMdlinksCommand(obsidianProxy));
 }
 
 export function getPaletteCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings): ICommand[] {
