@@ -1,11 +1,11 @@
 import { expect, test } from '@jest/globals';
 
 import { EditorMock } from './EditorMock'
-import { ConvertWikilinksToMdlinksCommand } from './ConvertWikilinksToMdlinksCommand';
+import { ConvertUrlsToMdlinksCommand } from './ConvertUrlsToMdlinksCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
 
+describe('ConvertUrlsToMdlinksCommand test', () => {
 
-describe('ConvertWikilinksToMdlinksCommand test', () => {
     const statusData = [
         {
             name: "no links",
@@ -15,7 +15,7 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
         {
             name: "wikilinks",
             text: "Aliquip esse [[exercitation]] deserunt ut. Ex Lorem [[incididunt|cupidatat]] officia adipisicing est eiusmod. Ullamco elit fugiat commodo labore aliquip",
-            expected: true
+            expected: false
         },
         {
             name: "mdlinks",
@@ -28,13 +28,18 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
             expected: false
         },
         {
-            name: "raw http link",
+            name: "URL http",
             text: "Aliquip esse href=\"http://ex.com\" exercitation</a> deserunt ut. Ex Lorem incididunt cupidatat officia adipisicing est eiusmod. Ullamco elit fugiat commodo labore aliquip",
-            expected: false
+            expected: true
         },
         {
-            name: "raw https link",
+            name: "URL https",
             text: "Aliquip esse href=\"https://ex.com\" exercitation</a> deserunt ut. Ex Lorem incididunt cupidatat officia adipisicing est eiusmod. Ullamco elit fugiat commodo labore aliquip",
+            expected: true
+        },
+        {
+            name: "autolinks",
+            text: "Aliquip esse <https://ex.com> exercitation</a> deserunt ut. Ex Lorem <incididunt@cupidatat.com> officia adipisicing est eiusmod. Ullamco elit fugiat commodo labore aliquip",
             expected: false
         }
     ];
@@ -42,7 +47,8 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
     test.each(statusData)
         ('status - text with $name - enabled:$expected', ({ name, text, expected }) => {
             const obsidianProxyMock = new ObsidianProxyMock()
-            const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
+            obsidianProxyMock.settings.ffMultipleLinkConversion = true;
+            const cmd = new ConvertUrlsToMdlinksCommand(obsidianProxyMock)
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
@@ -57,7 +63,8 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
     test.each(statusData)
         ('status - selection with $name - enabled:$expected', ({ name, text, expected }) => {
             const obsidianProxyMock = new ObsidianProxyMock()
-            const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
+            obsidianProxyMock.settings.ffMultipleLinkConversion = true;
+            const cmd = new ConvertUrlsToMdlinksCommand(obsidianProxyMock)
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
@@ -72,53 +79,54 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
 
     const convertData = [
         {
-            name: "wikilink",
-            text: "Consectetur [[cillum]] magna sint laboris [[elit|elit text]] nisi laborum. Sint aliqua esse duis consequat.",
+            name: "autolinks http, https",
+            text: "Consectetur http://cillum magna sint laboris https://elit nisi laborum. Sint aliqua esse duis consequat.",
             expected: [
                 {
-                    text: '[elit text](elit)',
-                    start: "Consectetur [[cillum]] magna sint laboris ".length,
-                    end: "Consectetur [[cillum]] magna sint laboris [[elit|elit text]]".length
+                    text: '[URL text](https://elit)',
+                    start: "Consectetur http://cillum magna sint laboris ".length,
+                    end: "Consectetur http://cillum magna sint laboris https://elit".length
                 },
                 {
-                    text: '[cillum](cillum)',
+                    text: '[URL text](http://cillum)',
                     start: "Consectetur ".length,
-                    end: "Consectetur [[cillum]]".length
+                    end: "Consectetur http://cillum".length
+                }
+            ]
+        },
+        {
+            name: "autolinks + other links",
+            text:  "deserunt http://commodo cupidatat ex https://quis in Lorem eu nisi eu." +
+                "Commodo sint <https://cupidatat> elit Lorem veniam culpa <cupidatat@occaecat.com> reprehenderit ad incididunt labore fugiat incididunt. Velit labore officia " +
+                "Consectetur [[cillum]] magna sint laboris [[elit|elit text]] nisi. Sint aliqua esse duis consequat." +
+                "sint [labore](Esse) enim ipsum tempor [mollit](https://hello.com) laborum mollit nostrud magna excepteur aute quis. Eiusmod adipisicing velit ",
+            expected: [
+                {
+                    text: '[URL text](https://quis)',
+                    start: "deserunt http://commodo cupidatat ex ".length,
+                    end: "deserunt http://commodo cupidatat ex https://quis".length
+                },
+                {
+                    text: '[URL text](http://commodo)',
+                    start: "deserunt ".length,
+                    end: "deserunt http://commodo".length
                 }
             ]
         },
 
-        {
-            name: "wikilink + other links",
-            text: "Consectetur [[cillum]] magna sint laboris [[elit|elit text]] nisi. Sint aliqua esse duis consequat." +
-                "Labore <http://adipisicing.com> occaecat <mailto:occaecat@velit.com> dolore eiusmod. reprehenderit " +
-                "sint [labore](Esse) enim ipsum tempor [mollit](https://hello.com) laborum mollit nostrud magna excepteur aute quis. Eiusmod adipisicing velit " +
-                "deserunt http://commodo cupidatat ex https://quis in Lorem eu nisi eu.",
-            expected: [
-                {
-                    text: '[elit text](elit)',
-                    start: "Consectetur [[cillum]] magna sint laboris ".length,
-                    end: "Consectetur [[cillum]] magna sint laboris [[elit|elit text]]".length
-                },
-                {
-                    text: '[cillum](cillum)',
-                    start: "Consectetur ".length,
-                    end: "Consectetur [[cillum]]".length
-                }
-            ]
-        },
     ];
+
     test.each(convertData)
-        ('convert wiki links - text with $name - success', ({ name, text, expected }, done) => {
+        ('convert autolinks - text with $name - success', ({ name, text, expected }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
-                text: "<title>Google</title>"
+                text: "<title>URL text</title>"
             })
-            const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            const cmd = new ConvertUrlsToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
                     return
@@ -151,9 +159,9 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
-                text: "<title>Google</title>"
+                text: "<title>URL text</title>"
             })
-            const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            const cmd = new ConvertUrlsToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
                     return

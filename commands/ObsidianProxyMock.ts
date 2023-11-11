@@ -2,10 +2,10 @@ import { IObsidianLinksSettings } from "settings";
 import { LinkData, InternalWikilinkWithoutTextAction } from "../utils";
 
 export class Notice {
-    setMessage(message: string | DocumentFragment): this{
+    setMessage(message: string | DocumentFragment): this {
         throw new Error('Method not implemented.');
     }
-    hide(): void{
+    hide(): void {
         throw new Error('Method not implemented.');
     }
 }
@@ -54,7 +54,7 @@ export interface RequestUrlResponsePromise extends Promise<RequestUrlResponse> {
 export class ObsidianProxyMock {
 
     __mocks: {
-        NoticeMock : {
+        NoticeMock: {
             setMessage: jest.Mock
             hide: jest.Mock
         }
@@ -65,18 +65,18 @@ export class ObsidianProxyMock {
         linkTextSuggestContextSetLinkData: jest.Mock
 
     } = {
-        NoticeMock : {
-            setMessage: jest.fn(),
-            hide: jest.fn()
-        },
-        requestUrlMock: jest.fn(),
-        clipboardWriteText: jest.fn(),
-        clipboardReadText: jest.fn(),
-        createNotice: jest.fn(),
-        linkTextSuggestContextSetLinkData: jest.fn()
-    }
+            NoticeMock: {
+                setMessage: jest.fn(),
+                hide: jest.fn()
+            },
+            requestUrlMock: jest.fn(),
+            clipboardWriteText: jest.fn(),
+            clipboardReadText: jest.fn(),
+            createNotice: jest.fn(),
+            linkTextSuggestContextSetLinkData: jest.fn()
+        }
 
-    settings : IObsidianLinksSettings = {
+    settings: IObsidianLinksSettings = {
         linkReplacements: [],
         titleSeparator: " • ",
         showPerformanceNotification: false,
@@ -85,11 +85,11 @@ export class ObsidianProxyMock {
         removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: "Delete",
 
         removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
-    
+
         //feature flags
         ffReplaceLink: false,
-        ffMultipleLinkConversion: false,
-    
+        ffMultipleLinkConversion: true,
+
         //context menu
         contexMenu: {
             editLinkText: true,
@@ -104,11 +104,15 @@ export class ObsidianProxyMock {
             embedUnembedLink: true,
             deleteLink: true,
             createLink: true,
-            createLinkFromClipboard: true
+            createLinkFromClipboard: true,
+            convertAllLinksToMdLinks: true,
+            convertWikilinkToMdLinks: true,
+            convertUrlsToMdlinks: true,
+            convertAutolinksToMdlinks: true
         }
     }
 
-    constructor(){
+    constructor() {
         this.clipboardWriteText = this.__mocks.clipboardWriteText;
         this.clipboardReadText = this.__mocks.clipboardReadText;
         this.__mocks.createNotice.mockReturnValue(this.__mocks.NoticeMock);
@@ -116,7 +120,7 @@ export class ObsidianProxyMock {
         this.linkTextSuggestContextSetLinkData = this.__mocks.linkTextSuggestContextSetLinkData;
     }
 
-    createNotice(message: string | DocumentFragment, timeout?: number) : Notice {
+    createNotice(message: string | DocumentFragment, timeout?: number): Notice {
         // return this.__mocks.NoticeMock;
         throw new Error('Method not implemented.');
     }
@@ -125,15 +129,15 @@ export class ObsidianProxyMock {
         return this.__mocks.requestUrlMock()
     }
 
-    clipboardWriteText(text: string): void{
-        throw new Error('Method not implemented.');
-    }
-    
-    clipboardReadText() : Promise<string>{
+    clipboardWriteText(text: string): void {
         throw new Error('Method not implemented.');
     }
 
-    linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]) : void{
+    clipboardReadText(): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
+
+    linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]): void {
         throw new Error('Method not implemented.');
     }
 }

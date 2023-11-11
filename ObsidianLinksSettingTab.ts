@@ -211,6 +211,72 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
+        const convertAllToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert all links to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertAllLinksToMdLinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertAllLinksToMdLinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+        const convertWikilinksToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert Wikilinks to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertWikilinkToMdLinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertWikilinkToMdLinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const convertUrlsToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert URLs to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertUrlsToMdlinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertUrlsToMdlinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const convertAutolinksToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert Autolinks to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertAutolinksToMdlinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertAutolinksToMdlinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const toggleMultipleLinksConversions = (enabled: boolean) => {
+            if (enabled) {
+                convertAllToMdLinksSettings.settingEl.show();
+                convertWikilinksToMdLinksSettings.settingEl.show();
+                convertUrlsToMdLinksSettings.settingEl.show();
+                convertAutolinksToMdLinksSettings.settingEl.show();
+            } else {
+                convertAllToMdLinksSettings.settingEl.hide();
+                convertWikilinksToMdLinksSettings.settingEl.hide();
+                convertUrlsToMdLinksSettings.settingEl.hide();
+                convertAutolinksToMdLinksSettings.settingEl.hide();
+            }
+        }
+
+        toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
 
         // ------ Early access features -----------------
 
@@ -288,8 +354,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     .onChange(async (value) => {
                         this.plugin.settings.ffMultipleLinkConversion = value;
                         await this.plugin.saveSettings();
+                        toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
                     })
-
             });
 
         const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");

@@ -5,7 +5,7 @@ import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from './ConvertToMdlinkCommandBase'
 
 
-export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase {
+export class ConvertUrlsToMdlinksCommand extends ConvertToMdlinkCommandBase {
 
 	callback: ((error: Error | null, data: any) => void) | undefined
 
@@ -15,11 +15,11 @@ export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase 
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
 		this.isEnabled = () => this.obsidianProxy.settings.ffMultipleLinkConversion;
-		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.convertAllLinksToMdLinks;
-		
-		this.id = 'editor-convert-all-links-to-mdlinks';
-		this.displayNameCommand = 'Convert all links to Markdown links';
-		this.displayNameContextMenu = 'Convert all links to Markdown links';
+		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.convertUrlsToMdlinks;
+
+		this.id = 'editor-convert-urls-to-mdlinks';
+		this.displayNameCommand = 'Convert URLs to Markdown links';
+		this.displayNameContextMenu = 'Convert URLs to Markdown links';
 		this.icon = 'rotate-cw';
 		this.callback = callback;
 	}
@@ -32,17 +32,17 @@ export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase 
 		const selection = editor.getSelection()
 		const text = selection || editor.getValue();
 		const links = findLinks(text);
-		const notMdlinks = links ? links.filter(x => x.type != LinkTypes.Markdown) : []
+		const urls = links ? links.filter(x => x.type == LinkTypes.PlainUrl) : []
 
 		if (checking) {
-			return notMdlinks.length > 0
+			return this.obsidianProxy.settings.ffMultipleLinkConversion && urls.length > 0
 		}
 
 		const selectionOffset = selection ? editor.posToOffset(editor.getCursor('from')) : 0;
 
 		(async () => {
-			for (let i = notMdlinks.length - 1; i >= 0; i--) {
-				const link = notMdlinks[i]
+			for (let i = urls.length - 1; i >= 0; i--) {
+				const link = urls[i]
 				await this.convertLinkToMarkdownLink(link, editor, false, selectionOffset)
 			}
 		})()
