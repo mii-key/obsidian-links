@@ -25,8 +25,14 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 		if(checking && !this.isEnabled()){
 			return false;
 		}
-		// TODO: no check for now
+		// TODO: no check clipboard
 		if (checking) {
+			const noteText = editor.getValue();
+			const cursorOffset = editor.posToOffset(editor.getCursor('from'))
+			const link = findLink(noteText, cursorOffset, cursorOffset, LinkTypes.All)
+			if(link && link.position.start < cursorOffset && link.position.end > cursorOffset){
+				return false;
+			}
 			return true;
 		}
 
