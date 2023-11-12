@@ -65,7 +65,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		//TODO:
 		this.obsidianProxy = new ObsidianProxy(this.linkTextSuggestContext, this.settings);
 
-
 		//TODO: remove
 		if(this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction === InternalWikilinkWithoutTextAction.None){
 			switch(this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement){
@@ -179,7 +178,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-
 		this.linkTextSuggestContext.titleSeparator = this.settings.titleSeparator;
 	}
 
