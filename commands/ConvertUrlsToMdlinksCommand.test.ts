@@ -79,7 +79,7 @@ describe('ConvertUrlsToMdlinksCommand test', () => {
 
     const convertData = [
         {
-            name: "autolinks http, https",
+            name: "url http, https",
             text: "Consectetur http://cillum magna sint laboris https://elit nisi laborum. Sint aliqua esse duis consequat.",
             expected: [
                 {
@@ -95,7 +95,7 @@ describe('ConvertUrlsToMdlinksCommand test', () => {
             ]
         },
         {
-            name: "autolinks + other links",
+            name: "url + other links",
             text:  "deserunt http://commodo cupidatat ex https://quis in Lorem eu nisi eu." +
                 "Commodo sint <https://cupidatat> elit Lorem veniam culpa <cupidatat@occaecat.com> reprehenderit ad incididunt labore fugiat incididunt. Velit labore officia " +
                 "Consectetur [[cillum]] magna sint laboris [[elit|elit text]] nisi. Sint aliqua esse duis consequat." +
@@ -117,7 +117,7 @@ describe('ConvertUrlsToMdlinksCommand test', () => {
     ];
 
     test.each(convertData)
-        ('convert autolinks - text with $name - success', ({ name, text, expected }, done) => {
+        ('convert  - text with $name - success', ({ name, text, expected }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
@@ -151,7 +151,7 @@ describe('ConvertUrlsToMdlinksCommand test', () => {
         })
 
     test.each(convertData)
-        ('convert wiki links - selection with $name - success', ({ name, text, expected }, done) => {
+        ('convert (selection)  $name - success', ({ name, text, expected }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
