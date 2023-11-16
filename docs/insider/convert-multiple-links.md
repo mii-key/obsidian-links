@@ -45,3 +45,9 @@ Convert multiple raw URLs in a note or in a selection to markdown links
 
 - Command palette: **Convert URLs to Markdown links**
 - Context menu: **Convert URLs to Markdown links** (enable in Settings)
+
+### Convert HTML links to markdown links
+Convert multiple raw URLs in a note or in a selection to markdown links
+
+- Command palette: **Convert HTML links to Markdown links**
+- Context menu: **Convert HTML links to Markdown links** (enable in Settings)

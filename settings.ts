@@ -33,6 +33,7 @@ export interface IObsidianLinksSettings {
 		convertWikilinkToMdLinks : boolean;
 		convertUrlsToMdlinks: boolean;
 		convertAutolinksToMdlinks: boolean;
+		convertHtmllinksToMdlinks: boolean;
 		extractSection: boolean;
 	}
 }
@@ -71,6 +72,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		convertWikilinkToMdLinks : false,
 		convertUrlsToMdlinks: false,
 		convertAutolinksToMdlinks: false,
+		convertHtmllinksToMdlinks: false,
 		extractSection: false
 	}
 }
