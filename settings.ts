@@ -12,6 +12,7 @@ export interface IObsidianLinksSettings {
 	// feature flags
 	ffReplaceLink: boolean;
 	ffMultipleLinkConversion: boolean;
+	ffExtractSection: boolean;
 
 	//context menu
 	contexMenu: {
@@ -32,8 +33,11 @@ export interface IObsidianLinksSettings {
 		convertWikilinkToMdLinks : boolean;
 		convertUrlsToMdlinks: boolean;
 		convertAutolinksToMdlinks: boolean;
+		convertHtmllinksToMdlinks: boolean;
+		extractSection: boolean;
 	}
 }
+
 
 export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
@@ -47,6 +51,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	//feature flags
 	ffReplaceLink: false,
 	ffMultipleLinkConversion: false,
+	ffExtractSection: false,
 
 	//context menu
 	contexMenu: {
@@ -66,6 +71,8 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		convertAllLinksToMdLinks: false,
 		convertWikilinkToMdLinks : false,
 		convertUrlsToMdlinks: false,
-		convertAutolinksToMdlinks: false
+		convertAutolinksToMdlinks: false,
+		convertHtmllinksToMdlinks: false,
+		extractSection: false
 	}
 }

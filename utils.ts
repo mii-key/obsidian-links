@@ -208,7 +208,8 @@ export function replaceAllHtmlLinks(text: string): string {
     })
 }
 
-const headingWithLinksRegEx = /^(#+ .*)(?:(\[(.*)\]\((.*)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))(.*)$/gm
+// const headingWithLinksRegEx = /^(#+ .*)(?:(\[(.*)\]\((.*)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>))(.*)$/gm
+const headingWithLinksRegEx = /^(#+ .*)(?:(\[(.*)\]\((.*)\))|(\[\[([^\[\]|]+)(?:\|([^\[\]]+))?\]\])|(<a\s[^>]*[^>]*>(.*?)<\/a>))(.*)$/gm
 
 export function hasLinksInHeadings(text: string): boolean {
     return new RegExp(headingWithLinksRegEx.source, 'gm').test(text);
@@ -232,7 +233,7 @@ export interface RemoveLinksFromHeadingsOptions {
 export function removeLinksFromHeadings(text: string, options: RemoveLinksFromHeadingsOptions): string {
     // eslint-disable-next-line no-useless-escape
 
-    const result = text.replace(headingWithLinksRegEx, (match, start, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlUrl, htmlText, end, offset) => {
+    const result = text.replace(headingWithLinksRegEx, (match, start, rawMdLink, mdText, mdUrl, rawWikiLink, wkLink, wkText, rawHtmlLink, htmlText, end, offset) => {
         let linkText;
         if (rawMdLink) {
             linkText = mdText ? mdText : "";

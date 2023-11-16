@@ -338,7 +338,10 @@ describe("Utils tests", () => {
                 "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
                 "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
-                "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+                "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
+                "# <a name=\"name-value\"></a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
             expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
                 "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
                 "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
@@ -350,7 +353,10 @@ describe("Utils tests", () => {
                 "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
                 "# Elit  tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
-                "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+                "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
+                "# anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
         },
         {
             name: "wiki, markdown, html links",
@@ -367,7 +373,10 @@ describe("Utils tests", () => {
                 "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
                 "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
-                "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+                "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
+                "# <a name=\"name-value\">Eu fugiat</a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
             expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
                 "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
                 "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
@@ -379,7 +388,10 @@ describe("Utils tests", () => {
                 "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
                 "# Elit #sunt tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
-                "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+                "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
+                "# Eu fugiatanim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
         },
         {
             name: "wiki, markdown, html links",
@@ -396,7 +408,10 @@ describe("Utils tests", () => {
                 "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
                 "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
-                "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+                "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
+                "# <a name=\"name-value\">Eu fugiat</a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
             expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
                 "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
                 "sit consequat mollit. Duis cupidatat minim commodo exercitation labore qui non qui eiusmod labore \n" +
@@ -408,7 +423,10 @@ describe("Utils tests", () => {
                 "dolore sint culpa aliquip fugiat officia consectetur nostrud adipisicing. Sunt cupidatat in eu non sint tempor ea enim officia reprehenderit elit veniam. Aute velit reprehenderit Lorem velit anim eiusmod non. Veniam labore nulla aute fugiat anim\n" +
                 "# Elit sunt tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
-                "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n",
+                "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
+                "# Eu fugiatanim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
         },
         
     ])('removeLinksFromHeadings check & remove links from headings [$name] - linksInHeadings:$linksInHeadings, InternalWikilinkWithoutTextAction:$internalWikilinkWithoutTextAction: $# ', 

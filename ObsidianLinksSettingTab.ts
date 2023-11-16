@@ -261,6 +261,18 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+        const convertHtmllinksToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert HTML links to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertHtmllinksToMdlinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertHtmllinksToMdlinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
 
         const toggleMultipleLinksConversions = (enabled: boolean) => {
             if (enabled) {
@@ -268,15 +280,40 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 convertWikilinksToMdLinksSettings.settingEl.show();
                 convertUrlsToMdLinksSettings.settingEl.show();
                 convertAutolinksToMdLinksSettings.settingEl.show();
+                convertHtmllinksToMdLinksSettings.settingEl.show();
             } else {
                 convertAllToMdLinksSettings.settingEl.hide();
                 convertWikilinksToMdLinksSettings.settingEl.hide();
                 convertUrlsToMdLinksSettings.settingEl.hide();
                 convertAutolinksToMdLinksSettings.settingEl.hide();
+                convertHtmllinksToMdLinksSettings.settingEl.hide();
             }
         }
 
         toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
+
+        const extractSectionSettings = new Setting(containerEl)
+            .setName('Extract section')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.extractSection)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.extractSection = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const toggleExtractSection = (enabled: boolean) => {
+            if (enabled) {
+                extractSectionSettings.settingEl.show();
+            } else {
+                extractSectionSettings.settingEl.hide();
+            }
+        }
+
+        toggleExtractSection(this.plugin.settings.ffExtractSection);
 
         // ------ Early access features -----------------
 
@@ -369,6 +406,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 }));
             feature2SettingDesc.appendText('.');
         }
+
+        // feature: extract section
+
+        // new Setting(containerEl)
+        //     .setName("Extract section")
+        //     .setDesc("Extract section into a note.")
+        //     .setClass("setting-item--insider-feature3")
+        //     .addToggle((toggle) => {
+        //         toggle
+        //             .setValue(this.plugin.settings.ffExtractSection)
+        //             .onChange(async (value) => {
+        //                 this.plugin.settings.ffExtractSection = value;
+        //                 await this.plugin.saveSettings();
+        //                 toggleExtractSection(value);
+        //             })
+        //     });
+
+        // const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
+
+        // if (feature3SettingDesc) {
+        //     feature3SettingDesc.appendText(' see ');
+        //     feature3SettingDesc.appendChild(
+        //         createEl('a', {
+        //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/extract-section.md',
+        //             text: 'docs'
+        //         }));
+        //     feature3SettingDesc.appendText('.');
+        // }
 
         // // feature: options for remove internal wikilink without text replacement
 

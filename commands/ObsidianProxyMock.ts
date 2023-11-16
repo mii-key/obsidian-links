@@ -87,8 +87,9 @@ export class ObsidianProxyMock {
         removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
 
         //feature flags
-        ffReplaceLink: false,
+        ffReplaceLink: true,
         ffMultipleLinkConversion: true,
+        ffExtractSection: true,
 
         //context menu
         contexMenu: {
@@ -108,7 +109,9 @@ export class ObsidianProxyMock {
             convertAllLinksToMdLinks: true,
             convertWikilinkToMdLinks: true,
             convertUrlsToMdlinks: true,
-            convertAutolinksToMdlinks: true
+            convertAutolinksToMdlinks: true,
+            convertHtmllinksToMdlinks: true,
+            extractSection: true
         }
     }
 
