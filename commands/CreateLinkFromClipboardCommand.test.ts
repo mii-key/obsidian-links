@@ -3,35 +3,63 @@ import { expect, test } from '@jest/globals';
 import { EditorMock } from './EditorMock'
 import { CreateLinkFromClipboardCommand } from './CreateLinkFromClipboardCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
+import exp from 'constants';
 
 describe('CreateLinkFromClipboardCommand test', () => {
 
-   
-    //TODO: 
-    // test.only.each(
-    //     [
-    //         {
-    //             name: "empty clipboard",
-    //             selection: "",
-    //             clipboard: "",
-    //             expected: false
-    //         },
-    //     ]
-    // )
-    //     ('status - cursor on [$name] - command enabled', ({ name, selection, clipboard, expected}) => {
-    //         const editor = new EditorMock()
-    //         editor.__mocks.getSelection.mockReturnValue(selection)
-    //         editor.__mocks.posToOffset.mockReturnValue(1)
-    //         const obsidianProxyMock = new ObsidianProxyMock()
-    //         obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
-    //         const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock)
-    //         //
-    //         const result = cmd.handler(editor, true)
-    //         //
-    //         expect(result).toBe(expected)
-    //         expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
 
-    //     })
+    test.each(
+        [
+            {
+                name: "cursor on text",
+                text: "Aliqua minim voluptate reprehenderit duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate reprehende".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "cursor inside mdlink",
+                text: "Aliqua minim voluptate [reprehenderit](duis) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: false,
+            },
+            {
+                name: "cursor inside wikilink",
+                text: "Aliqua minim voluptate [[reprehenderit]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: false,
+            },
+            {
+                name: "cursor inside autolink",
+                text: "Aliqua minim voluptate <http://reprehenderit> duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate <re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: false,
+            },
+        ]
+    )
+        ('status - $name - success', ({ name, text, cursorPos, selection, clipboard, expectedEnabled }) => {
+            const editor = new EditorMock()
+            editor.__mocks.getValue.mockReturnValue(text)
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorPos })
+            editor.__mocks.getSelection.mockReturnValue(selection)
+
+            const obsidianProxyMock = new ObsidianProxyMock()
+            obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
+
+            const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock);
+            //
+            const enabled = cmd.handler(editor, true)
+            //
+            expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
+            expect(enabled).toBe(expectedEnabled)
+        })
 
     test.each(
         [
@@ -79,11 +107,11 @@ describe('CreateLinkFromClipboardCommand test', () => {
             },
         ]
     )
-        ('create link - $name - success', ({ name, selection, clipboard: clipboard, expected, cursurPos}, done) => {
+        ('create link - $name - success', ({ name, selection, clipboard: clipboard, expected, cursurPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(selection)
             const linkStart = 1;
-            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: linkStart})
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: linkStart })
 
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
@@ -93,28 +121,30 @@ describe('CreateLinkFromClipboardCommand test', () => {
             obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
 
             const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
-                if(err){
+                if (err) {
                     done(err)
                     return
-                } 
-                try{
+                }
+                try {
                     expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
                     expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
                     expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(linkStart)
                     expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(linkStart)
-        
+
                     expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
                     expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(linkStart + cursurPos)
                     done()
                 }
-                catch(err){
+                catch (err) {
                     done(err)
                 }
             })
-           
+
             //
             cmd.handler(editor, false)
             //
         })
+
+
 
 })
