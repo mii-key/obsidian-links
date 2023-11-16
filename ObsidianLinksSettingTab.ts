@@ -261,6 +261,18 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+        const convertHtmllinksToMdLinksSettings = new Setting(containerEl)
+            .setName('Convert HTML links to Markdown links')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertHtmllinksToMdlinks)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertHtmllinksToMdlinks = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
 
         const toggleMultipleLinksConversions = (enabled: boolean) => {
             if (enabled) {
@@ -268,16 +280,17 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 convertWikilinksToMdLinksSettings.settingEl.show();
                 convertUrlsToMdLinksSettings.settingEl.show();
                 convertAutolinksToMdLinksSettings.settingEl.show();
+                convertHtmllinksToMdLinksSettings.settingEl.show();
             } else {
                 convertAllToMdLinksSettings.settingEl.hide();
                 convertWikilinksToMdLinksSettings.settingEl.hide();
                 convertUrlsToMdLinksSettings.settingEl.hide();
                 convertAutolinksToMdLinksSettings.settingEl.hide();
+                convertHtmllinksToMdLinksSettings.settingEl.hide();
             }
         }
 
         toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
-
 
         const extractSectionSettings = new Setting(containerEl)
             .setName('Extract section')

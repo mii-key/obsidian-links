@@ -110,6 +110,7 @@ export class ObsidianProxyMock {
             convertWikilinkToMdLinks: true,
             convertUrlsToMdlinks: true,
             convertAutolinksToMdlinks: true,
+            convertHtmllinksToMdlinks: true,
             extractSection: true
         }
     }
