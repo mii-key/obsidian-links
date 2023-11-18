@@ -52,6 +52,7 @@ export class EditorMock {
         this.setValue = this.__mocks.setValue
         this.getCursor = this.__mocks.getCursor
         this.setCursor = this.__mocks.setCursor
+        this.getRange = this.__mocks.getRange
         this.replaceRange = this.__mocks.replaceRange
         this.getSelection = this.__mocks.getSelection
         this.setSelection = this.__mocks.setSelection
@@ -62,6 +63,7 @@ export class EditorMock {
         setValue : jest.Mock
         getCursor : jest.Mock
         setCursor : jest.Mock
+        getRange: jest.Mock
         replaceRange : jest.Mock
         getSelection : jest.Mock
         setSelection : jest.Mock
@@ -71,12 +73,14 @@ export class EditorMock {
         setValue : jest.fn(),
         getCursor : jest.fn(),
         setCursor : jest.fn(),
+        getRange: jest.fn(),
         replaceRange : jest.fn(),
         getSelection : jest.fn(),
         setSelection : jest.fn(),
         replaceSelection : jest.fn()
 
     }
+
     refresh(): void {
         throw new Error('Method not implemented.');
     }
@@ -153,7 +157,7 @@ export class EditorMock {
         throw new Error('Method not implemented.');
     }
     posToOffset(pos: EditorPosition): number {
-        return pos.line * 100 + pos.ch;
+        return pos.ch;
     }
     offsetToPos(offset: number): EditorPosition {
         return {line: 0, ch: offset};
