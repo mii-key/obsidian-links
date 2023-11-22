@@ -99,7 +99,7 @@ Convert a wikilink or HTML link to a markdown link. If a wiki link contains spac
 
 </details>
 
-see [Convert wikilinks to markdown links](#convert-wikilinks-to-markdown-links)
+see [Convert wikilinks to markdown links](#convert-wikilinks-to-markdown-links)<br/>
 see [Convert HTML links to markdown links](#convert-html-links-to-markdown-links)
 
 
