@@ -9,6 +9,13 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Convert wikilink or html link to markdown link](#convert-wikilink-or-html-link-to-markdown-link)
   - [Convert markdown link to Wikilink](#convert-markdown-link-to-wikilink)
   - [Convert markdown link to autolink](#convert-markdown-link-to-autolink)
+  - [Convert autolink to markdown link](#convert-autolink-to-markdown-link)
+  - [Convert multiple links](#convert-multiple-links)
+    - [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+    - [Convert wikilinks to markdown links](#convert-wikilinks-to-markdown-links)
+    - [Convert autolinks to markdown links](#convert-autolinks-to-markdown-links)
+    - [Convert URLs to markdown links](#convert-urls-to-markdown-links)
+    - [Convert HTML links to markdown links](#convert-html-links-to-markdown-links)
   - [Copy link destination to clipboard](#copy-link-destination-to-clipboard)
   - [Remove links from headings](#remove-links-from-headings)
     - [Configuration](#configuration)
@@ -18,7 +25,6 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Set link text](#set-link-text)
   - [Create link from selection](#create-link-from-selection)
   - [Create link from clipboard](#create-link-from-clipboard)
-  - [Convert autolink to markdown link](#convert-autolink-to-markdown-link)
   - [Embed / Unembed files](#embed--unembed-files)
 
 
@@ -72,7 +78,6 @@ Unlink single link or all links in a selection.
 
 </details>
 
-
 ## Convert wikilink or html link to markdown link
 
 Convert a wikilink or HTML link to a markdown link. If a wiki link contains spaces a destination of a markdown link will be places in `<>`. HTML link must be expanded.
@@ -93,6 +98,10 @@ Convert a wikilink or HTML link to a markdown link. If a wiki link contains spac
 ![convert html link to markdown link](docs/img/convert-htmllink-to-mdlink.gif)
 
 </details>
+
+see [Convert wikilinks to markdown links](#convert-wikilinks-to-markdown-links)
+see [Convert HTML links to markdown links](#convert-html-links-to-markdown-links)
+
 
 ## Convert markdown link to Wikilink
 - Command palette: **Convert to wikilink**
@@ -128,6 +137,83 @@ Converts a markdown link with an absolute URL or an email address to an autolink
 
 </details>
 
+## Convert autolink to markdown link
+
+Convert an autolink to a markdown link.
+If an autolink has an absolute URI with `http` or `https` scheme content of the `<title/>` element will be set as a link text. If request fails or the URL has other scheme cursor will be places inside the `[]` of the markdown link. For email autolink `mailto` scheme will be added before email address.
+
+<details>
+<summary>Demo. Convert autolink to markdown link</summary>
+
+![convert to markdown link](/docs/img/convert-autolink-to-markdown-link.gif)
+
+</details>
+
+see [Convert autolinks to markdown links](#convert-autolinks-to-markdown-links)
+
+## Convert multiple links
+
+> **Note**
+> Early access. Enable in settings.
+
+Converts multiple links in a note or in a selection to markdown links.
+
+### Convert all links to markdown links
+Convert plain URLs, html links, wiki links, autolinks in a note or in a selection to markdown links.
+For URLs and autolinks with absolute URL with `http://` or `https://` schemes link text will be set to a content of a `<title/>` element of the page loaded from the URL.
+
+- Command palette: **Convert all links to Markdown links**
+- Context menu: **Convert all links to Markdown links** (enable in Settings)
+
+<details>
+<summary>Demo. Convert all links in a note to markdown links </summary>
+
+![remove link](/docs/img/convert-all-to-mdlinks.gif)
+
+</details>
+
+<details>
+<summary>Demo. Convert all links in a selection to markdown links </summary>
+
+![remove link](/docs/img/convert-all-in-selection-to-mdlinks.gif)
+
+</details>
+
+### Convert wikilinks to markdown links
+Convert multiple wikilinks in a note or in a selection to markdown links.
+
+- Command palette: **Convert Wikilinks to Markdown links**
+- Context menu: **Convert Wikilinks to Markdown links** (enable in Settings)
+
+Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+
+see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+
+### Convert autolinks to markdown links
+Convert multiple autolinks in a note or in a selection to markdown links.
+For autolinks with absolute URL with `http://` or `https://` schemes link text will be set to a content of a `<title/>` element of the page loaded from the URL.
+
+- Command palette: **Convert Autolinks to Markdown links**
+- Context menu: **Convert Autolinks to Markdown links** (enable in Settings)
+
+Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+
+### Convert URLs to markdown links
+Convert multiple raw URLs in a note or in a selection to markdown links.
+For absolute URLs with `http://` or `https://` schemes link text will be set to a content of a `<title/>` element of the page loaded from the URL.
+
+- Command palette: **Convert URLs to Markdown links**
+- Context menu: **Convert URLs to Markdown links** (enable in Settings)
+
+Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+
+### Convert HTML links to markdown links
+Convert multiple raw URLs in a note or in a selection to markdown links.
+
+- Command palette: **Convert HTML links to Markdown links**
+- Context menu: **Convert HTML links to Markdown links** (enable in Settings)
+
+Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
 
 ## Copy link destination to clipboard
 
@@ -291,17 +377,6 @@ Create link from textual content of the system clipboard.
 
 </details>
 
-## Convert autolink to markdown link
-
-Convert an autolink to a markdown link.
-If an autolink has an absolute URI with `http` or `https` scheme content of the `<page/>` element will be set as a link text. If request fails or the URL has other scheme cursor will be places inside the `[]` of the markdown link. For email autolink `mailto` scheme will be added before email address.
-
-<details>
-<summary>Demo. Convert autolink to markdown link</summary>
-
-![convert to markdown link](/docs/img/convert-autolink-to-markdown-link.gif)
-
-</details>
 
 ## Embed / Unembed files
 
@@ -323,3 +398,4 @@ Add or remove [file embedding](https://help.obsidian.md/Linking+notes+and+files/
 ![remove link](/docs/img/unembed-link.gif)
 
 </details>
+

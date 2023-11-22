@@ -354,6 +354,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             text: " to be fixed."
         });
 
+        // feature: convert multiple links to markdown
+
+        new Setting(containerEl)
+            .setName("Convert multiple links to markdown links")
+            .setDesc("Convert multiple links in note or selection to markdown links.")
+            .setClass("setting-item--insider-feature2")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffMultipleLinkConversion)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffMultipleLinkConversion = value;
+                        await this.plugin.saveSettings();
+                        toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
+                    })
+            });
+
+        const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
+
+        if (feature2SettingDesc) {
+            feature2SettingDesc.appendText(' see ');
+            feature2SettingDesc.appendChild(
+                createEl('a', {
+                    href: 'https://github.com/mii-key/obsidian-links#convert-multiple-links',
+                    text: 'docs'
+                }));
+            feature2SettingDesc.appendText('.');
+        }
+
         // ----- Early access feature1
 
         // new Setting(containerEl)
@@ -401,33 +429,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             text: " and influence the direction of development."
         });
 
-        // feature: convert multiple links to markdown
-
-        new Setting(containerEl)
-            .setName("Convert multiple links to markdown links")
-            .setDesc("Convert multiple links in document or selection to markdown links.")
-            .setClass("setting-item--insider-feature2")
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.ffMultipleLinkConversion)
-                    .onChange(async (value) => {
-                        this.plugin.settings.ffMultipleLinkConversion = value;
-                        await this.plugin.saveSettings();
-                        toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
-                    })
-            });
-
-        const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
-
-        if (feature2SettingDesc) {
-            feature2SettingDesc.appendText(' see ');
-            feature2SettingDesc.appendChild(
-                createEl('a', {
-                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-multiple-links.md',
-                    text: 'docs'
-                }));
-            feature2SettingDesc.appendText('.');
-        }
+        
 
         // feature: set link text from clipboard
 
