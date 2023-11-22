@@ -74,6 +74,28 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+        const setLinkTestFromClipboardSetting = new Setting(containerEl)
+            .setName('Set link text from clipboard')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.setLinkTextFromClipboard)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.setLinkTextFromClipboard = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const toggleSetLinkTextFromClipboard = (enabled: boolean) => {
+            if (enabled) {
+                setLinkTestFromClipboardSetting.settingEl.show();
+            } else {
+                setLinkTestFromClipboardSetting.settingEl.hide();
+            }
+        }
+        toggleSetLinkTextFromClipboard(this.plugin.settings.ffSetLinkTextFromClipboard);
+
         new Setting(containerEl)
             .setName('Edit link destination')
             .setDesc('')
@@ -332,6 +354,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             text: " to be fixed."
         });
 
+        // feature: convert multiple links to markdown
+
+        new Setting(containerEl)
+            .setName("Convert multiple links to markdown links")
+            .setDesc("Convert multiple links in note or selection to markdown links.")
+            .setClass("setting-item--insider-feature2")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffMultipleLinkConversion)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffMultipleLinkConversion = value;
+                        await this.plugin.saveSettings();
+                        toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
+                    })
+            });
+
+        const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
+
+        if (feature2SettingDesc) {
+            feature2SettingDesc.appendText(' see ');
+            feature2SettingDesc.appendChild(
+                createEl('a', {
+                    href: 'https://github.com/mii-key/obsidian-links#convert-multiple-links',
+                    text: 'docs'
+                }));
+            feature2SettingDesc.appendText('.');
+        }
+
         // ----- Early access feature1
 
         // new Setting(containerEl)
@@ -379,33 +429,35 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             text: " and influence the direction of development."
         });
 
-        // feature: convert multiple links to markdown
+        
 
-        new Setting(containerEl)
-            .setName("Convert multiple links to markdown links")
-            .setDesc("Convert multiple links in document or selection to markdown links.")
-            .setClass("setting-item--insider-feature2")
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.ffMultipleLinkConversion)
-                    .onChange(async (value) => {
-                        this.plugin.settings.ffMultipleLinkConversion = value;
-                        await this.plugin.saveSettings();
-                        toggleMultipleLinksConversions(this.plugin.settings.ffMultipleLinkConversion);
-                    })
-            });
+        // feature: set link text from clipboard
 
-        const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
+        // new Setting(containerEl)
+        //     .setName("Set link text from clipboard")
+        //     // .setDesc("")
+        //     .setClass("setting-item--insider-feature3")
+        //     .addToggle((toggle) => {
+        //         toggle
+        //             .setValue(this.plugin.settings.ffSetLinkTextFromClipboard)
+        //             .onChange(async (value) => {
+        //                 this.plugin.settings.ffSetLinkTextFromClipboard = value;
+        //                 await this.plugin.saveSettings();
+        //                 toggleSetLinkTextFromClipboard(this.plugin.settings.ffSetLinkTextFromClipboard);
+        //             })
+        //     });
 
-        if (feature2SettingDesc) {
-            feature2SettingDesc.appendText(' see ');
-            feature2SettingDesc.appendChild(
-                createEl('a', {
-                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-multiple-links.md',
-                    text: 'docs'
-                }));
-            feature2SettingDesc.appendText('.');
-        }
+        // const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
+
+        // if (feature3SettingDesc) {
+        //     feature3SettingDesc.appendText(' see ');
+        //     feature3SettingDesc.appendChild(
+        //         createEl('a', {
+        //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/set-link-text-from-clipboard.md',
+        //             text: 'docs'
+        //         }));
+        //     feature3SettingDesc.appendText('.');
+        // }
 
         // feature: extract section
 

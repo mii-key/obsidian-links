@@ -95,3 +95,4 @@ describe('ExtractSectionCommand test', () => {
         })
 
 })
+
