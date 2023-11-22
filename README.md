@@ -99,7 +99,7 @@ Convert a wikilink or HTML link to a markdown link. If a wiki link contains spac
 
 </details>
 
-see [Convert wikilinks to markdown links](#convert-wikilinks-to-markdown-links)
+see [Convert wikilinks to markdown links](#convert-wikilinks-to-markdown-links)<br/>
 see [Convert HTML links to markdown links](#convert-html-links-to-markdown-links)
 
 
@@ -140,7 +140,7 @@ Converts a markdown link with an absolute URL or an email address to an autolink
 ## Convert autolink to markdown link
 
 Convert an autolink to a markdown link.
-If an autolink has an absolute URI with `http` or `https` scheme content of the `<title/>` element will be set as a link text. If request fails or the URL has other scheme cursor will be places inside the `[]` of the markdown link. For email autolink `mailto` scheme will be added before email address.
+If an autolink has an absolute URI with `http` or `https` scheme content of the `<title/>` element will be set as a link text. If request fails or the URL has other scheme cursor will be placed inside the `[]` of the markdown link. For email autolink `mailto` scheme will be added before email address.
 
 <details>
 <summary>Demo. Convert autolink to markdown link</summary>
