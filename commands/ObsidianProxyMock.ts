@@ -90,11 +90,13 @@ export class ObsidianProxyMock {
         ffReplaceLink: true,
         ffMultipleLinkConversion: true,
         ffExtractSection: true,
+        ffSetLinkTextFromClipboard: true,
 
         //context menu
         contexMenu: {
             editLinkText: true,
             setLinkText: true,
+            setLinkTextFromClipboard: true,
             editLinkDestination: true,
             copyLinkDestination: true,
             unlink: true,

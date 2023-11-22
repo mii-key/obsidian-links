@@ -21,6 +21,7 @@ import { ConvertAutolinksToMdlinksCommand } from "./ConvertAutolinksToMdlinksCom
 import { ConvertUrlsToMdlinksCommand } from "./ConvertUrlsToMdlinksCommand";
 import { ExtractSectionCommand } from "./ExtractSectionCommand";
 import { ConvertHtmlLinksToMdlinksCommand } from "./ConvertHtmlLinksToMdlinksCommand";
+import { SetTextFromClipboardCommand } from "./SetTextFromClipboardCommand";
 
 
 var commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -56,6 +57,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(ConvertHtmlLinksToMdlinksCommand.name, new ConvertHtmlLinksToMdlinksCommand(obsidianProxy));
 
     commands.set(ExtractSectionCommand.name, new ExtractSectionCommand(obsidianProxy));
+    commands.set(SetTextFromClipboardCommand.name, new SetTextFromClipboardCommand(obsidianProxy));
     
 }
 
@@ -72,6 +74,7 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         null,
         EditLinkTextCommand.name,
         SetLinkTextCommand.name,
+        SetTextFromClipboardCommand.name,
         EditLinkDestinationCommand.name,
         CopyLinkDestinationToClipboardCommand.name,
         null,

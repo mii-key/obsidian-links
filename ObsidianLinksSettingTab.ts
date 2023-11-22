@@ -74,6 +74,28 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+        const setLinkTestFromClipboardSetting = new Setting(containerEl)
+            .setName('Set link text from clipboard')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.setLinkTextFromClipboard)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.setLinkTextFromClipboard = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const toggleSetLinkTextFromClipboard = (enabled: boolean) => {
+            if (enabled) {
+                setLinkTestFromClipboardSetting.settingEl.show();
+            } else {
+                setLinkTestFromClipboardSetting.settingEl.hide();
+            }
+        }
+        toggleSetLinkTextFromClipboard(this.plugin.settings.ffSetLinkTextFromClipboard);
+
         new Setting(containerEl)
             .setName('Edit link destination')
             .setDesc('')
@@ -406,6 +428,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 }));
             feature2SettingDesc.appendText('.');
         }
+
+        // feature: set link text from clipboard
+
+        // new Setting(containerEl)
+        //     .setName("Set link text from clipboard")
+        //     // .setDesc("")
+        //     .setClass("setting-item--insider-feature3")
+        //     .addToggle((toggle) => {
+        //         toggle
+        //             .setValue(this.plugin.settings.ffSetLinkTextFromClipboard)
+        //             .onChange(async (value) => {
+        //                 this.plugin.settings.ffSetLinkTextFromClipboard = value;
+        //                 await this.plugin.saveSettings();
+        //                 toggleSetLinkTextFromClipboard(this.plugin.settings.ffSetLinkTextFromClipboard);
+        //             })
+        //     });
+
+        // const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
+
+        // if (feature3SettingDesc) {
+        //     feature3SettingDesc.appendText(' see ');
+        //     feature3SettingDesc.appendChild(
+        //         createEl('a', {
+        //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/set-link-text-from-clipboard.md',
+        //             text: 'docs'
+        //         }));
+        //     feature3SettingDesc.appendText('.');
+        // }
 
         // feature: extract section
 

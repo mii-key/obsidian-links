@@ -13,11 +13,13 @@ export interface IObsidianLinksSettings {
 	ffReplaceLink: boolean;
 	ffMultipleLinkConversion: boolean;
 	ffExtractSection: boolean;
+	ffSetLinkTextFromClipboard: boolean;
 
 	//context menu
 	contexMenu: {
 		editLinkText: boolean;
 		setLinkText: boolean;
+		setLinkTextFromClipboard: boolean;
 		editLinkDestination: boolean;
 		copyLinkDestination: boolean;
 		unlink: boolean;
@@ -52,11 +54,13 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffReplaceLink: false,
 	ffMultipleLinkConversion: false,
 	ffExtractSection: false,
+	ffSetLinkTextFromClipboard: false,
 
 	//context menu
 	contexMenu: {
 		editLinkText: true,
 		setLinkText: true,
+		setLinkTextFromClipboard: true,
 		editLinkDestination: true,
 		copyLinkDestination: true,
 		unlink: true,
