@@ -1,6 +1,9 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
+import { RegExPatterns } from "../RegExPatterns";
+import { LinkData, LinkTypes, getSafeFilename } from "../utils";
+import { rawListeners } from "process";
 
 export class ExtractSectionCommand extends CommandBase {
 
@@ -21,8 +24,6 @@ export class ExtractSectionCommand extends CommandBase {
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-
-		console.log('extract');
 		console.log(this.isEnabled())
 		const text = editor.getValue();
 		if (checking) {
@@ -49,7 +50,7 @@ export class ExtractSectionCommand extends CommandBase {
 				break;
 			} else {
 
-				while (blockStart >= 0 && text[blockStart] == '#'){
+				while (blockStart >= 0 && text[blockStart] == '#') {
 					blockStart--;
 				}
 
@@ -72,21 +73,35 @@ export class ExtractSectionCommand extends CommandBase {
 				break;
 			} else {
 				idx = ++blockEnd;
-				while (idx < text.length && text[idx] == '#'){
-					idx ++;
+				while (idx < text.length && text[idx] == '#') {
+					idx++;
 				}
 				if (idx >= text.length || text[idx] == ' ') {
 					break;
 				}
 			}
 		}
-		
+
 		if (blockEnd >= text.length) {
 			blockEnd = text.length;
 		}
 
 		const section = editor.getRange(editor.offsetToPos(blockStart), editor.offsetToPos(blockEnd))
-		console.log(section)
-		editor.setSelection(editor.offsetToPos(blockStart), editor.offsetToPos(blockEnd))
+
+		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
+		const currentNoteParentPath = currentView?.file.parent.path;
+		const headerMatch = section.match(new RegExp(RegExPatterns.NoteHeader.source, 'im'))
+		if (headerMatch) {
+			const safeFilename = getSafeFilename(headerMatch[1]);
+			const noteFullPath = `${currentNoteParentPath}/${safeFilename}.md`;
+			const noteContent = section.substring(headerMatch[1].length + 1);
+			(async () => {
+				const noteFile = await this.obsidianProxy.Vault.createNote(noteFullPath, noteContent);
+				const rawWikilink = `[[${noteFullPath}|${safeFilename}]]`
+				editor.replaceRange(rawWikilink, editor.offsetToPos(blockStart), editor.offsetToPos(blockEnd))
+				editor.setCursor(editor.offsetToPos(blockStart + rawWikilink.length))
+			})();
+
+		}
 	}
 }
