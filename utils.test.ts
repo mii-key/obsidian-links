@@ -1,5 +1,5 @@
 import exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction, getSafeFilename } from './utils';
 import { expect, test } from '@jest/globals';
 
 describe("Utils tests", () => {
@@ -832,4 +832,12 @@ describe("Utils tests", () => {
         }
     });
 
+    test('getSafeFilename', () => {
+        const fileName = 'Occa#e^ca[t] i|rure C*o"mmodo" /exc\epteur <laborum> cu:lpa? velit'
+        const expectedFileName = 'Occaecat irure Commodo excepteur laborum culpa velit'
+        //
+        const result = getSafeFilename(fileName);
+        //
+        expect(result).toBe(expectedFileName);
+    })
 })

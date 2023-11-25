@@ -407,3 +407,12 @@ export function findLinks(text: string): Array<LinkData> {
     }
     return links;
 }
+
+export function getSafeFilename(filename: string) : string {
+    const regex = new RegExp(RegExPatterns.InvalidNoteNameChars.source, 'g');
+    if(!filename){
+        return filename;
+    }
+
+    return filename.replace(regex, '');
+}

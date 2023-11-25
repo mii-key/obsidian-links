@@ -1,5 +1,6 @@
 import { IObsidianLinksSettings } from "settings";
 import { LinkData, InternalWikilinkWithoutTextAction } from "../utils";
+import { IVault } from "IVault";
 
 export class Notice {
     setMessage(message: string | DocumentFragment): this {
@@ -53,6 +54,7 @@ export interface RequestUrlResponsePromise extends Promise<RequestUrlResponse> {
 
 export class ObsidianProxyMock {
 
+
     __mocks: {
         NoticeMock: {
             setMessage: jest.Mock
@@ -75,6 +77,8 @@ export class ObsidianProxyMock {
             createNotice: jest.fn(),
             linkTextSuggestContextSetLinkData: jest.fn()
         }
+    
+    Vault: IVault;
 
     settings: IObsidianLinksSettings = {
         linkReplacements: [],

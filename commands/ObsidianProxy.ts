@@ -1,3 +1,5 @@
+import { IVault } from "IVault";
+import { VaultImp } from "Vault";
 import { App, Notice, RequestUrlParam, RequestUrlResponsePromise, requestUrl } from "obsidian";
 import { IObsidianLinksSettings } from "settings";
 import { ILinkTextSuggestContext } from "suggesters/ILinkTextSuggestContext";
@@ -7,10 +9,15 @@ export class ObsidianProxy {
 
     linkTextSuggestContext: ILinkTextSuggestContext;
     settings: IObsidianLinksSettings;
+    Vault : IVault;
+    app: App;
 
-    constructor(linkTextSuggestContext: ILinkTextSuggestContext, settings: IObsidianLinksSettings){
+    constructor(app: App, linkTextSuggestContext: ILinkTextSuggestContext, settings: IObsidianLinksSettings){
+        this.app = app;
         this.linkTextSuggestContext = linkTextSuggestContext;
         this.settings = settings;
+
+        this.Vault = new VaultImp(app);
     }
 
     createNotice(message: string | DocumentFragment, timeout?: number) : Notice {

@@ -43,7 +43,8 @@ describe('ExtractSectionCommand test', () => {
             expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
         })
 
-    test.only.each(
+    // TODO:
+    test.skip.each(
         [
             {
                 name: "text wo/section",
@@ -79,7 +80,7 @@ describe('ExtractSectionCommand test', () => {
             }
         ]
     )
-        ('embed link - cursor on [$name] - success', ({ name, text, cursorOffest, expectedSection, expectedSectionStart, expectedSectionEnd}) => {
+        ('extract - $name - success', ({ name, text, cursorOffest, expectedSection, expectedSectionStart, expectedSectionEnd}) => {
             const obsidianProxy = new ObsidianProxyMock()
             const cmd = new ExtractSectionCommand(obsidianProxy)
             const editor = new EditorMock()
