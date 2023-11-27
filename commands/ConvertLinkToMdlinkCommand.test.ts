@@ -58,6 +58,10 @@ describe('ConvertLinkToMdlinkCommand test', () => {
             {
                 name: "url https",
                 text: "https://google.com",
+            },
+            {
+                name: "url",
+                text: "irc://google.com",
             }
         ]
     )
@@ -144,9 +148,15 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 expected: '[Google](https://google.com)',
                 cursurPos: "[Google](https://google.com)".length
             },
+            {
+                name: "url irc",
+                text: "irc://google.com",
+                expected: '[](irc://google.com)',
+                cursurPos: "[".length
+            },
         ]
     )
-        ('convert link - cursor in selection [$name] - success', ({ name, text, expected, cursurPos }, done) => {
+        ('convert - cursor on [$name] - success', ({ name, text, expected, cursurPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })

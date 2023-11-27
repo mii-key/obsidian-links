@@ -10,6 +10,7 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Convert markdown link to Wikilink](#convert-markdown-link-to-wikilink)
   - [Convert markdown link to autolink](#convert-markdown-link-to-autolink)
   - [Convert autolink to markdown link](#convert-autolink-to-markdown-link)
+  - [Convert URL to markdown link](#convert-url-to-markdown-link)
   - [Convert multiple links](#convert-multiple-links)
     - [Convert all links to markdown links](#convert-all-links-to-markdown-links)
     - [Convert wikilinks to markdown links](#convert-wikilinks-to-markdown-links)
@@ -142,6 +143,9 @@ Converts a markdown link with an absolute URL or an email address to an autolink
 Convert an autolink to a markdown link.
 If an autolink has an absolute URI with `http` or `https` scheme content of the `<title/>` element will be set as a link text. If request fails or the URL has other scheme cursor will be placed inside the `[]` of the markdown link. For email autolink `mailto` scheme will be added before email address.
 
+- Command palette: **Convert to markdown link**
+- Context menu: **Convert to markdown link**
+
 <details>
 <summary>Demo. Convert autolink to markdown link</summary>
 
@@ -150,6 +154,23 @@ If an autolink has an absolute URI with `http` or `https` scheme content of the 
 </details>
 
 see [Convert autolinks to markdown links](#convert-autolinks-to-markdown-links)
+
+## Convert URL to markdown link
+
+Convert a raw URL to a markdown link.
+If a URL has an absolute URI with `http` or `https` scheme content of the `<title/>` element will be set as a link text. If request fails or the URL has other scheme cursor will be placed inside the `[]` of the markdown link.
+
+- Command palette: **Convert to markdown link**
+- Context menu: **Convert to markdown link**
+
+<details>
+<summary>Demo. Convert a URL to a markdown link</summary>
+
+![convert to markdown link](/docs/img/convert-url-to-markdown-link.gif)
+
+</details>
+
+see [Convert URLs to markdown links](#convert-urls-to-markdown-links)
 
 ## Convert multiple links
 
@@ -376,7 +397,6 @@ Create link from textual content of the system clipboard.
 ![Create link from selection](docs/img/create-mdlink-from-clipboard.gif)
 
 </details>
-
 
 ## Embed / Unembed files
 
