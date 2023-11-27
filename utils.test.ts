@@ -339,8 +339,8 @@ describe("Utils tests", () => {
                 "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
                 "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
-                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
-                "# <a name=\"name-value\"></a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" +
+                "# <a name=\"name-value\"></a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" +
                 "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
             expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
                 "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
@@ -354,8 +354,8 @@ describe("Utils tests", () => {
                 "# Elit  tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
                 "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
-                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
-                "# anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" +
+                "# anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" +
                 "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
         },
         {
@@ -374,8 +374,8 @@ describe("Utils tests", () => {
                 "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
                 "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
-                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
-                "# <a name=\"name-value\">Eu fugiat</a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" +
+                "# <a name=\"name-value\">Eu fugiat</a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" +
                 "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
             expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
                 "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
@@ -389,8 +389,8 @@ describe("Utils tests", () => {
                 "# Elit #sunt tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
                 "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
-                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
-                "# Eu fugiatanim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" +
+                "# Eu fugiatanim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" +
                 "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
         },
         {
@@ -409,8 +409,8 @@ describe("Utils tests", () => {
                 "# Elit [[#sunt]] tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
                 "## <a href=\"google.com\">amet mollit velit1</a>. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
-                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
-                "# <a name=\"name-value\">Eu fugiat</a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" +
+                "# <a name=\"name-value\">Eu fugiat</a>anim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" +
                 "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
             expected: "Et magna velit adipisicing non exercitation commodo officia in sunt aliquip. \r\n" +
                 "# Aute officia do eu. Dolore eiusmod aliqua non esse ut laborum adipisicing sit\n" +
@@ -424,26 +424,26 @@ describe("Utils tests", () => {
                 "# Elit sunt tempor amet velit consectetur. Minim fugiat labore aliquip laboris dolore \n" +
                 "in nisi voluptate consectetur ea aliqua sint ullamco sint. Incididunt incididunt ex commodo laboris minim nostrud duis excepteur labore id do anim deserunt id.\n" +
                 "## amet mollit velit1. Velit dolor non ut occaecat eiusmod est ipsum culpa nulla eu nulla culpa ullamco.\n" +
-                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" + 
-                "# Eu fugiatanim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" + 
+                "Labore aliquip voluptate Lorem ea in. Sint et sit excepteur Lorem officia tempor veniam. Voluptate sint velit \n" +
+                "# Eu fugiatanim consequat eu irure irure exercitation. Voluptate aliqua incididunt ipsum \n" +
                 "Sint sint nulla minim eu incididunt magna sunt. Sit duis voluptate id reprehenderit in enim pariatur",
         },
-        
-    ])('removeLinksFromHeadings check & remove links from headings [$name] - linksInHeadings:$linksInHeadings, InternalWikilinkWithoutTextAction:$internalWikilinkWithoutTextAction: $# ', 
+
+    ])('removeLinksFromHeadings check & remove links from headings [$name] - linksInHeadings:$linksInHeadings, InternalWikilinkWithoutTextAction:$internalWikilinkWithoutTextAction: $# ',
         ({ name, linksInHeadings, internalWikilinkWithoutTextAction, input, expected }) => {
 
-        const hasLinks = hasLinksInHeadings(input);
-        expect(hasLinks).toBe(linksInHeadings);
+            const hasLinks = hasLinksInHeadings(input);
+            expect(hasLinks).toBe(linksInHeadings);
 
-        if (linksInHeadings) {
-            expect(hasLinks).toBeTruthy();
-            const options = {
-                internalWikilinkWithoutTextAction: internalWikilinkWithoutTextAction ?? InternalWikilinkWithoutTextAction.ReplaceWithDestination
-            };
-            const result = removeLinksFromHeadings(input, options);
-            expect(result).toBe(expected);
-        }
-    });
+            if (linksInHeadings) {
+                expect(hasLinks).toBeTruthy();
+                const options = {
+                    internalWikilinkWithoutTextAction: internalWikilinkWithoutTextAction ?? InternalWikilinkWithoutTextAction.ReplaceWithDestination
+                };
+                const result = removeLinksFromHeadings(input, options);
+                expect(result).toBe(expected);
+            }
+        });
 
     test.each([
         {
@@ -830,6 +830,92 @@ describe("Utils tests", () => {
             }
             expect(result[i].embedded).toBe(expected[i].embedded);
         }
+    });
+
+    test.each([
+        {
+            name: "mdlink",
+            input: "[Consectetur](Consectetur-dest) in id []() ad voluptate ![tempor](tempor-dest) sit ![]() " +
+                "laborum aliqua [consequat]() voluptate ![esse]() officia in [](id-dest) ad voluptate ![](voluptate-dest) " +
+                "ad voluptate [Consectetur](<Consectetur dest>) officia ![tempor](<tempor dest>)",
+            start: "[Consectetur](Consectetur-dest) in id []() ad voluptate ![t".length,
+            end: "[Consectetur](Consectetur-dest) in id []() ad voluptate ![t".length,
+            expected:
+                new LinkData(LinkTypes.Markdown, "![tempor](tempor-dest)",
+                    new Position("[Consectetur](Consectetur-dest) in id []() ad voluptate ".length,
+                        "[Consectetur](Consectetur-dest) in id []() ad voluptate ![tempor](tempor-dest)".length),
+                    new TextPart("tempor-dest", new Position("![tempor](".length, "![tempor](tempor-dest".length)),
+                    new TextPart("tempor", new Position("![".length, "![tempor".length)),
+                    true),
+        },
+        {
+            name: "wikilink",
+            input: "[[Consectetur-dest|Consectetur]] in id [[]] ad voluptate ![[tempor-dest|tempor]] sit ![[]] " +
+                "laborum aliqua [[|consequat]] voluptate ![[|esse]] officia in [[id-dest]] ad voluptate ![[voluptate-dest]] " +
+                "ad voluptate Consectetur officia tempor",
+            start: "[[Consectetur-dest|Consectetur]] in id [[]] ad voluptate ![[tempor-dest|tem".length,
+            end: "[[Consectetur-dest|Consectetur]] in id [[]] ad voluptate ![[tempor-dest|tem".length,
+            expected:
+                new LinkData(LinkTypes.Wiki, "![[tempor-dest|tempor]]",
+                    new Position("[[Consectetur-dest|Consectetur]] in id [[]] ad voluptate ".length,
+                        "[[Consectetur-dest|Consectetur]] in id [[]] ad voluptate ![[tempor-dest|tempor]]".length),
+                    new TextPart("tempor-dest", new Position("![[".length, "![[tempor-dest".length)),
+                    new TextPart("tempor", new Position("![[tempor-dest|".length, "![[tempor-dest|tempor".length)),
+                    true)
+        },
+        {
+            name: "autlink",
+            input: "Consectetur in <http://dolore.com> id ad voluptate  <https://sunt.com> tempor sit <irc://foo.bar:2233/baz>" +
+                "laborum <http://foo.bar.baz/test?q=hello&id=22&boolean> aliqua consequatvoluptate esse officia in ad voluptate voluptate-dest " +
+                "<MAILTO:FOO@BAR.BAZ> ad voluptate <foo@bar.example.com> Consectetur <> officia <hello> tempor",
+            start: ("Consectetur in <http://dolore.com> id ad voluptate  <https://sunt.com> tempor sit <irc://foo.bar:2233/baz>" +
+                "laborum <http://foo").length,
+            end: ("Consectetur in <http://dolore.com> id ad voluptate  <https://sunt.com> tempor sit <irc://foo.bar:2233/baz>" +
+                "laborum <http://foo").length,
+            expected:
+                new LinkData(LinkTypes.Autolink, "<http://foo.bar.baz/test?q=hello&id=22&boolean>",
+                    new Position(("Consectetur in <http://dolore.com> id ad voluptate  <https://sunt.com> tempor sit <irc://foo.bar:2233/baz>" +
+                        "laborum ").length,
+                        ("Consectetur in <http://dolore.com> id ad voluptate  <https://sunt.com> tempor sit <irc://foo.bar:2233/baz>" +
+                            "laborum <http://foo.bar.baz/test?q=hello&id=22&boolean>").length),
+                    new TextPart("http://foo.bar.baz/test?q=hello&id=22&boolean", new Position("<".length, "<http://foo.bar.baz/test?q=hello&id=22&boolean".length)),
+                    undefined)
+        },
+        {
+            name: "html link",
+            input: "<a href='Consectetur-dest'>Consectetur</a> in id <a href=\"\"></a> ad voluptate !<a href=\"tempor-dest\">tempor</a> sit !<a href=''></a> " +
+                "laborum aliqua <a href=\"\">consequat</a> voluptate !<a href=''>esse</a> officia in <a href=\"id-dest\"></a> ad voluptate !<a href='voluptate-dest'></a> ",
+            start: "<a href='Consectetur-dest'>Consectetur</a> in id <a href=\"\"></a> ad voluptate !<a hre".length,
+            end: "<a href='Consectetur-dest'>Consectetur</a> in id <a href=\"\"></a> ad voluptate !<a hre".length,
+            expected:
+
+                new LinkData(LinkTypes.Html, "<a href=\"tempor-dest\">tempor</a>",
+                    new Position("<a href='Consectetur-dest'>Consectetur</a> in id <a href=\"\"></a> ad voluptate !".length,
+                        "<a href='Consectetur-dest'>Consectetur</a> in id <a href=\"\"></a> ad voluptate !<a href=\"tempor-dest\">tempor</a>".length),
+                    new TextPart("tempor-dest", new Position("<a href=\"".length, "<a href=\"tempor-dest".length)),
+                    new TextPart("tempor", new Position("<a href=\"tempor-dest\">".length, "<a href=\"tempor-dest\">tempor".length)))
+        },
+        {
+            name: "plain link",
+            input: "Consectetur in http://dolore.com id ad voluptate https://sunt.com tempor sit irc://foo.bar:2233/baz " +
+                "laborum http://foo.bar.baz/test?q=hello&id=22&boolean aliqua consequatvoluptate esse officia in ad voluptate voluptate-dest ",
+            start: "Consectetur in ht".length,
+            end: "Consectetur in ht".length,
+            expected:
+                new LinkData(LinkTypes.PlainUrl, "http://dolore.com",
+                    new Position("Consectetur in ".length, "Consectetur in http://dolore.com".length),
+                    new TextPart("http://dolore.com", new Position("".length, "http://dolore.com".length)),
+                    undefined)
+        }
+
+    ])("$# findLinks at position [$name]", ({ name, input, start, end, expected }) => {
+        const result = findLinks(input, start, end);
+        //
+        expect(result.length).toBe(1);
+        expect(result[0].type).toBe(expected.type);
+        expect(result[0].content).toBe(expected.content);
+        expect(result[0].position.start).toBe(expected.position.start);
+        expect(result[0].position.end).toBe(expected.position.end);
     });
 
     test('getSafeFilename', () => {

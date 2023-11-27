@@ -11,13 +11,13 @@ describe('ConvertLinkToMdlinkCommand test', () => {
         const cmd = new ConvertLinkToMdlinkCommand(obsidianProxyMock)
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
         //
         const result = cmd.handler(editor, true)
         //
         expect(result).toBeFalsy()
         expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
-        
+
     })
 
     test.each(
@@ -50,13 +50,21 @@ describe('ConvertLinkToMdlinkCommand test', () => {
             {
                 name: "autolink email",
                 text: "<jack.smith@example.com>",
+            },
+            {
+                name: "url http",
+                text: "http://google.com",
+            },
+            {
+                name: "url https",
+                text: "https://google.com",
             }
         ]
     )
-        ('status - cursor on [$name] - command enabled', ({ name, text}) => {
+        ('status - cursor on [$name] - command enabled', ({ name, text }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
             const obsidianProxyMock = new ObsidianProxyMock()
             const cmd = new ConvertLinkToMdlinkCommand(obsidianProxyMock)
             //
@@ -66,6 +74,20 @@ describe('ConvertLinkToMdlinkCommand test', () => {
             expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
 
         })
+
+    test('status - text selected - disabled', () => {
+        const editor = new EditorMock()
+        editor.__mocks.getSelection.mockReturnValue("some text")
+        const obsidianProxyMock = new ObsidianProxyMock()
+        const cmd = new ConvertLinkToMdlinkCommand(obsidianProxyMock)
+        //
+        //
+        const result = cmd.handler(editor, true)
+        //
+        expect(result).toBeFalsy()
+        expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
+
+    })
 
     test.each(
         [
@@ -109,13 +131,25 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 text: "<jack.smith@example.com>",
                 expected: '[](mailto:jack.smith@example.com)',
                 cursurPos: "[".length
-            }
+            },
+            {
+                name: "url http",
+                text: "http://google.com",
+                expected: '[Google](http://google.com)',
+                cursurPos: "[Google](http://google.com)".length
+            },
+            {
+                name: "url https",
+                text: "https://google.com",
+                expected: '[Google](https://google.com)',
+                cursurPos: "[Google](https://google.com)".length
+            },
         ]
     )
-        ('convert link - cursor in selection [$name] - success', ({ name, text, expected, cursurPos}, done) => {
+        ('convert link - cursor in selection [$name] - success', ({ name, text, expected, cursurPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
 
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
@@ -123,25 +157,25 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 text: "<title>Google</title>"
             })
             const cmd = new ConvertLinkToMdlinkCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
-                if(err){
+                if (err) {
                     done(err)
                     return
-                } 
-                try{
+                }
+                try {
                     expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
                     expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
                     expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(0)
                     expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(text.length)
-                    
+
                     expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
                     expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(cursurPos)
                     done()
                 }
-                catch(err){
+                catch (err) {
                     done(err)
                 }
             })
-           
+
             //
             cmd.handler(editor, false)
             //
