@@ -368,7 +368,7 @@ export function decodeHtmlEntities(text: string): string {
     });
 }
 
-export function findLinks(text: string): Array<LinkData> {
+export function findLinks(text: string, start?: number, end?: number): Array<LinkData> {
     const linksRegex = new RegExp(`${RegExPatterns.Markdownlink.source}|${RegExPatterns.Wikilink.source}` +
         `|${RegExPatterns.AutolinkUrl.source}|${RegExPatterns.AutolinkMail.source}` +
         `|${RegExPatterns.Htmllink.source}|${RegExPatterns.PlainUrl.source}` 
@@ -377,6 +377,8 @@ export function findLinks(text: string): Array<LinkData> {
 
     let match;
     const links: Array<LinkData> = new Array<LinkData>;
+    let startOffset = start ? start : 0;
+    let endOffset = end ? end : text.length;
 
     while ((match = linksRegex.exec(text))) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -385,6 +387,16 @@ export function findLinks(text: string): Array<LinkData> {
             autoLinkUrlDestination, autoLinkMailDestination,
             htmlLinkDestination, htmlLinkText,
             plainUrl] = match;
+
+        if(startOffset == endOffset){
+            if(!(startOffset >= match.index && startOffset <= (match.index + rawMatch.length))){
+                continue;
+            }
+        } else{
+            if(!(match.index >= startOffset && (match.index + rawMatch.length) <= endOffset)){
+                continue;
+            }
+        }
 
         if (rawMatch.indexOf("](") >= 0 || mdLinkEmbeded || mdLinkText || mdLinkDestination) {
             const linkData = parseMarkdownLink(linksRegex, match, rawMatch, mdLinkEmbeded, mdLinkText, mdLinkDestination);
