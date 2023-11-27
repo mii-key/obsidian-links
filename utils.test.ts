@@ -835,6 +835,135 @@ describe("Utils tests", () => {
     test.each([
         {
             name: "mdlink",
+            input: "Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                "Voluptate [[reprehenderit]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                "Non tempor <http://ullamco> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                "Elit <a href='commodo'> ea in</a> sit in commodo deserunt est. Cillum magna deserunt sint nisi cupidatat. Incididunt labore nulla labore ipsum occaecat\n" +
+                "exercitation est http://dolore.com pariatur. Elit ea sint Lorem cupidatat ullamco Lorem esse amet quis.",
+            type: LinkTypes.Markdown,
+            expected: [
+                new LinkData(LinkTypes.Markdown, "[Consectetur](Consectetur-dest)",
+                    new Position("Duis ".length, "Duis [Consectetur](Consectetur-dest)".length),
+                    new TextPart("Consectetur-dest", new Position("[Consectetur](".length, "[Consectetur](Consectetur-dest".length)),
+                    new TextPart("Consectetur", new Position("[".length, "[Consectetur".length))),
+            ]
+        },
+        {
+            name: "wikilink",
+            input: "Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                "Non tempor <http://ullamco> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                "Elit <a href='commodo'> ea in</a> sit in commodo deserunt est. Cillum magna deserunt sint nisi cupidatat. Incididunt labore nulla labore ipsum occaecat\n" +
+                "exercitation est http://dolore.com pariatur. Elit ea sint Lorem cupidatat ullamco Lorem esse amet quis.",
+            type: LinkTypes.Wiki,
+            expected: [
+                new LinkData(LinkTypes.Wiki, "[[Consectetur-dest|Consectetur]]",
+                    new Position(
+                        ("Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                            "Voluptate ").length,
+                        ("Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                            "Voluptate [[Consectetur-dest|Consectetur]]").length),
+                    new TextPart("Consectetur-dest", new Position("[[".length, "[[Consectetur-dest".length)),
+                    new TextPart("Consectetur", new Position("[[Consectetur-dest|".length, "[[Consectetur-dest|Consectetur".length))),
+            ]
+        },
+        {
+            name: "autlink",
+            input: "Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                "Non tempor <http://dolore.com> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                "Elit <a href='commodo'> ea in</a> sit in commodo deserunt est. Cillum magna deserunt sint nisi cupidatat. Incididunt labore nulla labore ipsum occaecat\n" +
+                "exercitation est http://dolore.com pariatur. Elit ea sint Lorem cupidatat ullamco Lorem esse amet quis.",
+            type: LinkTypes.Autolink,
+            expected: [
+                new LinkData(LinkTypes.Autolink, "<http://dolore.com>",
+                    new Position(
+                        ("Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                            "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                            "Non tempor ").length,
+                        ("Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                            "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                            "Non tempor <http://dolore.com>").length),
+                    new TextPart("http://dolore.com", new Position("<".length, "<http://dolore.com".length)),
+                    undefined)
+            ]
+        },
+        {
+            name: "html link",
+            input: "Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                "Non tempor <http://dolore.com> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                "Elit <a href='Consectetur-dest'>Consectetur</a> ea in</a> sit in commodo deserunt est. Cillum magna deserunt sint nisi cupidatat. Incididunt labore nulla labore ipsum occaecat\n" +
+                "exercitation est http://dolore.com pariatur. Elit ea sint Lorem cupidatat ullamco Lorem esse amet quis.",
+            type: LinkTypes.Html,
+            expected: [
+                new LinkData(LinkTypes.Html, "<a href='Consectetur-dest'>Consectetur</a>",
+                    new Position(
+                        ("Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                            "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                            "Non tempor <http://dolore.com> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                            "Elit ").length,
+                        ("Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                            "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                            "Non tempor <http://dolore.com> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                            "Elit <a href='Consectetur-dest'>Consectetur</a>").length),
+                    new TextPart("Consectetur-dest", new Position("<a href='".length, "<a href='Consectetur-dest".length)),
+                    new TextPart("Consectetur", new Position("<a href='Consectetur-dest'>".length, "<a href='Consectetur-dest'>Consectetur".length))),
+            ]
+        },
+        {
+            name: "plain url",
+            input: "Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                "Non tempor <http://dolore.com> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                "Elit <a href='Consectetur-dest'>Consectetur</a> ea in</a> sit in commodo deserunt est. Cillum magna deserunt sint nisi cupidatat. Incididunt labore nulla labore ipsum occaecat\n" +
+                "exercitation est http://dolore.com pariatur. Elit ea sint Lorem cupidatat ullamco Lorem esse amet quis.",
+            type: LinkTypes.PlainUrl,
+            expected: [
+                new LinkData(LinkTypes.PlainUrl, "http://dolore.com",
+                    new Position(
+                        ("Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                            "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                            "Non tempor <http://dolore.com> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                            "Elit <a href='Consectetur-dest'>Consectetur</a> ea in</a> sit in commodo deserunt est. Cillum magna deserunt sint nisi cupidatat. Incididunt labore nulla labore ipsum occaecat\n" +
+                            "exercitation est ").length,
+                        ("Duis [Consectetur](Consectetur-dest) est fugiat pariatur mollit. Dolor do officia incididunt ad anim eiusmod proident ex elit eu esse exercitation duis non.\n" +
+                            "Voluptate [[Consectetur-dest|Consectetur]] exercitation labore mollit proident in. Aliquip commodo eiusmod ipsum quis tempor eu veniam aliquip ex nisi cupidatat aute.\n" +
+                            "Non tempor <http://dolore.com> ipsum non fugiat laboris aliquip officia ea et anim aliqua sint sit. Fugiat excepteur ea duis tempor cupidatat\n" +
+                            "Elit <a href='Consectetur-dest'>Consectetur</a> ea in</a> sit in commodo deserunt est. Cillum magna deserunt sint nisi cupidatat. Incididunt labore nulla labore ipsum occaecat\n" +
+                            "exercitation est http://dolore.com").length),
+                    new TextPart("http://dolore.com", new Position("".length, "http://dolore.com".length)),
+                    undefined),
+            ]
+        }
+    ])("$# findLinks by type - [$name]", ({ name, input, type, expected }) => {
+        const result = findLinks(input, type);
+        expect(result.length).toBe(expected.length);
+        for (let i = 0; i < expected.length; i++) {
+            // console.log(expected[i].content)
+            expect(result[i].type).toBe(expected[i].type);
+            expect(result[i].content).toBe(expected[i].content);
+            expect(result[i].position.start).toBe(expected[i].position.start);
+            expect(result[i].position.end).toBe(expected[i].position.end);
+            if (expected[i].link) {
+                expect(result[i].link).toBeDefined();
+                expect(result[i].link?.content).toBe(expected[i].link?.content);
+                expect(result[i].link?.position.start).toBe(expected[i].link?.position.start);
+                expect(result[i].link?.position.end).toBe(expected[i].link?.position.end);
+            }
+            if (expected[i].text) {
+                expect(result[i].text).toBeDefined();
+                expect(result[i].text?.content).toBe(expected[i].text?.content);
+                expect(result[i].text?.position.start).toBe(expected[i].text?.position.start);
+                expect(result[i].text?.position.end).toBe(expected[i].text?.position.end);
+            }
+            expect(result[i].embedded).toBe(expected[i].embedded);
+        }
+    });
+
+    test.each([
+        {
+            name: "mdlink",
             input: "[Consectetur](Consectetur-dest) in id []() ad voluptate ![tempor](tempor-dest) sit ![]() " +
                 "laborum aliqua [consequat]() voluptate ![esse]() officia in [](id-dest) ad voluptate ![](voluptate-dest) " +
                 "ad voluptate [Consectetur](<Consectetur dest>) officia ![tempor](<tempor dest>)",
@@ -909,7 +1038,7 @@ describe("Utils tests", () => {
         }
 
     ])("$# findLinks at position [$name]", ({ name, input, start, end, expected }) => {
-        const result = findLinks(input, start, end);
+        const result = findLinks(input, LinkTypes.All, start, end);
         //
         expect(result.length).toBe(1);
         expect(result[0].type).toBe(expected.type);

@@ -5,26 +5,23 @@ import { ConvertLinkToMdlinkCommand } from './ConvertLinkToMdlinkCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
 
 describe('ConvertLinkToMdlinkCommand test', () => {
-
-    test('status - cursor on text - command disabled', () => {
-        const obsidianProxyMock = new ObsidianProxyMock()
-        const cmd = new ConvertLinkToMdlinkCommand(obsidianProxyMock)
-        const editor = new EditorMock()
-        editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
-        //
-        const result = cmd.handler(editor, true)
-        //
-        expect(result).toBeFalsy()
-        expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
-
-    })
-
     test.each(
         [
             {
+                name: "text",
+                text: "some text",
+                expected: false,
+            },
+            {
+                name: "mdlink",
+                text: "[note1](some-note)",
+                expected: true,
+            },
+            {
                 name: "html - href in '",
-                text: "<a href='google.com'>google1</a>"
+                text: "<a href='google.com'>google1</a>",
+                expected: true
+
             },
             //TODO:
             // {
@@ -33,39 +30,47 @@ describe('ConvertLinkToMdlinkCommand test', () => {
             // },
             {
                 name: "wikilink",
-                text: "[[google.com|google]]"
+                text: "[[google.com|google]]",
+                expected: true
             },
             {
                 name: "wikilink empty text",
                 text: "[[google.com]]",
+                expected: true
             },
             {
                 name: "autolink https://",
                 text: "<https://google.com>",
+                expected: true
             },
             {
                 name: "autolink ssh://",
                 text: "<ssh://192.168.1.1>",
+                expected: true
             },
             {
                 name: "autolink email",
                 text: "<jack.smith@example.com>",
+                expected: true
             },
             {
                 name: "url http",
                 text: "http://google.com",
+                expected: true
             },
             {
                 name: "url https",
                 text: "https://google.com",
+                expected: true
             },
             {
                 name: "url",
                 text: "irc://google.com",
+                expected: true
             }
         ]
     )
-        ('status - cursor on [$name] - command enabled', ({ name, text }) => {
+        ('status - cursor on [$name] - command enabled', ({ name, text, expected }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
@@ -74,7 +79,7 @@ describe('ConvertLinkToMdlinkCommand test', () => {
             //
             const result = cmd.handler(editor, true)
             //
-            expect(result).toBeTruthy()
+            expect(result).toBe(expected)
             expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
 
         })

@@ -26,7 +26,7 @@ export class ConvertLinkToMdlinkCommand extends ConvertToMdlinkCommandBase {
 		}
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLinks(text, cursorOffset, cursorOffset)
+		const linkData = findLinks(text, ~LinkTypes.Markdown, cursorOffset, cursorOffset)
 		if (checking) {
 			return linkData.length != 0;
 		}

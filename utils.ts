@@ -368,7 +368,7 @@ export function decodeHtmlEntities(text: string): string {
     });
 }
 
-export function findLinks(text: string, start?: number, end?: number): Array<LinkData> {
+export function findLinks(text: string, type?: LinkTypes, start?: number, end?: number): Array<LinkData> {
     const linksRegex = new RegExp(`${RegExPatterns.Markdownlink.source}|${RegExPatterns.Wikilink.source}` +
         `|${RegExPatterns.AutolinkUrl.source}|${RegExPatterns.AutolinkMail.source}` +
         `|${RegExPatterns.Htmllink.source}|${RegExPatterns.PlainUrl.source}` 
@@ -379,6 +379,7 @@ export function findLinks(text: string, start?: number, end?: number): Array<Lin
     const links: Array<LinkData> = new Array<LinkData>;
     let startOffset = start ? start : 0;
     let endOffset = end ? end : text.length;
+    let linkType = type ? type : LinkTypes.All;
 
     while ((match = linksRegex.exec(text))) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -398,21 +399,36 @@ export function findLinks(text: string, start?: number, end?: number): Array<Lin
             }
         }
 
-        if (rawMatch.indexOf("](") >= 0 || mdLinkEmbeded || mdLinkText || mdLinkDestination) {
+        if ((rawMatch.indexOf("](") >= 0 || mdLinkEmbeded || mdLinkText || mdLinkDestination)) {
+            if(!(linkType & LinkTypes.Markdown)){
+                continue
+            }
             const linkData = parseMarkdownLink(linksRegex, match, rawMatch, mdLinkEmbeded, mdLinkText, mdLinkDestination);
             links.push(linkData);
-        } else if (rawMatch.indexOf("[[") >= 0 || wikiLinkEmbeded || wikiLinkDestination || wikiLinkText) {
+        } else if ((rawMatch.indexOf("[[") >= 0 || wikiLinkEmbeded || wikiLinkDestination || wikiLinkText)) {
+            if(!(linkType & LinkTypes.Wiki)){
+                continue
+            }
             const linkData = parseWikiLink(linksRegex, match, rawMatch, wikiLinkEmbeded, wikiLinkText, wikiLinkDestination);
             links.push(linkData);
         } else if (rawMatch.startsWith('<a')) {
+            if(!(linkType & LinkTypes.Html)){
+                continue
+            }
             const linkData = parseHtmlLink(linksRegex, match, rawMatch,
                 htmlLinkText, htmlLinkDestination);
             links.push(linkData)
         } else if (rawMatch[0] === '<') {
+            if(!(linkType & LinkTypes.Autolink)){
+                continue
+            }
             const linkData = parseAutolink(linksRegex, match, rawMatch,
                 autoLinkUrlDestination ? autoLinkUrlDestination : autoLinkMailDestination)
             links.push(linkData)
         } else if(plainUrl){
+            if(!(linkType & LinkTypes.PlainUrl)){
+                continue
+            }
             const linkData = parsePlainUrl(linksRegex, match, rawMatch, plainUrl)
             links.push(linkData)
         }
