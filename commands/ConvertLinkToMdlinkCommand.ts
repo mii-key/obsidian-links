@@ -1,6 +1,6 @@
 import { Editor, requestUrl } from "obsidian";
 import { Func, ICommand } from "./ICommand"
-import { LinkTypes, findLink } from "../utils";
+import { LinkTypes, findLink, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from './ConvertToMdlinkCommandBase'
 import { error } from "console";
@@ -21,17 +21,17 @@ export class ConvertLinkToMdlinkCommand extends ConvertToMdlinkCommandBase {
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		if(checking && !this.isEnabled()){
+		if(checking && (!this.isEnabled() || editor.getSelection())){
 			return false;
 		}
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.Autolink)
+		const linkData = findLinks(text, ~LinkTypes.Markdown, cursorOffset, cursorOffset)
 		if (checking) {
-			return !!linkData;
+			return linkData.length != 0;
 		}
-		if (linkData) {
-			this.convertLinkToMarkdownLink(linkData, editor)
+		if (linkData.length) {
+			this.convertLinkToMarkdownLink(linkData[0], editor)
 				.then(() => {
 					this.callback?.(null, undefined);
 				})

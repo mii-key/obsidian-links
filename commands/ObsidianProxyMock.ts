@@ -77,7 +77,7 @@ export class ObsidianProxyMock {
             createNotice: jest.fn(),
             linkTextSuggestContextSetLinkData: jest.fn()
         }
-    
+
     Vault: IVault;
 
     settings: IObsidianLinksSettings = {
@@ -95,6 +95,8 @@ export class ObsidianProxyMock {
         ffMultipleLinkConversion: true,
         ffExtractSection: true,
         ffSetLinkTextFromClipboard: true,
+        ffWrapNoteInFolder: true,
+
 
         //context menu
         contexMenu: {
@@ -117,7 +119,8 @@ export class ObsidianProxyMock {
             convertUrlsToMdlinks: true,
             convertAutolinksToMdlinks: true,
             convertHtmllinksToMdlinks: true,
-            extractSection: true
+            extractSection: true,
+            wrapNoteInFolder: true
         }
     }
 

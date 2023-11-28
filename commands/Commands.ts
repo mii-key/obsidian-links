@@ -22,6 +22,7 @@ import { ConvertUrlsToMdlinksCommand } from "./ConvertUrlsToMdlinksCommand";
 import { ExtractSectionCommand } from "./ExtractSectionCommand";
 import { ConvertHtmlLinksToMdlinksCommand } from "./ConvertHtmlLinksToMdlinksCommand";
 import { SetTextFromClipboardCommand } from "./SetTextFromClipboardCommand";
+import { WrapNoteInFolderCommand } from "./WrapNoteInFolderCommand";
 
 
 var commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -58,7 +59,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
 
     commands.set(ExtractSectionCommand.name, new ExtractSectionCommand(obsidianProxy));
     commands.set(SetTextFromClipboardCommand.name, new SetTextFromClipboardCommand(obsidianProxy));
-    
+    commands.set(WrapNoteInFolderCommand.name, new WrapNoteInFolderCommand(obsidianProxy));
 }
 
 export function getPaletteCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings): ICommand[] {
@@ -96,7 +97,8 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         ConvertAutolinksToMdlinksCommand.name,
         ConvertHtmlLinksToMdlinksCommand.name,
         null,
-        ExtractSectionCommand.name
+        ExtractSectionCommand.name,
+        WrapNoteInFolderCommand.name
     ];
 
     let contextMenuCommands = [];

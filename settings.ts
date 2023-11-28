@@ -14,6 +14,7 @@ export interface IObsidianLinksSettings {
 	ffMultipleLinkConversion: boolean;
 	ffExtractSection: boolean;
 	ffSetLinkTextFromClipboard: boolean;
+	ffWrapNoteInFolder: boolean;
 
 	//context menu
 	contexMenu: {
@@ -37,6 +38,7 @@ export interface IObsidianLinksSettings {
 		convertAutolinksToMdlinks: boolean;
 		convertHtmllinksToMdlinks: boolean;
 		extractSection: boolean;
+		wrapNoteInFolder: boolean;
 	}
 }
 
@@ -55,6 +57,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffMultipleLinkConversion: false,
 	ffExtractSection: false,
 	ffSetLinkTextFromClipboard: false,
+	ffWrapNoteInFolder: false,
 
 	//context menu
 	contexMenu: {
@@ -77,6 +80,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		convertUrlsToMdlinks: false,
 		convertAutolinksToMdlinks: false,
 		convertHtmllinksToMdlinks: false,
-		extractSection: false
+		extractSection: false,
+		wrapNoteInFolder: false
 	}
 }
