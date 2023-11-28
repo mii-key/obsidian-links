@@ -15,7 +15,7 @@ describe('ConvertLinkToMdlinkCommand test', () => {
             {
                 name: "mdlink",
                 text: "[note1](some-note)",
-                expected: true,
+                expected: false,
             },
             {
                 name: "html - href in '",
@@ -70,7 +70,7 @@ describe('ConvertLinkToMdlinkCommand test', () => {
             }
         ]
     )
-        ('status - cursor on [$name] - command enabled', ({ name, text, expected }) => {
+        ('status - cursor on [$name]', ({ name, text, expected }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
