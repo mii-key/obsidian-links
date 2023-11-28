@@ -8,6 +8,14 @@ export class VaultImp implements IVault {
     constructor(app: App){
         this.app = app;
     }    
+    rename(normalizedPath: string, normalizedNewPath: string): Promise<void> {
+        return this.app.vault.adapter.rename(normalizedPath, normalizedNewPath);
+    }
+    
+    createFolder(path: string): Promise<void> {
+        return this.app.vault.createFolder(path)
+    }
+
     getActiveNoteView(): INoteView | null {
         return app.workspace.getActiveViewOfType(MarkdownView);
     }
