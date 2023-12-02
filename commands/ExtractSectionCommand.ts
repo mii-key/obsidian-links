@@ -24,7 +24,6 @@ export class ExtractSectionCommand extends CommandBase {
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		console.log(this.isEnabled())
 		const text = editor.getValue();
 		if (checking) {
 			if (!this.isEnabled() || !text) {

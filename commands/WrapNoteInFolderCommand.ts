@@ -24,7 +24,6 @@ export class WrapNoteInFolderCommand extends CommandBase {
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		console.log(this.isEnabled())
 		if (checking) {
 			if (!this.isEnabled()) {
 				return false;
