@@ -96,6 +96,7 @@ export class ObsidianProxyMock {
         ffExtractSection: true,
         ffSetLinkTextFromClipboard: true,
         ffWrapNoteInFolder: true,
+        ffCopyLinkToClipboard: true,
 
 
         //context menu
@@ -120,7 +121,8 @@ export class ObsidianProxyMock {
             convertAutolinksToMdlinks: true,
             convertHtmllinksToMdlinks: true,
             extractSection: true,
-            wrapNoteInFolder: true
+            wrapNoteInFolder: true,
+            copyLinkToClipboard: true
         }
     }
 
