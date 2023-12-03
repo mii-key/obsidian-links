@@ -26,7 +26,7 @@ import { WrapNoteInFolderCommand } from "./WrapNoteInFolderCommand";
 import { CopyLinkToClipboardCommand } from "./CopyLinkToClipboardCommand";
 
 
-var commands: Map<string, ICommand> = new Map<string, ICommand>();
+let commands: Map<string, ICommand> = new Map<string, ICommand>();
 
 function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings) {
     if (commands.size > 0) {
