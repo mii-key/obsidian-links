@@ -86,7 +86,6 @@ export class ExtractSectionCommand extends CommandBase {
 		}
 
 		const section = editor.getRange(editor.offsetToPos(blockStart), editor.offsetToPos(blockEnd))
-		console.log(section)
 
 		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
 		const currentNoteParentPath = currentView?.file.parent.path;
