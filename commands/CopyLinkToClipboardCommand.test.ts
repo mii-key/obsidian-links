@@ -42,6 +42,16 @@ describe('CopyLinkToClipboardCommand test', () => {
                 name: "autolink",
                 text: "<https://google.com>",
                 expectedEnabled: true
+            },
+            {
+                name: "url https",
+                text: "https://google.com",
+                expectedEnabled: true
+            },
+            {
+                name: "url http",
+                text: "http://google.com",
+                expectedEnabled: true
             }
         ]
     )
