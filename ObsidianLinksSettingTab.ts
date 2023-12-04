@@ -108,6 +108,30 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        const settingCopyLink = new Setting(containerEl)
+            .setName('Copy link')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.copyLinkToClipboard)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.copyLinkToClipboard = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const toggleCopyLinkToClipboard = (enabled: boolean) => {
+            if (enabled) {
+                settingCopyLink.settingEl.show();
+            } else {
+                settingCopyLink.settingEl.hide();
+            }
+        }
+
+        toggleCopyLinkToClipboard(this.plugin.settings.ffCopyLinkToClipboard);
+
         new Setting(containerEl)
             .setName('Copy link destination')
             .setDesc('')
@@ -120,6 +144,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+
 
         new Setting(containerEl)
             .setName('Unlink')
@@ -183,6 +209,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
         }
+
         new Setting(containerEl)
             .setName('Embed/Unembed')
             .setDesc('')
@@ -337,7 +364,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         toggleExtractSection(this.plugin.settings.ffExtractSection);
 
-        // ------ Early access features -----------------
+        // ----------------------------------------------
+        // --          Early access features           --
+        // ----------------------------------------------
 
         containerEl.createEl('h3', { text: 'Early access features' });
         const earlyAccessDescription = containerEl.createEl('p');
@@ -409,7 +438,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // }
         // ----------
 
-        // ------ Insider features -----------------
+        // ----------------------------------------------
+        // --            Insider features              --
+        // ----------------------------------------------
 
         containerEl.createEl('h3', { text: 'Insider features' });
 
@@ -429,7 +460,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             text: " and influence the direction of development."
         });
 
-        
+
 
         // feature: set link text from clipboard
 
@@ -548,6 +579,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // 			text: 'docs'
         // 		}));
         // 	feature2SettingDesc.appendText('.');
+        // }
+
+        // FEATURE: copy link to clipboard
+
+        new Setting(containerEl)
+            .setName("Copy link")
+            .setDesc("Copy link to clipboard")
+            .setClass("setting-item--insider-feature-copy-link-to-cliboard")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffCopyLinkToClipboard)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffCopyLinkToClipboard = value;
+                        await this.plugin.saveSettings();
+                        toggleCopyLinkToClipboard(this.plugin.settings.ffCopyLinkToClipboard);
+                    })
+            });
+
+        // const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature-copy-link-to-cliboard .setting-item-description");
+
+        // if (feature3SettingDesc) {
+        //     feature3SettingDesc.appendText(' see ');
+        //     feature3SettingDesc.appendChild(
+        //         createEl('a', {
+        //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/set-link-text-from-clipboard.md',
+        //             text: 'docs'
+        //         }));
+        //     feature3SettingDesc.appendText('.');
         // }
     }
 }

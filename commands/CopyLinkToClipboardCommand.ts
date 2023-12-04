@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func, ICommand  } from "./ICommand"
-import { LinkData, LinkTypes, findLink } from "../utils";
+import { LinkData, LinkTypes, findLink, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 
 export class CopyLinkToClipboardCommand extends CommandBase {
@@ -27,12 +27,12 @@ export class CopyLinkToClipboardCommand extends CommandBase {
 		}
         const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Autolink);
+		const linkData = findLinks(text, LinkTypes.All, cursorOffset, cursorOffset)
 		if (checking) {
-			return !!linkData;
+			return linkData.length != 0
 		}
 		if (linkData) {
-			this.copyLinkUnderCursorToClipboard(linkData);
+			this.copyLinkUnderCursorToClipboard(linkData[0]);
 		}
     }
 
