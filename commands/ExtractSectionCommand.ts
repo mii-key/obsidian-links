@@ -71,7 +71,7 @@ export class ExtractSectionCommand extends CommandBase {
 				blockEnd = text.length;
 				break;
 			} else {
-				idx = ++blockEnd;
+				idx = blockEnd + 1;
 				while (idx < text.length && text[idx] == '#') {
 					idx++;
 				}
@@ -86,14 +86,18 @@ export class ExtractSectionCommand extends CommandBase {
 		}
 
 		const section = editor.getRange(editor.offsetToPos(blockStart), editor.offsetToPos(blockEnd))
+		console.log(section)
 
 		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
 		const currentNoteParentPath = currentView?.file.parent.path;
+		
 		const headerMatch = section.match(new RegExp(RegExPatterns.NoteHeader.source, 'im'))
 		if (headerMatch) {
-			const safeFilename = getSafeFilename(headerMatch[1]);
-			const noteFullPath = `${currentNoteParentPath}/${safeFilename}.md`;
-			const noteContent = section.substring(headerMatch[1].length + 1);
+			const safeFilename = getSafeFilename(headerMatch[1]).trim();
+			const noteFullPath =  (currentNoteParentPath === '/' ? safeFilename : 
+			 `${currentNoteParentPath}/${safeFilename}`) + ".md";
+			const noteContent = section.substring(headerMatch[0].length + 1);
+
 			(async () => {
 				const noteFile = await this.obsidianProxy.Vault.createNote(noteFullPath, noteContent);
 				const rawWikilink = `[[${noteFullPath}|${safeFilename}]]`

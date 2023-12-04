@@ -77,7 +77,19 @@ describe('ExtractSectionCommand test', () => {
                 "# Eiusmod mollit magna consectetur est.\r\n" +
                 "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
                 "Et laborum eu velit eu Lorem irure labore. \r\n").length
-            }
+            },
+            {
+                name: "test",
+                text: `## Application Sessions 
+                An application may need to track session information such as the identity of the user, the user’s in-flight transactions, or how long the user’s session can continue. This is usually accomplished via `,
+                cursorOffest: (`## Application Sessions 
+                An application may need to track sess`).length,
+                expectedSection: `## Application Sessions 
+                An application may need to track session information such as the identity of the user, the user’s in-flight transactions, or how long the user’s session can continue. This is usually accomplished via `,
+                expectedSectionStart: "".length,
+                expectedSectionEnd: (`## Application Sessions 
+                An application may need to track session information such as the identity of the user, the user’s in-flight transactions, or how long the user’s session can continue. This is usually accomplished via `).length
+            },
         ]
     )
         ('extract - $name - success', ({ name, text, cursorOffest, expectedSection, expectedSectionStart, expectedSectionEnd}) => {
