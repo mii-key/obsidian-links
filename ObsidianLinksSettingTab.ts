@@ -368,6 +368,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // --          Early access features           --
         // ----------------------------------------------
 
+        
+
         containerEl.createEl('h3', { text: 'Early access features' });
         const earlyAccessDescription = containerEl.createEl('p');
         earlyAccessDescription.createEl('span', {
@@ -382,6 +384,33 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         earlyAccessDescription.createEl('span', {
             text: " to be fixed."
         });
+
+         // ----- Early access feature1
+
+        // new Setting(containerEl)
+        // 	.setName("Early access feature1")
+        // 	.setDesc("Feature description")
+        // 	.setClass("setting-item--eaccess-feature1")
+        // 	.addToggle((toggle) => {
+        // 		toggle
+        // 			.setValue(this.plugin.settings.ffEarlyAccessFeature1)
+        // 			.onChange(async (value) => {
+        // 				this.plugin.settings.ffEarlyAccessFeature1 = value;
+        // 				await this.plugin.saveSettings();
+        // 			})
+        // 	});
+
+        // const earlyAccessFeature1SettingDesc = containerEl.querySelector(".setting-item--eaccess-feature1 .setting-item-description");
+        // if (earlyAccessFeature1SettingDesc) {
+        // 	earlyAccessFeature1SettingDesc.appendText(' see ');
+        // 	earlyAccessFeature1SettingDesc.appendChild(
+        // 		createEl('a', {
+        // 			href: 'https://github.com/mii-key/obsidian-links#readme',
+        // 			text: 'docs'
+        // 		}));
+        // 	earlyAccessFeature1SettingDesc.appendText('.');
+        // }
+        // ----------
 
         // feature: convert multiple links to markdown
 
@@ -411,32 +440,33 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             feature2SettingDesc.appendText('.');
         }
 
-        // ----- Early access feature1
+        // FEATURE: copy link to clipboard
 
-        // new Setting(containerEl)
-        // 	.setName("Early access feature1")
-        // 	.setDesc("Feature description")
-        // 	.setClass("setting-item--eaccess-feature1")
-        // 	.addToggle((toggle) => {
-        // 		toggle
-        // 			.setValue(this.plugin.settings.ffEarlyAccessFeature1)
-        // 			.onChange(async (value) => {
-        // 				this.plugin.settings.ffEarlyAccessFeature1 = value;
-        // 				await this.plugin.saveSettings();
-        // 			})
-        // 	});
+        new Setting(containerEl)
+            .setName("Copy link")
+            .setDesc("Copy link to clipboard")
+            .setClass("setting-item--insider-feature-copy-link-to-cliboard")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffCopyLinkToClipboard)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffCopyLinkToClipboard = value;
+                        await this.plugin.saveSettings();
+                        toggleCopyLinkToClipboard(this.plugin.settings.ffCopyLinkToClipboard);
+                    })
+            });
 
-        // const earlyAccessFeature1SettingDesc = containerEl.querySelector(".setting-item--eaccess-feature1 .setting-item-description");
-        // if (earlyAccessFeature1SettingDesc) {
-        // 	earlyAccessFeature1SettingDesc.appendText(' see ');
-        // 	earlyAccessFeature1SettingDesc.appendChild(
-        // 		createEl('a', {
-        // 			href: 'https://github.com/mii-key/obsidian-links#readme',
-        // 			text: 'docs'
-        // 		}));
-        // 	earlyAccessFeature1SettingDesc.appendText('.');
-        // }
-        // ----------
+        const copyLinkSettingDesc = containerEl.querySelector(".setting-item--insider-feature-copy-link-to-cliboard .setting-item-description");
+
+        if (copyLinkSettingDesc) {
+            copyLinkSettingDesc.appendText(' see ');
+            copyLinkSettingDesc.appendChild(
+                createEl('a', {
+                    href: 'https://github.com/mii-key/obsidian-links#copy-link',
+                    text: 'docs'
+                }));
+                copyLinkSettingDesc.appendText('.');
+        }
 
         // ----------------------------------------------
         // --            Insider features              --
@@ -581,32 +611,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // 	feature2SettingDesc.appendText('.');
         // }
 
-        // FEATURE: copy link to clipboard
-
-        new Setting(containerEl)
-            .setName("Copy link")
-            .setDesc("Copy link to clipboard")
-            .setClass("setting-item--insider-feature-copy-link-to-cliboard")
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.ffCopyLinkToClipboard)
-                    .onChange(async (value) => {
-                        this.plugin.settings.ffCopyLinkToClipboard = value;
-                        await this.plugin.saveSettings();
-                        toggleCopyLinkToClipboard(this.plugin.settings.ffCopyLinkToClipboard);
-                    })
-            });
-
-        // const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature-copy-link-to-cliboard .setting-item-description");
-
-        // if (feature3SettingDesc) {
-        //     feature3SettingDesc.appendText(' see ');
-        //     feature3SettingDesc.appendChild(
-        //         createEl('a', {
-        //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/set-link-text-from-clipboard.md',
-        //             text: 'docs'
-        //         }));
-        //     feature3SettingDesc.appendText('.');
-        // }
+        
     }
 }
