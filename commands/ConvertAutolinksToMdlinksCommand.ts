@@ -14,7 +14,6 @@ export class ConvertAutolinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 	) {
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
-		this.isEnabled = () => this.obsidianProxy.settings.ffMultipleLinkConversion;
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.convertAutolinksToMdlinks;
 
 		this.id = 'editor-convert-autolinks-to-mdlinks';
@@ -35,7 +34,7 @@ export class ConvertAutolinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 		const autolinks = links ? links.filter(x => x.type == LinkTypes.Autolink) : []
 
 		if (checking) {
-			return this.obsidianProxy.settings.ffMultipleLinkConversion && autolinks.length > 0
+			return autolinks.length > 0
 		}
 
 		const selectionOffset = selection ? editor.posToOffset(editor.getCursor('from')) : 0;

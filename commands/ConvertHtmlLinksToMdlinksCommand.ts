@@ -14,7 +14,6 @@ export class ConvertHtmlLinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 	) {
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
-		this.isEnabled = () => this.obsidianProxy.settings.ffMultipleLinkConversion;
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.convertHtmllinksToMdlinks;
 
 		this.id = 'editor-convert-htmllink-to-mdlinks';
@@ -35,7 +34,7 @@ export class ConvertHtmlLinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 		const urls = links ? links.filter(x => x.type == LinkTypes.Html) : []
 
 		if (checking) {
-			return this.obsidianProxy.settings.ffMultipleLinkConversion && urls.length > 0
+			return urls.length > 0
 		}
 
 		const selectionOffset = selection ? editor.posToOffset(editor.getCursor('from')) : 0;

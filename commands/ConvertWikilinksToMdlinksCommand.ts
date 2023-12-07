@@ -14,7 +14,6 @@ export class ConvertWikilinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 	) {
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
-		this.isEnabled = () => this.obsidianProxy.settings.ffMultipleLinkConversion;
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.convertWikilinkToMdLinks;
 
 		this.id = 'editor-convert-wikilinks-to-mdlinks';

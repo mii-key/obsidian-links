@@ -47,7 +47,6 @@ describe('ConvertHtmlLinksToMdlinksCommand test', () => {
     test.each(statusData)
         ('status - $name', ({ name, text, expected }) => {
             const obsidianProxyMock = new ObsidianProxyMock()
-            obsidianProxyMock.settings.ffMultipleLinkConversion = true;
             const cmd = new ConvertHtmlLinksToMdlinksCommand(obsidianProxyMock)
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
@@ -63,7 +62,6 @@ describe('ConvertHtmlLinksToMdlinksCommand test', () => {
     test.each(statusData)
         ('status (selection)  $name', ({ name, text, expected }) => {
             const obsidianProxyMock = new ObsidianProxyMock()
-            obsidianProxyMock.settings.ffMultipleLinkConversion = true;
             const cmd = new ConvertHtmlLinksToMdlinksCommand(obsidianProxyMock)
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)

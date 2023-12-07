@@ -11,7 +11,6 @@ export interface IObsidianLinksSettings {
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction;
 	// feature flags
 	ffReplaceLink: boolean;
-	ffMultipleLinkConversion: boolean;
 	ffExtractSection: boolean;
 	ffSetLinkTextFromClipboard: boolean;
 	ffWrapNoteInFolder: boolean;
@@ -56,7 +55,6 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.None,
 	//feature flags
 	ffReplaceLink: false,
-	ffMultipleLinkConversion: false,
 	ffExtractSection: false,
 	ffSetLinkTextFromClipboard: false,
 	ffWrapNoteInFolder: false,

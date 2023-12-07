@@ -175,9 +175,6 @@ see [Convert URLs to markdown links](#convert-urls-to-markdown-links)
 
 ## Convert multiple links
 
-> **Note**
-> Early access. Enable in settings.
-
 Converts multiple links in a note or in a selection to markdown links.
 
 ### Convert all links to markdown links

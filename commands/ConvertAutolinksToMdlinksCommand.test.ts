@@ -47,7 +47,6 @@ describe('ConvertAutolinksToMdlinksCommand test', () => {
     test.each(statusData)
         ('status - text with $name - enabled:$expected', ({ name, text, expected }) => {
             const obsidianProxyMock = new ObsidianProxyMock()
-            obsidianProxyMock.settings.ffMultipleLinkConversion = true;
             const cmd = new ConvertAutolinksToMdlinksCommand(obsidianProxyMock)
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
@@ -63,7 +62,6 @@ describe('ConvertAutolinksToMdlinksCommand test', () => {
     test.each(statusData)
         ('status - selection with $name - enabled:$expected', ({ name, text, expected }) => {
             const obsidianProxyMock = new ObsidianProxyMock()
-            obsidianProxyMock.settings.ffMultipleLinkConversion = true;
             const cmd = new ConvertAutolinksToMdlinksCommand(obsidianProxyMock)
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
