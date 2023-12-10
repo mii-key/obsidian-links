@@ -1,4 +1,8 @@
 # Set link text from clipboard
+
+> **Note**
+> Insider feature. Enable in settings.
+
 Set markdown or wikilink text from clipboard.
 
 - Command palette: **Set text from clipboard**
