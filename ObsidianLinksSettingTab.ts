@@ -367,7 +367,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             text: " to be fixed."
         });
 
-         // ----- Early access feature1
+        // ----- Early access feature1
 
         // new Setting(containerEl)
         // 	.setName("Early access feature1")
@@ -444,6 +444,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             text: " and influence the direction of development."
         });
 
+        // ------------------------------------
+        // insider feature1
+
+        // new Setting(containerEl)
+        // 	.setName("Insinder feature")
+        // 	.setDesc("description")
+        // 	.setClass("setting-item--insider-feature1")
+        // 	.addToggle((toggle) => {
+        // 		toggle
+        // 			.setValue(this.plugin.settings.ffFeature1)
+        // 			.onChange(async (value) => {
+        // 				this.plugin.settings.ffFeature1 = value;
+        // 				await this.plugin.saveSettings();
+        // 			})
+
+        // 	});
+
+        // const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
+
+        // if (feature1SettingDesc) {
+        // 	feature1SettingDesc.appendText(' see ');
+        // 	feature1SettingDesc.appendChild(
+        // 		createEl('a', {
+        // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature1.md',
+        // 			text: 'docs'
+        // 		}));
+        // 	feature1SettingDesc.appendText('.');
+        // }
 
         // ------------------------------------
         // feature: set link text from clipboard
@@ -472,6 +500,35 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     text: 'docs'
                 }));
             feature3SettingDesc.appendText('.');
+        }
+
+        // ------------------------------------
+        // convert links in a folder
+
+        new Setting(containerEl)
+        	.setName("Convert links in folder")
+        	.setDesc("Convert links in a folder")
+        	.setClass("setting-item--insider-feature-convert-links-in-folder")
+        	.addToggle((toggle) => {
+        		toggle
+        			.setValue(this.plugin.settings.ffConvertLinksInFolder)
+        			.onChange(async (value) => {
+        				this.plugin.settings.ffConvertLinksInFolder = value;
+        				await this.plugin.saveSettings();
+        			})
+
+        	});
+
+        const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature-convert-links-in-folder .setting-item-description");
+
+        if (feature1SettingDesc) {
+        	feature1SettingDesc.appendText(' see ');
+        	feature1SettingDesc.appendChild(
+        		createEl('a', {
+        			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-links-in-folder.md',
+        			text: 'docs'
+        		}));
+        	feature1SettingDesc.appendText('.');
         }
 
         // feature: extract section
@@ -537,33 +594,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // 		feature3SettingDesc.appendText('.');
         // }
 
-        // // feature embed/unembed
-
-        // new Setting(containerEl)
-        // 	.setName("Embed/unembed files")
-        // 	.setDesc("Adds ability to embed/unembed files.")
-        // 	.setClass("setting-item--insider-feature2")
-        // 	.addToggle((toggle) => {
-        // 		toggle
-        // 			.setValue(this.plugin.settings.ffEmbedFiles)
-        // 			.onChange(async (value) => {
-        // 				this.plugin.settings.ffEmbedFiles = value;
-        // 				await this.plugin.saveSettings();
-        // 			})
-
-        // 	});
-
-        // const feature2SettingDesc = containerEl.querySelector(".setting-item--insider-feature2 .setting-item-description");
-
-        // if (feature2SettingDesc) {
-        // 	feature2SettingDesc.appendText(' see ');
-        // 	feature2SettingDesc.appendChild(
-        // 		createEl('a', {
-        // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/embed-unembed-files.md',
-        // 			text: 'docs'
-        // 		}));
-        // 	feature2SettingDesc.appendText('.');
-        // }
+       
 
         
     }
