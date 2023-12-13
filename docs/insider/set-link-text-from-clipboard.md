@@ -1,6 +1,6 @@
 # Set link text from clipboard
 
-> **Note**
+> [!NOTE]
 > Insider feature. Enable in settings.
 
 Set markdown or wikilink text from clipboard.
