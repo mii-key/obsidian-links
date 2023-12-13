@@ -1,10 +1,11 @@
 # Convert links in folder
 
-> **Note**
+> [!NOTE] 
 > Insider feature. Enable in settings.
 
-> **Warning**
-> Backup your notes!
+> [!WARNING] 
+> BACKUP YOU NOTES<br/>
+> before trying to use this command!
 
 
 Convert wiki links in all notes in a selected folder and its subfolders to Markdown links. 
