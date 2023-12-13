@@ -1,5 +1,5 @@
 import { INoteView } from "INoteView";
-import { Constructor, LinkCache, TFile, View } from "obsidian";
+import { Constructor, DataWriteOptions, LinkCache, TFile, TFolder, View } from "obsidian";
 
 export interface IVault {
     exists(path: string, caseSensitive?: boolean): Promise<boolean>;
@@ -8,4 +8,8 @@ export interface IVault {
     createFolder(path: string) : Promise<void>;
     rename(normalizedPath: string, normalizedNewPath: string): Promise<void>;
     getBacklinksForFileByPath(path: string): Record<string, LinkCache[]> | null;
+    read(file: TFile): Promise<string>;
+    modify(file: TFile, data: string, options?: DataWriteOptions): Promise<void>;
+    getFilesInFolder(folder: TFolder) : TFile[];
+    getRoot() : TFolder;
 }

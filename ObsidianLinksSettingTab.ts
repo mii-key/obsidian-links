@@ -505,31 +505,31 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // ------------------------------------
         // convert links in a folder
 
-        // new Setting(containerEl)
-        // 	.setName("Convert links in folder")
-        // 	.setDesc("Convert links in a folder")
-        // 	.setClass("setting-item--insider-feature-convert-links-in-folder")
-        // 	.addToggle((toggle) => {
-        // 		toggle
-        // 			.setValue(this.plugin.settings.ffConvertLinksInFolder)
-        // 			.onChange(async (value) => {
-        // 				this.plugin.settings.ffConvertLinksInFolder = value;
-        // 				await this.plugin.saveSettings();
-        // 			})
+        new Setting(containerEl)
+        	.setName("Convert links in folder")
+        	.setDesc("Convert links in a folder")
+        	.setClass("setting-item--insider-feature-convert-links-in-folder")
+        	.addToggle((toggle) => {
+        		toggle
+        			.setValue(this.plugin.settings.ffConvertLinksInFolder)
+        			.onChange(async (value) => {
+        				this.plugin.settings.ffConvertLinksInFolder = value;
+        				await this.plugin.saveSettings();
+        			})
 
-        // 	});
+        	});
 
-        // const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature-convert-links-in-folder .setting-item-description");
+        const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature-convert-links-in-folder .setting-item-description");
 
-        // if (feature1SettingDesc) {
-        // 	feature1SettingDesc.appendText(' see ');
-        // 	feature1SettingDesc.appendChild(
-        // 		createEl('a', {
-        // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-links-in-folder.md',
-        // 			text: 'docs'
-        // 		}));
-        // 	feature1SettingDesc.appendText('.');
-        // }
+        if (feature1SettingDesc) {
+        	feature1SettingDesc.appendText(' see ');
+        	feature1SettingDesc.appendChild(
+        		createEl('a', {
+        			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-links-in-folder.md',
+        			text: 'docs'
+        		}));
+        	feature1SettingDesc.appendText('.');
+        }
 
         // feature: extract section
 
