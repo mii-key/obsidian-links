@@ -1,6 +1,7 @@
 import { IObsidianLinksSettings } from "settings";
 import { LinkData, InternalWikilinkWithoutTextAction } from "../utils";
 import { IVault } from "IVault";
+import { VaultMock } from "VaultMock";
 
 export class Notice {
     setMessage(message: string | DocumentFragment): this {
@@ -96,7 +97,7 @@ export class ObsidianProxyMock {
         ffSetLinkTextFromClipboard: true,
         ffWrapNoteInFolder: true,
         ffCopyLinkToClipboard: true,
-
+        ffConvertLinksInFolder: true,
 
         //context menu
         contexMenu: {
@@ -125,12 +126,16 @@ export class ObsidianProxyMock {
         }
     }
 
-    constructor() {
+    constructor(vault?: IVault) {
         this.clipboardWriteText = this.__mocks.clipboardWriteText;
         this.clipboardReadText = this.__mocks.clipboardReadText;
         this.__mocks.createNotice.mockReturnValue(this.__mocks.NoticeMock);
         this.createNotice = this.__mocks.createNotice;
         this.linkTextSuggestContextSetLinkData = this.__mocks.linkTextSuggestContextSetLinkData;
+
+        if(vault){
+            this.Vault = vault;
+        }
     }
 
     createNotice(message: string | DocumentFragment, timeout?: number): Notice {

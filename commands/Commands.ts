@@ -24,6 +24,7 @@ import { ConvertHtmlLinksToMdlinksCommand } from "./ConvertHtmlLinksToMdlinksCom
 import { SetTextFromClipboardCommand } from "./SetTextFromClipboardCommand";
 import { WrapNoteInFolderCommand } from "./WrapNoteInFolderCommand";
 import { CopyLinkToClipboardCommand } from "./CopyLinkToClipboardCommand";
+import { ConvertLinksInFolderCommand } from "./ConvertLinksInFolderCommand";
 
 
 let commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -62,6 +63,8 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(ExtractSectionCommand.name, new ExtractSectionCommand(obsidianProxy));
     commands.set(SetTextFromClipboardCommand.name, new SetTextFromClipboardCommand(obsidianProxy));
     commands.set(WrapNoteInFolderCommand.name, new WrapNoteInFolderCommand(obsidianProxy));
+
+    commands.set(ConvertLinksInFolderCommand.name, new ConvertLinksInFolderCommand(obsidianProxy));
 }
 
 export function getPaletteCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings): ICommand[] {

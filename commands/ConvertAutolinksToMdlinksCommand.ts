@@ -3,6 +3,7 @@ import { Func, ICommand } from "./ICommand"
 import { LinkTypes, findLink, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from './ConvertToMdlinkCommandBase'
+import { EditorTextBuffer } from "../EditorTextBuffer";
 
 
 export class ConvertAutolinksToMdlinksCommand extends ConvertToMdlinkCommandBase {
@@ -40,9 +41,10 @@ export class ConvertAutolinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 		const selectionOffset = selection ? editor.posToOffset(editor.getCursor('from')) : 0;
 
 		(async () => {
+			const textBuffer = new EditorTextBuffer(editor);
 			for (let i = autolinks.length - 1; i >= 0; i--) {
 				const link = autolinks[i]
-				await this.convertLinkToMarkdownLink(link, editor, false, selectionOffset)
+				await this.convertLinkToMarkdownLink1(link, textBuffer, false, selectionOffset)
 			}
 		})()
 			.then(() => {

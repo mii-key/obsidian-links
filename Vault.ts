@@ -1,6 +1,6 @@
 import { INoteView } from "INoteView";
 import { IVault } from "IVault";
-import { App, Constructor, LinkCache, MarkdownView, TFile, Vault, View } from "obsidian";
+import { App, Constructor, DataWriteOptions, LinkCache, MarkdownView, TFile, TFolder, Vault, View } from "obsidian";
 
 export class VaultImp implements IVault {
     app: App;
@@ -8,6 +8,36 @@ export class VaultImp implements IVault {
     constructor(app: App){
         this.app = app;
     }    
+
+    getFilesInFolder(folder: TFolder): TFile[] {
+        let folders : TFolder[] = [];
+        let files : TFile[] = [];
+        folders.push(folder);
+        while(folders.length > 0){
+            const currentFolder = folders.pop();
+            if(!currentFolder){
+                break;
+            }
+            for(let child of currentFolder.children){
+                if(child instanceof TFolder){
+                    folders.push(child);
+                } else{
+                    files.push(child as TFile);
+                }
+            }
+        }
+
+        return files;
+    }
+
+    read(file: TFile): Promise<string> {
+        return app.vault.read(file);
+    }
+    
+    modify(file: TFile, data: string, options?: DataWriteOptions | undefined): Promise<void> {
+        return app.vault.modify(file, data, options);
+    }
+
     rename(normalizedPath: string, normalizedNewPath: string): Promise<void> {
         return this.app.vault.adapter.rename(normalizedPath, normalizedNewPath);
     }
@@ -35,6 +65,10 @@ export class VaultImp implements IVault {
         }
         
         return null;
+    }
+
+    getRoot(): TFolder {
+        return this.app.vault.getRoot();
     }
 
 }
