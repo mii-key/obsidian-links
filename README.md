@@ -11,6 +11,7 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Convert markdown link to autolink](#convert-markdown-link-to-autolink)
   - [Convert autolink to markdown link](#convert-autolink-to-markdown-link)
   - [Convert URL to markdown link](#convert-url-to-markdown-link)
+  - [Convert URL to autolink](#convert-url-to-autolink)
   - [Convert multiple links](#convert-multiple-links)
     - [Convert all links to markdown links](#convert-all-links-to-markdown-links)
     - [Convert wikilinks to markdown links](#convert-wikilinks-to-markdown-links)
@@ -172,6 +173,20 @@ If a URL has an absolute URI with `http` or `https` scheme content of the `<titl
 </details>
 
 see [Convert URLs to markdown links](#convert-urls-to-markdown-links)
+
+## Convert URL to autolink
+
+Convert an absolute URL to an autolink.
+
+- Command palette: **Convert to autolink**
+- Context menu: **Convert to autolink**
+
+<details>
+<summary>Demo. Convert an absolute URL to an autolink</summary>
+
+![convert to markdown link](/docs/img/convert-url-to-autolink.gif)
+
+</details>
 
 ## Convert multiple links
 
