@@ -66,30 +66,23 @@ describe('CreateLinkFromClipboardCommand test', () => {
             {
                 name: "no selection, text in clipboard",
                 selection: "",
+                clipboard: "some-text",
+                expected: '[some-text](some-text)',
+                cursurPos: "[some-text](some-text)".length
+            },
+            {
+                name: "no selection, text in clipboard",
+                selection: "",
                 clipboard: "some text",
-                expected: '[some text](some text)',
-                cursurPos: "[some text](some text)".length
+                expected: '[some text](<some text>)',
+                cursurPos: "[some text](<some text>)".length
             },
             {
                 name: "selection, text in clipboard",
                 selection: "some selection",
                 clipboard: "some text",
-                expected: '[some selection](some text)',
-                cursurPos: "[some selection](some text)".length
-            },
-            {
-                name: "no selection, http:// url in clipboard",
-                selection: "",
-                clipboard: "http://google.com",
-                expected: '[Google](http://google.com)',
-                cursurPos: "[Google](http://google.com)".length
-            },
-            {
-                name: "no selection, https:// url in clipboard",
-                selection: "",
-                clipboard: "https://google.com",
-                expected: '[Google](https://google.com)',
-                cursurPos: "[Google](https://google.com)".length
+                expected: '[some selection](<some text>)',
+                cursurPos: "[some selection](<some text>)".length
             },
             {
                 name: "no selection, http:// url in clipboard",

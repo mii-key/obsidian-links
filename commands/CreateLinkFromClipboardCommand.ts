@@ -42,8 +42,10 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 			const linkDestination = await this.obsidianProxy.clipboardReadText();
 			let linkText = linkDestination;
 			const selection = editor.getSelection();
+			let isUrl = false;
 
 			if (selection.length == 0 && urlRegEx.test(linkDestination)) {
+				isUrl = true;
 				const notice = this.obsidianProxy.createNotice("Getting title ...", 0);
 				try {
 					linkText = await getPageTitle(new URL(linkDestination), this.getPageText.bind(this));
@@ -65,7 +67,10 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 				posRangeEnd = editor.getCursor('to');
 				linkText = selection;
 			}
-			const linkRawText = `[${linkText}](${linkDestination})`;
+
+			const requireAngleBrackets = !isUrl && linkDestination && linkDestination.indexOf(' ') > 0;
+
+			const linkRawText = requireAngleBrackets ?`[${linkText}](<${linkDestination}>)` : `[${linkText}](${linkDestination})`;
 			const endOffset = editor.posToOffset(posRangeStart) + linkRawText.length;
 			editor.replaceRange(linkRawText, posRangeStart, posRangeEnd);
 			editor.setCursor(editor.offsetToPos(endOffset));
