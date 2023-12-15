@@ -10,6 +10,68 @@ describe('ConvertLinkToAutolinkCommand test', () => {
         [
             {
                 name: "text wo/links",
+                text: "some text"
+            },
+            {
+                name: "html - href in '",
+                text: "<a href='google.com'>google1</a>",
+            },
+            //TODO:
+            // {
+            //     name: "html - href in \"",
+            //     text: "<a href=\"google.com\">google1</a>",
+            //     expected: false
+            // },
+            {
+                name: "wikilink",
+                text: "[[note1|note1]]",
+            },
+            {
+                name: "wikilink empty text",
+                text: "[[note1]]",
+            },
+            {
+                name: "mdlink https",
+                text: "[Google](https://google.com)",
+            },
+            {
+                name: "mdlink ssh://",
+                text: "[server](ssh://192.168.1.1)",
+
+            },
+            {
+                name: "mkdlink email",
+                text: "[jack](mailto:jack.smith@example.com)",
+            },
+            {
+                name: "mdlink internal",
+                text: "[note1](note1)",
+            },
+            {
+                name: "url http://",
+                text: "http://obsidian.md",
+            },
+            {
+                name: "url https://",
+                text: "https://obsidian.md",
+            }
+        ]
+    )
+        ('status - selection $name - disabled', ({ name, text}) => {
+            const editor = new EditorMock()
+            editor.__mocks.getSelection.mockReturnValue(text);
+            const cmd = new ConvertLinkToAutolinkCommand()
+            //
+            const result = cmd.handler(editor, true)
+            //
+            expect(result).toBeFalsy()
+            expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
+        })
+
+    test.each(
+        [
+            {
+                name: "text wo/links",
                 text: "some text",
                 expected: false
             },
@@ -28,19 +90,16 @@ describe('ConvertLinkToAutolinkCommand test', () => {
                 name: "wikilink",
                 text: "[[note1|note1]]",
                 expected: false
-
             },
             {
                 name: "wikilink empty text",
                 text: "[[note1]]",
                 expected: false
-
             },
             {
                 name: "mdlink https",
                 text: "[Google](https://google.com)",
                 expected: true
-
             },
             {
                 name: "mdlink ssh://",
@@ -52,13 +111,21 @@ describe('ConvertLinkToAutolinkCommand test', () => {
                 name: "mkdlink email",
                 text: "[jack](mailto:jack.smith@example.com)",
                 expected: true
-
             },
             {
                 name: "mdlink internal",
                 text: "[note1](note1)",
                 expected: false
-
+            },
+            {
+                name: "url http://",
+                text: "http://obsidian.md",
+                expected: true
+            },
+            {
+                name: "url https://",
+                text: "https://obsidian.md",
+                expected: true
             }
         ]
     )
@@ -100,9 +167,21 @@ describe('ConvertLinkToAutolinkCommand test', () => {
                 expected: '<jack@example.com>',
                 cursurPos: "<jack@example.com>".length
             },
+            {
+                name: "url http",
+                text: "http://obsidian.md",
+                expected: '<http://obsidian.md>',
+                cursurPos: "<http://obsidian.md>".length
+            },
+            {
+                name: "url https",
+                text: "https://obsidian.md",
+                expected: '<https://obsidian.md>',
+                cursurPos: "<https://obsidian.md>".length
+            },
         ]
     )
-        ('convert link - cursor in selection [$name] - success', ({ name, text, expected, cursurPos }) => {
+        ('convert link - cursor on [$name] - success', ({ name, text, expected, cursurPos }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
