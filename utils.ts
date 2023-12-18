@@ -361,6 +361,8 @@ export function decodeHtmlEntities(text: string): string {
     charByHe.set("amp", "&");
     charByHe.set("nbsp", " ");
     charByHe.set("quot", "\"");
+    charByHe.set("gt", ">");
+    charByHe.set("lt", "<");
    
     return text.replace(regexpHe, (match, he) => {
         const entry = charByHe.get(he);
