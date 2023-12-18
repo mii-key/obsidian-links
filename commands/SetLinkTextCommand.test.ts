@@ -30,9 +30,19 @@ describe('SetLinkTextCommand test', () => {
                 expected: false
             },
             {
-                name: "wikilink local with heading",
+                name: "wikilink heading in a note",
                 text: "[[note1#heading 1|google]]",
                 expected: true
+            },
+            {
+                name: "wikilink heading",
+                text: "[[#heading 1]]",
+                expected: true
+            },
+            {
+                name: "wikilink heading with text",
+                text: "[[#heading 1|heading 1]]",
+                expected: false
             },
             {
                 name: "wikilink empty destination",
@@ -115,14 +125,14 @@ describe('SetLinkTextCommand test', () => {
                 selectionEnd: "[[google.com|google.com".length
             },
             {
-                name: "wikilink w/heading, no text - show suggestions",
-                text: "[[note1#heading1]]",
+                name: "wikilink w/heading, no text",
+                text: "[[#heading1]]",
                 linkHasText: false,
-                expected: '|google.com',
-                suggesterData: {
-                    titles: ["heading1"]
-
-                }
+                expected: '|heading1',
+                selectionStart: "[[#heading1|".length,
+                selectionEnd: "[[#heading1|heading1".length,
+                suggesterData: null,
+                isDestinationUrl: false
             },
             {
                 name: "wikilink w/headig, w/text - show suggestions",
@@ -182,7 +192,7 @@ describe('SetLinkTextCommand test', () => {
                 status: 200,
                 text: "<title>Google</title>"
             })
-            const cmd = new SetLinkTextCommand(obsidianProxyMock, () => true, () => true,  (err, data) => {
+            const cmd = new SetLinkTextCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
                     return
@@ -235,7 +245,7 @@ describe('SetLinkTextCommand test', () => {
                                     expect(editor.__mocks.setSelection.mock.calls[1][1].ch).toBe(selectionEnd)
                                     expect(editor.__mocks.replaceSelection.mock.calls).toHaveLength(1)
                                     expect(editor.__mocks.replaceSelection.mock.calls[0][0]).toBe(expected)
-    
+
                                 }
                             }
                         } else {

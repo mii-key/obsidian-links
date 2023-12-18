@@ -33,7 +33,7 @@ export class SetLinkTextCommand extends CommandBase {
 			return !!linkData
 				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
 				&& !!linkData.link?.content
-				&& (!linkData.text || !linkData?.text.content || linkData.link.content.includes('#'));
+				&& (!linkData.text || !linkData?.text.content || (!linkData.link.content.startsWith('#') && linkData.link.content.includes('#')));
 		}
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
@@ -57,7 +57,8 @@ export class SetLinkTextCommand extends CommandBase {
 			if (this.showLinkTextSuggestions(linkData, editor)) {
 				return;
 			}
-			const text = getFileName(linkData.link?.content);
+			const text = linkData.link.content[0] === '#' ? 
+				linkData.link.content.substring(1) : getFileName(linkData.link?.content);
 			let textStart = linkData.position.start + linkData.link.position.end;
 			if (linkData.text) {
 				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(linkData.text.content.length + 1));
