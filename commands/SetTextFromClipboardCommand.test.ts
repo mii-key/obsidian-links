@@ -19,7 +19,7 @@ describe('SetTextFromClipboardCommand test', () => {
                 expectedEnabled: false,
             },
             {
-                name: "cursor inside mdlink",
+                name: "cursor on mdlink",
                 text: "Aliqua minim voluptate [reprehenderit](duis) amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate [re".length,
                 selection: "",
@@ -27,7 +27,7 @@ describe('SetTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
             {
-                name: "cursor inside wikilink",
+                name: "cursor on wikilink",
                 text: "Aliqua minim voluptate [[reprehenderit]] duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate [[re".length,
                 selection: "",
@@ -35,12 +35,20 @@ describe('SetTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
             {
-                name: "cursor inside autolink",
+                name: "cursor on autolink",
                 text: "Aliqua minim voluptate <http://reprehenderit> duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate <re".length,
                 selection: "",
                 clipboard: "some text",
                 expectedEnabled: false,
+            },
+            {
+                name: "cursor on URL",
+                text: "Aliqua minim voluptate http://reprehenderit duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate ht".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
             },
         ]
     )
@@ -70,7 +78,9 @@ describe('SetTextFromClipboardCommand test', () => {
                 cursorOffset: "Proident laboris [n".length,
                 expectedReplacement: 'some text',
                 expectedReplacementStart: "Proident laboris [".length,
-                expectedReplacementEnd: "Proident laboris [nisi".length
+                expectedReplacementEnd: "Proident laboris [nisi".length,
+                expectedCursorPos:  "Proident laboris [some text".length
+
             },
             {
                 name: "mdlink",
@@ -79,7 +89,9 @@ describe('SetTextFromClipboardCommand test', () => {
                 cursorOffset: "Proident laboris [".length,
                 expectedReplacement: 'some text',
                 expectedReplacementStart: "Proident laboris [".length,
-                expectedReplacementEnd: "Proident laboris [".length
+                expectedReplacementEnd: "Proident laboris [".length,
+                expectedCursorPos:  "Proident laboris [some text".length
+
             },
             {
                 name: "wikilink",
@@ -88,7 +100,9 @@ describe('SetTextFromClipboardCommand test', () => {
                 cursorOffset: "Proident laboris [[n".length,
                 expectedReplacement: 'some text',
                 expectedReplacementStart: "Proident laboris [[nisi|".length,
-                expectedReplacementEnd: "Proident laboris [[nisi|elit".length
+                expectedReplacementEnd: "Proident laboris [[nisi|elit".length,
+                expectedCursorPos:  "Proident laboris [[nisi|some text".length
+
             },
             {
                 name: "wikilink wo/text",
@@ -97,7 +111,9 @@ describe('SetTextFromClipboardCommand test', () => {
                 cursorOffset: "Proident laboris [[n".length,
                 expectedReplacement: '|some text',
                 expectedReplacementStart: "Proident laboris [[nisi".length,
-                expectedReplacementEnd: "Proident laboris [[nisi".length
+                expectedReplacementEnd: "Proident laboris [[nisi".length,
+                expectedCursorPos:  "Proident laboris [[nisi|some text".length
+
             },
             {
                 name: "wikilink empty text",
@@ -106,11 +122,23 @@ describe('SetTextFromClipboardCommand test', () => {
                 cursorOffset: "Proident laboris [[n".length,
                 expectedReplacement: '|some text',
                 expectedReplacementStart: "Proident laboris [[nisi".length,
-                expectedReplacementEnd: "Proident laboris [[nisi".length
+                expectedReplacementEnd: "Proident laboris [[nisi".length,
+                expectedCursorPos:  "Proident laboris [[nisi|some text".length
+            },
+            {
+                name: "url http",
+                text: "Proident laboris http://obsidian irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris http://ob".length,
+                expectedReplacement: '[some text](http://obsidian)',
+                expectedReplacementStart: "Proident laboris ".length,
+                expectedReplacementEnd: "Proident laboris http://obsidian".length,
+                expectedCursorPos:  "Proident laboris [some text".length
             },
         ]
     )
-        ('create link - $name - success', ({ name, text, clipboardText, cursorOffset, expectedReplacement, expectedReplacementStart, expectedReplacementEnd }, done) => {
+        ('set text - $name - success', ({ name, text, clipboardText, cursorOffset, 
+            expectedReplacement, expectedReplacementStart, expectedReplacementEnd, expectedCursorPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getSelection.mockRejectedValue('')
@@ -131,7 +159,7 @@ describe('SetTextFromClipboardCommand test', () => {
                     expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(expectedReplacementEnd)
 
                     expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
-                    expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(expectedReplacementStart + expectedReplacement.length)
+                    expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(expectedCursorPos)
                     done()
                 }
                 catch (err) {
