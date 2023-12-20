@@ -21,7 +21,7 @@ import { ConvertAutolinksToMdlinksCommand } from "./ConvertAutolinksToMdlinksCom
 import { ConvertUrlsToMdlinksCommand } from "./ConvertUrlsToMdlinksCommand";
 import { ExtractSectionCommand } from "./ExtractSectionCommand";
 import { ConvertHtmlLinksToMdlinksCommand } from "./ConvertHtmlLinksToMdlinksCommand";
-import { SetTextFromClipboardCommand } from "./SetTextFromClipboardCommand";
+import { SetLinkTextFromClipboardCommand } from "./SetLinkTextFromClipboardCommand";
 import { WrapNoteInFolderCommand } from "./WrapNoteInFolderCommand";
 import { CopyLinkToClipboardCommand } from "./CopyLinkToClipboardCommand";
 import { ConvertLinksInFolderCommand } from "./ConvertLinksInFolderCommand";
@@ -61,7 +61,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(ConvertHtmlLinksToMdlinksCommand.name, new ConvertHtmlLinksToMdlinksCommand(obsidianProxy));
 
     commands.set(ExtractSectionCommand.name, new ExtractSectionCommand(obsidianProxy));
-    commands.set(SetTextFromClipboardCommand.name, new SetTextFromClipboardCommand(obsidianProxy));
+    commands.set(SetLinkTextFromClipboardCommand.name, new SetLinkTextFromClipboardCommand(obsidianProxy));
     commands.set(WrapNoteInFolderCommand.name, new WrapNoteInFolderCommand(obsidianProxy));
 
     commands.set(ConvertLinksInFolderCommand.name, new ConvertLinksInFolderCommand(obsidianProxy));
@@ -80,7 +80,7 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         null,
         EditLinkTextCommand.name,
         SetLinkTextCommand.name,
-        SetTextFromClipboardCommand.name,
+        SetLinkTextFromClipboardCommand.name,
         EditLinkDestinationCommand.name,
         CopyLinkToClipboardCommand.name,
         CopyLinkDestinationToClipboardCommand.name,

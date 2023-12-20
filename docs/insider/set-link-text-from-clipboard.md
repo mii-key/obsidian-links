@@ -3,7 +3,15 @@
 > [!NOTE]
 > Insider feature. Enable in settings.
 
-Set markdown or wikilink text from clipboard.
+Set markdown, wikilink or URL text from clipboard.
+Links that can't have text, like URL, will be converted to markdown link.
 
-- Command palette: **Set text from clipboard**
-- Context menu: **Set text from clipboard** (enable in Settings)
+- Command palette: **Set link text from clipboard**
+- Context menu: **Set link text from clipboard** (enable in Settings)
+
+<details>
+<summary>Demo.</summary>
+
+![delete link](/docs/img/set-link-text-from-clipboard.gif)
+
+</details>

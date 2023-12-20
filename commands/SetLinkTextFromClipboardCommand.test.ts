@@ -1,11 +1,11 @@
 import { expect, test } from '@jest/globals';
 
 import { EditorMock } from './EditorMock'
-import { SetTextFromClipboardCommand } from './SetTextFromClipboardCommand';
+import { SetLinkTextFromClipboardCommand } from './SetLinkTextFromClipboardCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
 import exp from 'constants';
 
-describe('SetTextFromClipboardCommand test', () => {
+describe('SetLinkTextFromClipboardCommand test', () => {
 
 
     test.each(
@@ -61,7 +61,7 @@ describe('SetTextFromClipboardCommand test', () => {
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
 
-            const cmd = new SetTextFromClipboardCommand(obsidianProxyMock);
+            const cmd = new SetLinkTextFromClipboardCommand(obsidianProxyMock);
             //
             const enabled = cmd.handler(editor, true)
             //
@@ -147,7 +147,7 @@ describe('SetTextFromClipboardCommand test', () => {
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboardText)
 
-            const cmd = new SetTextFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            const cmd = new SetLinkTextFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
                     return
