@@ -4,7 +4,7 @@ import { HasLinks, LinkData, LinkTypes, findLink, findLinks, getPageTitle, remov
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from "./ConvertToMdlinkCommandBase";
 
-export class SetTextFromClipboardCommand extends ConvertToMdlinkCommandBase {
+export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase {
 	obsidianProxy: IObsidianProxy;
 	callback: ((error: Error | null, data: any) => void) | undefined
 
@@ -18,8 +18,8 @@ export class SetTextFromClipboardCommand extends ConvertToMdlinkCommandBase {
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.setLinkTextFromClipboard;
 
 		this.id = 'editor-set-link-text-from-clipboard';
-		this.displayNameCommand = 'Set text from clipboard';
-		this.displayNameContextMenu = 'Set text from clipboard';
+		this.displayNameCommand = 'Set link text from clipboard';
+		this.displayNameContextMenu = 'Set link text from clipboard';
 		this.icon = 'link';
 		this.obsidianProxy = obsidianProxy;
 		this.callback = callback;
