@@ -72,41 +72,42 @@ describe('ExtractSectionCommand test', () => {
                     "# Culpa laboris cupidatat commodo sunt occaecat sint irure mollit sunt voluptate dolor dolor quis.",
                     cursorOffest: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
                     "# Eiusmod mol").length,
-                    expectedSection: "# Eiusmod mollit magna consectetur est\r\n" +
-                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n",
+                    expectedSection: "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
+                    "Et laborum eu velit eu Lorem irure labore. \r\n",
                     expectedSectionStart: "Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n".length,
                     expectedSectionEnd: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
                     "# Eiusmod mollit magna consectetur est.\r\n" +
                     "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r" +
                     "Et laborum eu velit eu Lorem irure labore. \r\n").length,
-                    expectedSectionFileName: "Eiusmod mollit magna consectetur est"
+                    expectedSectionFileName: "Eiusmod mollit magna consectetur est."
                 },
-            // {
-            //     name: "subsection",
-            //     text: "Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
-            //         "# Eiusmod mollit magna consectetur est.\r\n" +
-            //         "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
-            //         "## Ea sunt ex Lorem excepteur id.\r\n" +
-            //         "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
-            //         "Et laborum eu velit eu Lorem irure labore. \r\n" +
-            //         "# Culpa laboris cupidatat commodo sunt occaecat sint irure mollit sunt voluptate dolor dolor quis.",
-            //     cursorOffest: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
-            //         "# Eiusmod mollit magna consectetur est.\r\n" +
-            //         "Non voluptate").length,
-            //     expectedSection: "# Eiusmod mollit magna consectetur est.\r\n" +
-            //         "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
-            //         "## Ea sunt ex Lorem excepteur id.\r\n" +
-            //         "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
-            //         "Et laborum eu velit eu Lorem irure labore. \r\n",
-            //     expectedSectionStart: "Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n".length,
-            //     expectedSectionEnd: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
-            //         "# Eiusmod mollit magna consectetur est.\r\n" +
-            //         "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
-            //         "## Ea sunt ex Lorem excepteur id.\r\n" +
-            //         "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
-            //         "Et laborum eu velit eu Lorem irure labore. \r").length,
-            //     expectedSectionFileName: "Eiusmod mollit magna consectetur est."
-            // },
+            {
+                name: "section w/subsection",
+                text: "Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
+                    "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
+                    "## Ea sunt ex Lorem excepteur id.\r\n" +
+                    "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
+                    "Et laborum eu velit eu Lorem irure labore. \r\n" +
+                    "# Culpa laboris cupidatat commodo sunt occaecat sint irure mollit sunt voluptate dolor dolor quis.",
+                cursorOffest: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
+                    "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate").length,
+                expectedSection: "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
+                    "## Ea sunt ex Lorem excepteur id.\r\n" +
+                    "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
+                    "Et laborum eu velit eu Lorem irure labore. \r\n",
+                expectedSectionStart: "Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n".length,
+                expectedSectionEnd: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
+                    "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
+                    "## Ea sunt ex Lorem excepteur id.\r\n" +
+                    "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
+                    "Et laborum eu velit eu Lorem irure labore. \r").length,
+                expectedSectionFileName: "Eiusmod mollit magna consectetur est."
+            },
         ]
     )
         ('extract - $name - success', ({ name, text, cursorOffest, expectedSection, expectedSectionStart, expectedSectionEnd, expectedSectionFileName }) => {
@@ -117,6 +118,7 @@ describe('ExtractSectionCommand test', () => {
                     parent: vault.getRoot()
                 }
             })
+            const activeView = vault.getActiveNoteView();
 
             const obsidianProxy = new ObsidianProxyMock(vault)
 
@@ -136,7 +138,11 @@ describe('ExtractSectionCommand test', () => {
             expect(editor.__mocks.getRange.mock.calls[0][1].ch).toBe(expectedSectionEnd)
 
             if (expectedSectionFileName) {
-
+                expect(vault.__mocks.createNote.mock.calls).toHaveLength(1)
+                expect(vault.__mocks.createNote.mock.calls[0][0]).toBe(`${expectedSectionFileName}.md`)
+                console.log('expected:')
+                console.log(vault.__mocks.createNote.mock.calls[0][1])
+                expect(vault.__mocks.createNote.mock.calls[0][1]).toBe(expectedSection.substring(expectedSection.indexOf('\r') + 1, expectedSection.length - 1))
             }
         })
 

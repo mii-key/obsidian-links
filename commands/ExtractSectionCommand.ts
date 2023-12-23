@@ -42,19 +42,21 @@ export class ExtractSectionCommand extends CommandBase {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		let found = false;
 		blockStart = blockEnd = cursorOffset;
+		let headerLevel = 1;
 		while (true) {
 			blockStart = text.lastIndexOf('# ', blockStart);
 			if (blockStart < 0) {
 				blockStart = 0;
 				break;
 			} else {
-
 				while (blockStart >= 0 && text[blockStart] == '#') {
 					blockStart--;
+					headerLevel++;
 				}
 
 				if (blockStart < 0 || text[blockStart] == '\n') {
 					blockStart++;
+					headerLevel--;
 					break;
 				}
 			}
@@ -66,7 +68,7 @@ export class ExtractSectionCommand extends CommandBase {
 		found = false;
 		let idx = blockEnd;
 		while (true) {
-			blockEnd = text.indexOf('\n#', blockEnd);
+			blockEnd = text.indexOf('\n' + '#'.repeat(headerLevel) + ' ', blockEnd);
 			if (blockEnd < 0) {
 				blockEnd = text.length;
 				break;
@@ -89,12 +91,12 @@ export class ExtractSectionCommand extends CommandBase {
 
 		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
 		const currentNoteParentPath = currentView?.file.parent.path;
-		
+
 		const headerMatch = section.match(new RegExp(RegExPatterns.NoteHeader.source, 'im'))
 		if (headerMatch) {
 			const safeFilename = getSafeFilename(headerMatch[1]).trim();
-			const noteFullPath =  (currentNoteParentPath === '/' ? safeFilename : 
-			 `${currentNoteParentPath}/${safeFilename}`) + ".md";
+			const noteFullPath = (currentNoteParentPath === '/' ? safeFilename :
+				`${currentNoteParentPath}/${safeFilename}`) + ".md";
 			const noteContent = section.substring(headerMatch[0].length + 1);
 
 			(async () => {
