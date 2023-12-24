@@ -122,16 +122,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
-        const toggleCopyLinkToClipboard = (enabled: boolean) => {
-            if (enabled) {
-                settingCopyLink.settingEl.show();
-            } else {
-                settingCopyLink.settingEl.hide();
-            }
-        }
-
-        toggleCopyLinkToClipboard(this.plugin.settings.ffCopyLinkToClipboard);
-
         new Setting(containerEl)
             .setName('Copy link destination')
             .setDesc('')
@@ -350,8 +340,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // --          Early access features           --
         // ----------------------------------------------
 
-        
-
         containerEl.createEl('h3', { text: 'Early access features' });
         const earlyAccessDescription = containerEl.createEl('p');
         earlyAccessDescription.createEl('span', {
@@ -394,33 +382,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // }
         // ----------
 
-        // FEATURE: copy link to clipboard
 
-        new Setting(containerEl)
-            .setName("Copy link")
-            .setDesc("Copy link to clipboard")
-            .setClass("setting-item--insider-feature-copy-link-to-cliboard")
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.ffCopyLinkToClipboard)
-                    .onChange(async (value) => {
-                        this.plugin.settings.ffCopyLinkToClipboard = value;
-                        await this.plugin.saveSettings();
-                        toggleCopyLinkToClipboard(this.plugin.settings.ffCopyLinkToClipboard);
-                    })
-            });
-
-        const copyLinkSettingDesc = containerEl.querySelector(".setting-item--insider-feature-copy-link-to-cliboard .setting-item-description");
-
-        if (copyLinkSettingDesc) {
-            copyLinkSettingDesc.appendText(' see ');
-            copyLinkSettingDesc.appendChild(
-                createEl('a', {
-                    href: 'https://github.com/mii-key/obsidian-links#copy-link',
-                    text: 'docs'
-                }));
-                copyLinkSettingDesc.appendText('.');
-        }
 
         // ----------------------------------------------
         // --            Insider features              --

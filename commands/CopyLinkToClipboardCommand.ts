@@ -16,9 +16,7 @@ export class CopyLinkToClipboardCommand extends CommandBase {
 		this.icon = 'copy';
 		this.obsidianProxy = obsidianProxy;
 
-		this.isEnabled = () => this.obsidianProxy.settings.ffCopyLinkToClipboard;
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.copyLinkToClipboard;
-
 	}
 
     handler(editor: Editor, checking: boolean) : boolean | void {

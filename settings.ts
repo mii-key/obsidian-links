@@ -14,7 +14,6 @@ export interface IObsidianLinksSettings {
 	ffExtractSection: boolean;
 	ffSetLinkTextFromClipboard: boolean;
 	ffWrapNoteInFolder: boolean;
-	ffCopyLinkToClipboard: boolean;
 	ffConvertLinksInFolder: boolean;
 
 	//context menu
@@ -59,7 +58,6 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffExtractSection: false,
 	ffSetLinkTextFromClipboard: false,
 	ffWrapNoteInFolder: false,
-	ffCopyLinkToClipboard: false,
 	ffConvertLinksInFolder: false,
 
 	//context menu

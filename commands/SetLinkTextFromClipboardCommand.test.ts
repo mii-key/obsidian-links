@@ -11,7 +11,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
     test.each(
         [
             {
-                name: "cursor on text",
+                name: "text",
                 text: "Aliqua minim voluptate reprehenderit duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate reprehende".length,
                 selection: "",
@@ -19,7 +19,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: false,
             },
             {
-                name: "cursor on mdlink",
+                name: "mdlink",
                 text: "Aliqua minim voluptate [reprehenderit](duis) amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate [re".length,
                 selection: "",
@@ -27,7 +27,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
             {
-                name: "cursor on wikilink",
+                name: "wikilink",
                 text: "Aliqua minim voluptate [[reprehenderit]] duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate [[re".length,
                 selection: "",
@@ -35,7 +35,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
             {
-                name: "cursor on autolink",
+                name: "autolink",
                 text: "Aliqua minim voluptate <http://reprehenderit> duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate <re".length,
                 selection: "",
@@ -43,7 +43,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: false,
             },
             {
-                name: "cursor on URL",
+                name: "URL",
                 text: "Aliqua minim voluptate http://reprehenderit duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate ht".length,
                 selection: "",
@@ -52,7 +52,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
             },
         ]
     )
-        ('status - $name - success', ({ name, text, cursorPos, selection, clipboard, expectedEnabled }) => {
+        ('status - cursor on $name - success', ({ name, text, cursorPos, selection, clipboard, expectedEnabled }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorPos })
