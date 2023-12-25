@@ -179,9 +179,15 @@ describe('ConvertLinkToAutolinkCommand test', () => {
                 expected: '<https://obsidian.md>',
                 cursurPos: "<https://obsidian.md>".length
             },
+            {
+                name: "url http wo/domain w/port",
+                text: "http://localhost:80",
+                expected: '<http://localhost:80>',
+                cursurPos: "<http://localhost:80>".length
+            },
         ]
     )
-        ('convert link - cursor on [$name] - success', ({ name, text, expected, cursurPos }) => {
+        ('convert - cursor on [$name] - success', ({ name, text, expected, cursurPos }) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})

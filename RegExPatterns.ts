@@ -1,6 +1,7 @@
 export class RegExPatterns {
     static readonly Email = /([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)/;
-    static readonly AbsoluteUri = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/;
+    //static readonly AbsoluteUri = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/;
+    static readonly AbsoluteUri = /^[a-z][a-z+-\.]+:\/\/.+/;
     static readonly Wikilink = /(!?)\[\[([^\[\]|]*)(\|([^\[\]]*))?\]\]/;
     static readonly Markdownlink = /(!?)\[([^\]\[]*)\]\(([^)(]*)\)/;
     static readonly Htmllink = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/;
