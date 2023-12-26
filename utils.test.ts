@@ -1063,32 +1063,67 @@ describe("Utils tests", () => {
             input: "```\n\n```",
             start: "".length,
             end: "```\n\n```".length,
-            expected:
-                new CodeBlock("```\n\n```", new Position("".length, "```\n\n```".length)),
+            expected:[
+                new CodeBlock("```\n\n```", new Position("".length, "```\n\n```".length))
+            ]
         },
         {
             name: "simple",
             input: "```\n some code\n```",
             start: "".length,
             end: "```\n some code\n```".length,
-            expected:
-                new CodeBlock("```\n some code\n```", new Position("".length, "```\n some code\n```".length)),
+            expected: [
+                new CodeBlock("```\n some code\n```", new Position("".length, "```\n some code\n```".length))
+            ]
         },
         {
             name: "js template literal ",
             input: "```\nconst v = `${12}`\n```",
             start: "".length,
             end: "```\nconst v = `${12}`\n```".length,
-            expected:
-                new CodeBlock("```\nconst v = `${12}`\n```", new Position("".length, "```\nconst v = `${12}`\n```".length)),
-        }
+            expected: [
+                new CodeBlock("```\nconst v = `${12}`\n```", new Position("".length, "```\nconst v = `${12}`\n```".length))
+            ]
+        },
+    {
+        name: "2 code blocks",
+        input: "Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+            "```\nconst v = `${12}`\n```\n" +
+            "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
+            "```\nconst v = \"some string\"\n```\n" +
+            "Cillum laboris et laboris ut exercitation. Culpa culpa",
+        start: "".length,
+        end: ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+            "```\nconst v = `${12}`\n```\n" +
+            "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
+            "```\nconst v = \"some string\"\n```\n" +
+            "Cillum laboris et laboris ut exercitation. Culpa culpa").length,
+        expected: [
+            new CodeBlock("```\nconst v = `${12}`\n```",
+                new Position(
+                    "Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n".length,
+                    ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+                        "```\nconst v = `${12}`\n```").length)),
+            new CodeBlock("```\nconst v = \"some string\"\n```",
+                new Position(
+                    ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+                        "```\nconst v = `${12}`\n```\n" +
+                        "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n").length,
+                    ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+                        "```\nconst v = `${12}`\n```\n" +
+                        "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
+                        "```\nconst v = \"some string\"\n```").length))
+        ]
+    }
 
     ])("$# findCodeBlocks at position [$name]", ({ name, input, start, end, expected }) => {
         const result = findCodeBlocks(input, start, end);
         //
-        expect(result.length).toBe(1);
-        expect(result[0].content).toBe(expected.content);
-        expect(result[0].position.start).toBe(expected.position.start);
-        expect(result[0].position.end).toBe(expected.position.end);
+        expect(result.length).toBe(expected.length);
+        for(let i = 0; i < expected.length; i++){
+            expect(result[i].content).toBe(expected[i].content);
+            expect(result[i].position.start).toBe(expected[i].position.start);
+            expect(result[i].position.end).toBe(expected[i].position.end);
+        }
     });
 })
