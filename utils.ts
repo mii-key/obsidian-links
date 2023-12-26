@@ -446,3 +446,46 @@ export function getSafeFilename(filename: string) : string {
 
     return filename.replace(regex, '');
 }
+
+export class CodeBlock extends TextPart {
+    constructor(content: string, position: Position) {
+        super(content, position);
+    }
+}
+
+function parseCodeBlock(regExp: RegExp, match: RegExpMatchArray, raw: string): CodeBlock {
+    if (match.index === undefined) {
+        throw new Error("match: index must be defined.");
+    }
+    const codeBlock = new CodeBlock(raw, new Position(match.index, match.index + raw.length));
+   
+    return codeBlock;
+}
+
+export function findCodeBlocks(text: string, start?: number, end?: number): Array<CodeBlock> {
+    const codeBlockRegex = new RegExp(RegExPatterns.CodeBlock.source, "gsi");
+
+    let match;
+    const blocks: Array<CodeBlock> = new Array<CodeBlock>;
+    let startOffset = start ? start : 0;
+    let endOffset = end ? end : text.length;
+
+    while ((match = codeBlockRegex.exec(text))) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [rawMatch, firstLine, header, content, lastLine] = match;
+
+        if(startOffset == endOffset){
+            if(!(startOffset >= match.index && startOffset <= (match.index + rawMatch.length))){
+                continue;
+            }
+        } else{
+            if(!(match.index >= startOffset && (match.index + rawMatch.length) <= endOffset)){
+                continue;
+            }
+        }
+
+        const block = parseCodeBlock(codeBlockRegex, match, rawMatch);
+        blocks.push(block);
+    }
+    return blocks;
+}

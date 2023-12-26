@@ -1,5 +1,5 @@
 import exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction, getSafeFilename } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction, getSafeFilename, CodeBlock, findCodeBlocks } from './utils';
 import { expect, test } from '@jest/globals';
 
 describe("Utils tests", () => {
@@ -1055,4 +1055,40 @@ describe("Utils tests", () => {
         //
         expect(result).toBe(expectedFileName);
     })
+
+
+    test.each([
+        {
+            name: "empty",
+            input: "```\n\n```",
+            start: "".length,
+            end: "```\n\n```".length,
+            expected:
+                new CodeBlock("```\n\n```", new Position("".length, "```\n\n```".length)),
+        },
+        {
+            name: "simple",
+            input: "```\n some code\n```",
+            start: "".length,
+            end: "```\n some code\n```".length,
+            expected:
+                new CodeBlock("```\n some code\n```", new Position("".length, "```\n some code\n```".length)),
+        },
+        {
+            name: "js template literal ",
+            input: "```\nconst v = `${12}`\n```",
+            start: "".length,
+            end: "```\nconst v = `${12}`\n```".length,
+            expected:
+                new CodeBlock("```\nconst v = `${12}`\n```", new Position("".length, "```\nconst v = `${12}`\n```".length)),
+        }
+
+    ])("$# findCodeBlocks at position [$name]", ({ name, input, start, end, expected }) => {
+        const result = findCodeBlocks(input, start, end);
+        //
+        expect(result.length).toBe(1);
+        expect(result[0].content).toBe(expected.content);
+        expect(result[0].position.start).toBe(expected.position.start);
+        expect(result[0].position.end).toBe(expected.position.end);
+    });
 })
