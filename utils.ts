@@ -351,7 +351,11 @@ export function replaceMarkdownTarget(text: string, target: string, newTarget: s
     let count = 0;
     return [text.replace(regexp, (match, text) => {
         count++;
-        return `[${text}](${encodeURI(newTarget)})`;
+        let destination = encodeURI(newTarget);
+        if ((destination.indexOf("%20") > 0)) {
+            destination = `<${destination.replace(/%20/g, " ")}>`;
+        }
+        return `[${text}](${destination})`;
     }), count];
 }
 

@@ -515,7 +515,7 @@ describe("Utils tests", () => {
             target: "http://link1.com",
             newtarget: "link 1 page",
             input: "Dolore qui elit cillum ex. [link1 text 1](http://link1.com) Veniam veniam est sit cillum tempor in nostrud ad. Cillum ex irure ipsum [link1 text 2](http://link1.com) et esse aliquip minim. Elit ullamco qui laboris reprehenderit. Reprehenderit incididunt nulla cupidatat id enim nisi dolor nulla id do mollit.",
-            expected: "Dolore qui elit cillum ex. [link1 text 1](link%201%20page) Veniam veniam est sit cillum tempor in nostrud ad. Cillum ex irure ipsum [link1 text 2](link%201%20page) et esse aliquip minim. Elit ullamco qui laboris reprehenderit. Reprehenderit incididunt nulla cupidatat id enim nisi dolor nulla id do mollit."
+            expected: "Dolore qui elit cillum ex. [link1 text 1](<link 1 page>) Veniam veniam est sit cillum tempor in nostrud ad. Cillum ex irure ipsum [link1 text 2](<link 1 page>) et esse aliquip minim. Elit ullamco qui laboris reprehenderit. Reprehenderit incididunt nulla cupidatat id enim nisi dolor nulla id do mollit."
         }
     ])("$# replace markdown target [$name]", ({ name, target, newtarget, input, expected }) => {
         const [output, count] = replaceMarkdownTarget(input, target, newtarget);
