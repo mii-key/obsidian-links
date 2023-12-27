@@ -15,7 +15,7 @@ export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase 
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.convertAllLinksToMdLinks;
-		
+
 		this.id = 'editor-convert-all-links-to-mdlinks';
 		this.displayNameCommand = 'Convert all links to Markdown links';
 		this.displayNameContextMenu = 'Convert all links to Markdown links';
@@ -24,29 +24,27 @@ export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase 
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		if(checking && !this.isEnabled()){
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
 		const selection = editor.getSelection()
 		const text = selection || editor.getValue();
 		const links = findLinks(text);
-		
+
 		//TODO: fix regex and move inside of findLinks
 		const codeBlocks = findCodeBlocks(text);
 
-		const insideCodeBlock = (pos: Position)  => {
-			for(const block of codeBlocks){
-				if(pos.start> block.position.end){
-					return false
-				} else if(pos.start >= block.position.start && pos.end <= block.position.end){
+		const insideCodeBlock = (pos: Position) => {
+			for (const block of codeBlocks) {
+				if (pos.start >= block.position.start && pos.end <= block.position.end) {
 					return true;
 				}
 			}
 
 			return false;
 		}
-		
+
 		const notMdlinks = links ? links.filter(x => x.type != LinkTypes.Markdown && !insideCodeBlock(x.position)) : []
 
 		if (checking) {
