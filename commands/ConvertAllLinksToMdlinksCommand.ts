@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { Func, ICommand } from "./ICommand"
-import { LinkTypes, findLink, findLinks } from "../utils";
+import { LinkTypes, Position, findCodeBlocks, findLink, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from './ConvertToMdlinkCommandBase'
 
@@ -31,7 +31,23 @@ export class ConvertAllLinksToMdlinksCommand extends ConvertToMdlinkCommandBase 
 		const selection = editor.getSelection()
 		const text = selection || editor.getValue();
 		const links = findLinks(text);
-		const notMdlinks = links ? links.filter(x => x.type != LinkTypes.Markdown) : []
+		
+		//TODO: fix regex and move inside of findLinks
+		const codeBlocks = findCodeBlocks(text);
+
+		const insideCodeBlock = (pos: Position)  => {
+			for(const block of codeBlocks){
+				if(pos.start> block.position.end){
+					return false
+				} else if(pos.start >= block.position.start && pos.end <= block.position.end){
+					return true;
+				}
+			}
+
+			return false;
+		}
+		
+		const notMdlinks = links ? links.filter(x => x.type != LinkTypes.Markdown && !insideCodeBlock(x.position)) : []
 
 		if (checking) {
 			return notMdlinks.length > 0

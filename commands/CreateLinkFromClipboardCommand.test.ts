@@ -63,6 +63,35 @@ describe('CreateLinkFromClipboardCommand test', () => {
 
     test.each(
         [
+            // selection
+            // --------
+            
+            // text
+            {
+                name: "selection, text in clipboard",
+                selection: "some selection",
+                clipboard: "some text",
+                expected: '[some selection](<some text>)',
+                cursurPos: "[some selection](<some text>)".length
+            },
+            // wikilink
+            {
+                name: "selection, wikilink in clipboard",
+                selection: "some selection",
+                clipboard: "[[some text]]",
+                expected: '[some selection](<some text>)',
+                cursurPos: "[some selection](<some text>)".length
+            },
+            {
+                name: "selection, 1st wikilink in clipboard",
+                selection: "some selection",
+                clipboard: "Ipsum [[cupidatat ut]] elit [[deserunt minim]] minim",
+                expected: '[some selection](<cupidatat ut>)',
+                cursurPos: "[some selection](<cupidatat ut>)".length
+            },
+
+            //no selection
+            //------
             {
                 name: "no selection, text in clipboard",
                 selection: "",
@@ -76,13 +105,6 @@ describe('CreateLinkFromClipboardCommand test', () => {
                 clipboard: "some text",
                 expected: '[some text](<some text>)',
                 cursurPos: "[some text](<some text>)".length
-            },
-            {
-                name: "selection, text in clipboard",
-                selection: "some selection",
-                clipboard: "some text",
-                expected: '[some selection](<some text>)',
-                cursurPos: "[some selection](<some text>)".length
             },
             {
                 name: "no selection, http:// url in clipboard",

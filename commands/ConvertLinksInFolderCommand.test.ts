@@ -36,6 +36,16 @@ describe('ConvertLinksInFolderCommand test', () => {
                 },
             ]
         },
+        {
+            name: "wikilinks skip code blocks",
+            files: [
+                {
+                    filePath: 'note 1.md',
+                    content: 'Nulla ut sint in [[laboris|excepteur]]\n```\n [[aliquip]]\n```\n consequat cillum [[anim|minim]] sit ad. Labore ex quis magna',
+                    expected: 'Nulla ut sint in [excepteur](laboris)\n```\n [[aliquip]]\n```\n consequat cillum [minim](anim) sit ad. Labore ex quis magna'
+                }
+            ]
+        },
         
     ];
 

@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, getPageTitle, removeLinks } from "../utils";
+import { HasLinks, LinkData, LinkTypes, findLink, findLinks, getPageTitle, removeLinks } from "../utils";
 import { ObsidianProxy } from "./ObsidianProxy";
 import { IObsidianProxy } from "./IObsidianProxy";
 
@@ -39,7 +39,18 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 		(async () => {
 			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
 			// const linkDestination = await navigator.clipboard.readText();
-			const linkDestination = await this.obsidianProxy.clipboardReadText();
+			
+			
+			const clipboardText = await this.obsidianProxy.clipboardReadText();
+			const links = findLinks(clipboardText, LinkTypes.All)
+			
+			let linkDestination : string;
+			if(links.length){
+				linkDestination = links[0].link ? links[0].link.content : ""
+			} else{
+				linkDestination = clipboardText;
+			}
+			
 			let linkText = linkDestination;
 			const selection = editor.getSelection();
 			let isUrl = false;

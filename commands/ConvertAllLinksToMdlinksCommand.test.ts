@@ -191,7 +191,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
     ];
 
     test.each(convertData)
-        ('convert all links - text - success', ({ name, text, expected, cursurPos }, done) => {
+        ('convert - text - success', ({ name, text, expected, cursurPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
@@ -225,7 +225,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         })
 
     test.each(convertData)
-        ('convert all links - selection - success', ({ name, text, expected, cursurPos }, done) => {
+        ('convert - selection - success', ({ name, text, expected, cursurPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
@@ -259,4 +259,64 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
             //
         })
 
+        const skipCodeBlockData = [
+            {
+                name: "simple block",
+                text: "Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" + 
+                "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" + 
+                "Ullamco ipsum in aliqua [[tempor]] excepteur et excepteur incididunt. ",
+                expected: [
+                    {
+                        text: '[tempor](tempor)',
+                        start: ("Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" + 
+                        "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" + 
+                        "Ullamco ipsum in aliqua ").length,
+                        end: ("Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" + 
+                        "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" + 
+                        "Ullamco ipsum in aliqua [[tempor]]").length
+                    },
+                    {
+                        text: '[officia](officia)',
+                        start: "Est deserunt ".length,
+                        end: "Est deserunt [[officia]]".length
+                    }
+                ],
+                cursurPos: "Est deserunt [officia](officia)".length
+
+            }
+        ]
+
+        test.each(skipCodeBlockData)
+        ('convert & skip code blocks - text - success', ({ name, text, expected, cursurPos }, done) => {
+            const editor = new EditorMock()
+            editor.__mocks.getValue.mockReturnValue(text)
+
+            const obsidianProxyMock = new ObsidianProxyMock()
+            obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
+                status: 200,
+                text: "<title>Google</title>"
+            })
+            const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+                if (err) {
+                    done(err)
+                    return
+                }
+                try {
+                    expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(expected.length)
+                    for (let call = 0; call < expected.length; call++) {
+                        expect(editor.__mocks.replaceRange.mock.calls[call][0]).toBe(expected[call].text)
+                        expect(editor.__mocks.replaceRange.mock.calls[call][1].ch).toBe(expected[call].start)
+                        expect(editor.__mocks.replaceRange.mock.calls[call][2].ch).toBe(expected[call].end)
+                    }
+                    done()
+                }
+                catch (err) {
+                    done(err)
+                }
+            })
+
+            //
+            cmd.handler(editor, false)
+            //
+        })
 })
