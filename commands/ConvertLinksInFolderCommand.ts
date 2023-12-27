@@ -56,9 +56,7 @@ export class ConvertLinksInFolderCommand extends ConvertToMdlinkCommandBase {
 
 					const insideCodeBlock = (pos: Position) => {
 						for (const block of codeBlocks) {
-							if (pos.start > block.position.end) {
-								return false
-							} else if (pos.start >= block.position.start && pos.end <= block.position.end) {
+							if (pos.start >= block.position.start && pos.end <= block.position.end) {
 								return true;
 							}
 						}
