@@ -97,7 +97,7 @@ export class ObsidianProxyMock {
         ffSetLinkTextFromClipboard: true,
         ffWrapNoteInFolder: true,
         ffConvertLinksInFolder: true,
-        ffConvertLinkToHtmllink: false,
+        ffConvertLinkToHtmllink: true,
 
 
         //context menu

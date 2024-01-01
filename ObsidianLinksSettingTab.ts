@@ -606,33 +606,32 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // ------------------------------------
         // Convert to HTML link
 
-        // new Setting(containerEl)
-        // 	.setName("Convert to HTML link")
-        // 	.setDesc("Convert link to HTML link")
-        // 	.setClass("setting-item--insider-convert-2htmllink")
-        // 	.addToggle((toggle) => {
-        // 		toggle
-        // 			.setValue(this.plugin.settings.ffConvertLinkToHtmllink)
-        // 			.onChange(async (value) => {
-        // 				this.plugin.settings.ffConvertLinkToHtmllink = value;
-        // 				await this.plugin.saveSettings();
-        //                 toggleConvertToHtmlLinkSection(value);
-        // 			})
+        new Setting(containerEl)
+        	.setName("Convert to HTML link")
+        	.setDesc("Convert link to HTML link")
+        	.setClass("setting-item--insider-convert-2htmllink")
+        	.addToggle((toggle) => {
+        		toggle
+        			.setValue(this.plugin.settings.ffConvertLinkToHtmllink)
+        			.onChange(async (value) => {
+        				this.plugin.settings.ffConvertLinkToHtmllink = value;
+        				await this.plugin.saveSettings();
+                        toggleConvertToHtmlLinkSection(value);
+        			})
 
-        // 	});
+        	});
 
-        // const convertToHtmlLinkSettingDesc = containerEl.querySelector(".setting-item--insider-convert-2htmllink .setting-item-description");
+        const convertToHtmlLinkSettingDesc = containerEl.querySelector(".setting-item--insider-convert-2htmllink .setting-item-description");
 
-        // if (convertToHtmlLinkSettingDesc) {
-        // 	convertToHtmlLinkSettingDesc.appendText(' see ');
-        // 	convertToHtmlLinkSettingDesc.appendChild(
-        // 		createEl('a', {
-        // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-to-htmllink.md',
-        // 			text: 'docs'
-        // 		}));
-        //         convertToHtmlLinkSettingDesc.appendText('.');
-        // }
-
+        if (convertToHtmlLinkSettingDesc) {
+        	convertToHtmlLinkSettingDesc.appendText(' see ');
+        	convertToHtmlLinkSettingDesc.appendChild(
+        		createEl('a', {
+        			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-to-htmllink.md',
+        			text: 'docs'
+        		}));
+                convertToHtmlLinkSettingDesc.appendText('.');
+        }
 
     }
 }
