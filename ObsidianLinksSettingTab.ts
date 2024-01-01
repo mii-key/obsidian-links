@@ -50,6 +50,31 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         // -- Configure context menu
         containerEl.createEl('h3', { text: 'Context menu' });
+
+
+        // const feature1Settings = new Setting(containerEl)
+        //     .setName('Feature1 context menu item')
+        //     .setDesc('')
+        //     .addToggle((toggle) => {
+        //         toggle
+        //             .setValue(this.plugin.settings.contexMenu.feature1)
+        //             .onChange(async (value) => {
+        //                 this.plugin.settings.contexMenu.feature1 = value;
+        //                 await this.plugin.saveSettings();
+        //             })
+
+        //     });
+
+        // const toggleFeature1Section = (enabled: boolean) => {
+        //     if (enabled) {
+        //         feature1Settings.settingEl.show();
+        //     } else {
+        //         feature1Settings.settingEl.hide();
+        //     }
+        // }
+
+        // toggleFeature1Section(this.plugin.settings.ffFeature1);
+
         new Setting(containerEl)
             .setName('Edit link text')
             .setDesc('')
@@ -135,8 +160,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
-
-
         new Setting(containerEl)
             .setName('Unlink')
             .setDesc('')
@@ -185,6 +208,30 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        const convertToHtmlLinkSettings = new Setting(containerEl)
+            .setName('Convert to HTML link')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.convertToHtmlLink)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.convertToHtmlLink = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const toggleConvertToHtmlLinkSection = (enabled: boolean) => {
+            if (enabled) {
+                convertToHtmlLinkSettings.settingEl.show();
+            } else {
+                convertToHtmlLinkSettings.settingEl.hide();
+            }
+        }
+
+        toggleConvertToHtmlLinkSection(this.plugin.settings.ffConvertLinkToHtmllink);
+
         if (this.plugin.settings.ffReplaceLink) {
             new Setting(containerEl)
                 .setName('Replace link')
@@ -468,29 +515,29 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // convert links in a folder
 
         new Setting(containerEl)
-        	.setName("Convert links in folder")
-        	.setDesc("Convert links in a folder")
-        	.setClass("setting-item--insider-feature-convert-links-in-folder")
-        	.addToggle((toggle) => {
-        		toggle
-        			.setValue(this.plugin.settings.ffConvertLinksInFolder)
-        			.onChange(async (value) => {
-        				this.plugin.settings.ffConvertLinksInFolder = value;
-        				await this.plugin.saveSettings();
-        			})
+            .setName("Convert links in folder")
+            .setDesc("Convert links in a folder")
+            .setClass("setting-item--insider-feature-convert-links-in-folder")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffConvertLinksInFolder)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffConvertLinksInFolder = value;
+                        await this.plugin.saveSettings();
+                    })
 
-        	});
+            });
 
         const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature-convert-links-in-folder .setting-item-description");
 
         if (feature1SettingDesc) {
-        	feature1SettingDesc.appendText(' see ');
-        	feature1SettingDesc.appendChild(
-        		createEl('a', {
-        			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-links-in-folder.md',
-        			text: 'docs'
-        		}));
-        	feature1SettingDesc.appendText('.');
+            feature1SettingDesc.appendText(' see ');
+            feature1SettingDesc.appendChild(
+                createEl('a', {
+                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-links-in-folder.md',
+                    text: 'docs'
+                }));
+            feature1SettingDesc.appendText('.');
         }
 
         // feature: extract section
@@ -556,8 +603,35 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // 		feature3SettingDesc.appendText('.');
         // }
 
-       
+        // ------------------------------------
+        // Convert to HTML link
 
-        
+        new Setting(containerEl)
+        	.setName("Convert to HTML link")
+        	.setDesc("Convert link to HTML link")
+        	.setClass("setting-item--insider-convert-2htmllink")
+        	.addToggle((toggle) => {
+        		toggle
+        			.setValue(this.plugin.settings.ffConvertLinkToHtmllink)
+        			.onChange(async (value) => {
+        				this.plugin.settings.ffConvertLinkToHtmllink = value;
+        				await this.plugin.saveSettings();
+                        toggleConvertToHtmlLinkSection(value);
+        			})
+
+        	});
+
+        const convertToHtmlLinkSettingDesc = containerEl.querySelector(".setting-item--insider-convert-2htmllink .setting-item-description");
+
+        if (convertToHtmlLinkSettingDesc) {
+        	convertToHtmlLinkSettingDesc.appendText(' see ');
+        	convertToHtmlLinkSettingDesc.appendChild(
+        		createEl('a', {
+        			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-to-htmllink.md',
+        			text: 'docs'
+        		}));
+                convertToHtmlLinkSettingDesc.appendText('.');
+        }
+
     }
 }

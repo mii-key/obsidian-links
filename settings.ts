@@ -15,6 +15,7 @@ export interface IObsidianLinksSettings {
 	ffSetLinkTextFromClipboard: boolean;
 	ffWrapNoteInFolder: boolean;
 	ffConvertLinksInFolder: boolean;
+	ffConvertLinkToHtmllink: boolean;
 
 	//context menu
 	contexMenu: {
@@ -27,6 +28,7 @@ export interface IObsidianLinksSettings {
 		convertToWikilink: boolean;
 		convertToAutolink: boolean;
 		convertToMakrdownLink: boolean;
+		convertToHtmlLink: boolean;
 		replaceLink: boolean;
 		embedUnembedLink: boolean;
 		deleteLink: boolean;
@@ -59,6 +61,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffSetLinkTextFromClipboard: false,
 	ffWrapNoteInFolder: false,
 	ffConvertLinksInFolder: false,
+	ffConvertLinkToHtmllink: false,
 
 	//context menu
 	contexMenu: {
@@ -71,6 +74,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		convertToWikilink: true,
 		convertToAutolink: true,
 		convertToMakrdownLink: true,
+		convertToHtmlLink: true,
 		replaceLink: true,
 		embedUnembedLink: true,
 		deleteLink: true,

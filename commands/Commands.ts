@@ -25,6 +25,7 @@ import { SetLinkTextFromClipboardCommand } from "./SetLinkTextFromClipboardComma
 import { WrapNoteInFolderCommand } from "./WrapNoteInFolderCommand";
 import { CopyLinkToClipboardCommand } from "./CopyLinkToClipboardCommand";
 import { ConvertLinksInFolderCommand } from "./ConvertLinksInFolderCommand";
+import { ConvertLinkToHtmllinkCommand } from "./ConvertLinkToHtmllinkCommand";
 
 
 let commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -37,6 +38,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(DeleteLinkCommand.name, new DeleteLinkCommand(() => settings.contexMenu.deleteLink));
     commands.set(ConvertLinkToMdlinkCommand.name, new ConvertLinkToMdlinkCommand(obsidianProxy, () => settings.contexMenu.convertToMakrdownLink));
     commands.set(ConvertLinkToWikilinkCommand.name, new ConvertLinkToWikilinkCommand(() => settings.contexMenu.convertToWikilink));
+    commands.set(ConvertLinkToHtmllinkCommand.name, new ConvertLinkToHtmllinkCommand(obsidianProxy));
     commands.set(ConvertLinkToAutolinkCommand.name, new ConvertLinkToAutolinkCommand(() => settings.contexMenu.convertToAutolink));
     commands.set(CopyLinkToClipboardCommand.name, new CopyLinkToClipboardCommand(obsidianProxy));
     commands.set(CopyLinkDestinationToClipboardCommand.name,
@@ -90,6 +92,7 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         ConvertLinkToWikilinkCommand.name,
         ConvertLinkToAutolinkCommand.name,
         ConvertLinkToMdlinkCommand.name,
+        ConvertLinkToHtmllinkCommand.name,
         UnembedLinkCommand.name,
         EmbedLinkCommand.name,
         DeleteLinkCommand.name,

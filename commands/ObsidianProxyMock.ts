@@ -97,6 +97,8 @@ export class ObsidianProxyMock {
         ffSetLinkTextFromClipboard: true,
         ffWrapNoteInFolder: true,
         ffConvertLinksInFolder: true,
+        ffConvertLinkToHtmllink: true,
+
 
         //context menu
         contexMenu: {
@@ -109,6 +111,7 @@ export class ObsidianProxyMock {
             convertToWikilink: true,
             convertToAutolink: true,
             convertToMakrdownLink: true,
+            convertToHtmlLink: true,
             replaceLink: true,
             embedUnembedLink: true,
             deleteLink: true,
@@ -132,7 +135,7 @@ export class ObsidianProxyMock {
         this.createNotice = this.__mocks.createNotice;
         this.linkTextSuggestContextSetLinkData = this.__mocks.linkTextSuggestContextSetLinkData;
 
-        if(vault){
+        if (vault) {
             this.Vault = vault;
         }
     }
