@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, TAbstractFile, htmlToMarkdown, requestUrl, moment, RequestUrlParam, RequestUrlResponsePromise } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtention, InternalWikilinkWithoutTextAction } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtention, InternalWikilinkWithoutTextAction, findLinks, LinkTypes } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -215,9 +215,16 @@ export default class ObsidianLinksPlugin extends Plugin {
 	replaceExternalLink(linkData: LinkData, editor: Editor) {
 		new ReplaceLinkModal(this.app, async (path) => {
 			if (path) {
+				let target = path;
+				if(path.startsWith('[')){
+					const links = findLinks(path, LinkTypes.Wiki);
+					if(links.length > 0 && links[0].link?.content){
+						target = links[0].link?.content;
+					}
+				}
 				this.settings.linkReplacements.push({
 					source: linkData.link!.content,
-					target: path
+					target: target
 				})
 				await this.saveSettings();
 				this.replaceMarkdownTargetsInNote();
