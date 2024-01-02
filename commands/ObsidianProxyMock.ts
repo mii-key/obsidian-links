@@ -98,7 +98,7 @@ export class ObsidianProxyMock {
         ffWrapNoteInFolder: true,
         ffConvertLinksInFolder: true,
         ffConvertLinkToHtmllink: true,
-
+        ffCutLinkToClipboard: true,
 
         //context menu
         contexMenu: {
@@ -124,7 +124,8 @@ export class ObsidianProxyMock {
             convertHtmllinksToMdlinks: true,
             extractSection: true,
             wrapNoteInFolder: true,
-            copyLinkToClipboard: true
+            copyLinkToClipboard: true,
+            cutLinkToClipboard: true
         }
     }
 

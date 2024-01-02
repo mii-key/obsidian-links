@@ -147,6 +147,29 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
+        const cutLinkSettings = new Setting(containerEl)
+            .setName('Cut link')
+            .setDesc('')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.contexMenu.cutLinkToClipboard)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contexMenu.cutLinkToClipboard = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const toggleCutLinkSection = (enabled: boolean) => {
+            if (enabled) {
+                cutLinkSettings.settingEl.show();
+            } else {
+                cutLinkSettings.settingEl.hide();
+            }
+        }
+
+        toggleCutLinkSection(this.plugin.settings.ffCutLinkToClipboard);
+
         new Setting(containerEl)
             .setName('Copy link destination')
             .setDesc('')
@@ -607,31 +630,62 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // Convert to HTML link
 
         new Setting(containerEl)
-        	.setName("Convert to HTML link")
-        	.setDesc("Convert link to HTML link")
-        	.setClass("setting-item--insider-convert-2htmllink")
-        	.addToggle((toggle) => {
-        		toggle
-        			.setValue(this.plugin.settings.ffConvertLinkToHtmllink)
-        			.onChange(async (value) => {
-        				this.plugin.settings.ffConvertLinkToHtmllink = value;
-        				await this.plugin.saveSettings();
+            .setName("Convert to HTML link")
+            .setDesc("Convert link to HTML link")
+            .setClass("setting-item--insider-convert-2htmllink")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffConvertLinkToHtmllink)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffConvertLinkToHtmllink = value;
+                        await this.plugin.saveSettings();
                         toggleConvertToHtmlLinkSection(value);
-        			})
+                    })
 
-        	});
+            });
 
         const convertToHtmlLinkSettingDesc = containerEl.querySelector(".setting-item--insider-convert-2htmllink .setting-item-description");
 
         if (convertToHtmlLinkSettingDesc) {
-        	convertToHtmlLinkSettingDesc.appendText(' see ');
-        	convertToHtmlLinkSettingDesc.appendChild(
-        		createEl('a', {
-        			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-to-htmllink.md',
-        			text: 'docs'
-        		}));
-                convertToHtmlLinkSettingDesc.appendText('.');
+            convertToHtmlLinkSettingDesc.appendText(' see ');
+            convertToHtmlLinkSettingDesc.appendChild(
+                createEl('a', {
+                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-to-htmllink.md',
+                    text: 'docs'
+                }));
+            convertToHtmlLinkSettingDesc.appendText('.');
         }
+
+        // ------------------------------------
+        // Cut link to the clipboard
+
+        // new Setting(containerEl)
+        //     .setName("Cut link")
+        //     .setDesc("Cut link to the clipboard")
+        //     .setClass("setting-item--insider-cut-2clipboard")
+        //     .addToggle((toggle) => {
+        //         toggle
+        //             .setValue(this.plugin.settings.ffCutLinkToClipboard)
+        //             .onChange(async (value) => {
+        //                 this.plugin.settings.ffCutLinkToClipboard = value;
+        //                 await this.plugin.saveSettings();
+        //                 toggleCutLinkSection(value);
+        //             })
+
+        //     });
+
+        // const cutLinkSettingDesc = containerEl.querySelector(".setting-item--insider-cut-2clipboard .setting-item-description");
+
+        // if (cutLinkSettingDesc) {
+        //     cutLinkSettingDesc.appendText(' see ');
+        //     cutLinkSettingDesc.appendChild(
+        //         createEl('a', {
+        //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/cut-link.md',
+        //             text: 'docs'
+        //         }));
+        //     cutLinkSettingDesc.appendText('.');
+        // }
+
 
     }
 }
