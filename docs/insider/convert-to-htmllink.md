@@ -22,7 +22,7 @@
 </details>
 
 <details>
-<summary>Demo. Create link to a note in a class diagram <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
+<summary>Demo. Create link to a note in a class <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
 
 ![Create link to a note's heading in a diagram](/docs/img/convert-wikilink-wheading-to-html-mermaid-class-diagram.gif)
 
