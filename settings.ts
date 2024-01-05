@@ -16,6 +16,7 @@ export interface IObsidianLinksSettings {
 	ffWrapNoteInFolder: boolean;
 	ffConvertLinksInFolder: boolean;
 	ffConvertLinkToHtmllink: boolean;
+	ffCutLinkToClipboard: boolean;
 
 	//context menu
 	contexMenu: {
@@ -42,6 +43,7 @@ export interface IObsidianLinksSettings {
 		extractSection: boolean;
 		wrapNoteInFolder: boolean;
 		copyLinkToClipboard: boolean;
+		cutLinkToClipboard: boolean;
 	}
 }
 
@@ -62,6 +64,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffWrapNoteInFolder: false,
 	ffConvertLinksInFolder: false,
 	ffConvertLinkToHtmllink: false,
+	ffCutLinkToClipboard: false,
 
 	//context menu
 	contexMenu: {
@@ -87,6 +90,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		convertHtmllinksToMdlinks: false,
 		extractSection: false,
 		wrapNoteInFolder: false,
-		copyLinkToClipboard: false
+		copyLinkToClipboard: false,
+		cutLinkToClipboard: false
 	}
 }

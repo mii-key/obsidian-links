@@ -104,7 +104,7 @@ describe('ConvertLinkToWikilinkCommand test', () => {
                 cursurPos: "[[note1|note1 text]]".length
             },
             {
-                name: "mdlink destination w/spaces",
+                name: "mdlink destination w/<>",
                 text: "[note1 text](<note 1>)",
                 expected: '[[note 1|note1 text]]',
                 cursurPos: "[[note 1|note1 text]]".length
@@ -120,6 +120,18 @@ describe('ConvertLinkToWikilinkCommand test', () => {
                 text: "[note1 text](note1#header1)",
                 expected: '[[note1#header1|note1 text]]',
                 cursurPos: "[[note1#header1|note1 text]]".length
+            },
+            {
+                name: "mdlink destination=text",
+                text: "[note1](note1)",
+                expected: '[[note1]]',
+                cursurPos: "[[note1]]".length
+            },
+            {
+                name: "mdlink destination=text w/<>",
+                text: "[note 1](<note 1>)",
+                expected: '[[note 1]]',
+                cursurPos: "[[note 1]]".length
             },
         ]
     )

@@ -434,13 +434,13 @@ Add or remove [file embedding](https://help.obsidian.md/Linking+notes+and+files/
 
 ## Copy link
 
-Copy markdown, wiki, auto, html link or plain url to clipboard
+Copy markdown, wiki, auto, html link or plain url to the clipboard
 
 - Command palette: Copy link
 - Context menu: Copy link
 
 <details>
-<summary>Demo. Copy link to clipbard </summary>
+<summary>Demo. Copy link to the clipbard </summary>
 
 ![remove link](/docs/img/copy-link-to-clipboard.gif)
 
