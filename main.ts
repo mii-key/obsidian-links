@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, TAbstractFile, htmlToMarkdown, requestUrl, moment, RequestUrlParam, RequestUrlResponsePromise } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtention, InternalWikilinkWithoutTextAction, findLinks, LinkTypes } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtention, InternalWikilinkWithoutTextAction, findLinks, LinkTypes, getLinkTitles, getFileName } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -66,8 +66,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.obsidianProxy = new ObsidianProxy(this.app, this.linkTextSuggestContext, this.settings);
 
 		//TODO: remove
-		if(this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction === InternalWikilinkWithoutTextAction.None){
-			switch(this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement){
+		if (this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction === InternalWikilinkWithoutTextAction.None) {
+			switch (this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement) {
 				case "Destination":
 					this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction = InternalWikilinkWithoutTextAction.ReplaceWithDestination;
 					break;
@@ -117,6 +117,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 			this.registerEvent(
 				this.app.workspace.on('editor-paste', (evt, editor, view) => this.onEditorPaste(evt, editor, view))
+			);
+			this.registerEvent(
+				this.app.workspace.on('editor-paste', (evt, editor, view) => this.processObsidianLink(evt, editor, view))
 			);
 
 			if (this.settings.ffReplaceLink) {
@@ -216,9 +219,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 		new ReplaceLinkModal(this.app, async (path) => {
 			if (path) {
 				let target = path;
-				if(path.startsWith('[')){
+				if (path.startsWith('[')) {
 					const links = findLinks(path, LinkTypes.Wiki);
-					if(links.length > 0 && links[0].link?.content){
+					if (links.length > 0 && links[0].link?.content) {
 						target = links[0].link?.content;
 					}
 				}
@@ -280,6 +283,47 @@ export default class ObsidianLinksPlugin extends Plugin {
 				}
 				editor.setCursor(editor.offsetToPos(fromOffset + text.length));
 			}
+		}
+	}
+
+	//TOOD: refactor
+	processObsidianLink(evt: ClipboardEvent, editor: Editor, view: MarkdownView | MarkdownFileInfo) {
+		const text = evt.clipboardData?.getData('text/plain');
+		console.log(text)
+		if (!text?.startsWith('obsidian://open?vault=')) {
+			return;
+		}
+		evt.preventDefault();
+
+		const url = new URL(text)
+		const targetVaultName = url.searchParams.get('vault')
+		console.log(targetVaultName)
+		const vaultName = this.app.vault.getName()
+		let link = text;
+		if (targetVaultName === vaultName) {
+			const file = url.searchParams.get('file');
+			if (file) {
+				const destination = decodeURI(file);
+				const hashIdx = destination.lastIndexOf('#');
+				let text = null;
+				if (hashIdx >= 0) {
+					if (hashIdx + 1 < destination.length - 1) {
+						text = destination.substring(hashIdx + 1)
+					}
+				} else{
+					text = getFileName(destination);
+				}
+
+				link = `[[${decodeURI(file)} ${(text && text != destination ? '|' + text : '')}]]`
+			}
+		}
+		const selection = editor.getSelection();
+		if (selection.length > 0) {
+			editor.replaceSelection(link);
+		} else {
+			const fromPos = editor.getCursor('from')
+			editor.replaceRange(link, fromPos)
+			editor.setCursor(editor.offsetToPos(editor.posToOffset(fromPos) + link.length));
 		}
 	}
 
