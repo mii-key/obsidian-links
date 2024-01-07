@@ -82,9 +82,20 @@ describe('CutLinkToClipboardCommand test', () => {
                 expected: "<a href=\"google.com\">google1</a>"
             },
             {
+                name: "html - w/class",
+                text: "<a href=\"note 1\" class=\"internal-link\">note 1</a>",
+                expected: "<a href=\"note 1\" class=\"internal-link\">note 1</a>"
+            },
+            {
                 name: "mdlink",
                 text: "[google](google.com)",
                 expected: "[google](google.com)"
+
+            },
+            {
+                name: "mdlink wo/text",
+                text: "[](google.com)",
+                expected: "[](google.com)"
 
             },
             {
@@ -93,9 +104,24 @@ describe('CutLinkToClipboardCommand test', () => {
                 expected: "[[note 1|google]]"
             },
             {
-                name: "wikilink empty text",
+                name: "wikilink wo/text",
                 text: "[[note 1]]",
                 expected: "[[note 1]]"
+            },
+            {
+                name: "autolink",
+                text: "<https://obsidian.md>",
+                expected: "<https://obsidian.md>"
+            },
+            {
+                name: "URL http",
+                text: "http://obsidian.md",
+                expected: "http://obsidian.md"
+            },
+            {
+                name: "URL https",
+                text: "https://obsidian.md",
+                expected: "https://obsidian.md"
             }
         ]
     )
