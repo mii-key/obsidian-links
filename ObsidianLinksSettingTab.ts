@@ -160,16 +160,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
-        const toggleCutLinkSection = (enabled: boolean) => {
-            if (enabled) {
-                cutLinkSettings.settingEl.show();
-            } else {
-                cutLinkSettings.settingEl.hide();
-            }
-        }
-
-        toggleCutLinkSection(this.plugin.settings.ffCutLinkToClipboard);
-
         new Setting(containerEl)
             .setName('Copy link destination')
             .setDesc('')
@@ -425,12 +415,13 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             text: " to be fixed."
         });
 
+        // ----------------------------
         // ----- Early access feature1
 
         // new Setting(containerEl)
         // 	.setName("Early access feature1")
         // 	.setDesc("Feature description")
-        // 	.setClass("setting-item--eaccess-feature1")
+        // 	.setClass("setting-item-feature1")
         // 	.addToggle((toggle) => {
         // 		toggle
         // 			.setValue(this.plugin.settings.ffEarlyAccessFeature1)
@@ -440,7 +431,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // 			})
         // 	});
 
-        // const earlyAccessFeature1SettingDesc = containerEl.querySelector(".setting-item--eaccess-feature1 .setting-item-description");
+        // const earlyAccessFeature1SettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
         // if (earlyAccessFeature1SettingDesc) {
         // 	earlyAccessFeature1SettingDesc.appendText(' see ');
         // 	earlyAccessFeature1SettingDesc.appendChild(
@@ -451,7 +442,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // 	earlyAccessFeature1SettingDesc.appendText('.');
         // }
         // ----------
-
 
 
         // ----------------------------------------------
@@ -482,7 +472,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // new Setting(containerEl)
         // 	.setName("Insinder feature")
         // 	.setDesc("description")
-        // 	.setClass("setting-item--insider-feature1")
+        // 	.setClass("setting-item-feature1")
         // 	.addToggle((toggle) => {
         // 		toggle
         // 			.setValue(this.plugin.settings.ffFeature1)
@@ -493,7 +483,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         // 	});
 
-        // const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature1 .setting-item-description");
+        // const feature1SettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
 
         // if (feature1SettingDesc) {
         // 	feature1SettingDesc.appendText(' see ');
@@ -563,6 +553,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             feature1SettingDesc.appendText('.');
         }
 
+        // ------------------------------
         // feature: extract section
 
         // new Setting(containerEl)
@@ -656,35 +647,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             convertToHtmlLinkSettingDesc.appendText('.');
         }
 
-        // ------------------------------------
-        // Cut link to the clipboard
-
-        new Setting(containerEl)
-            .setName("Cut link")
-            .setDesc("Cut link to the clipboard")
-            .setClass("setting-item--insider-cut-2clipboard")
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.ffCutLinkToClipboard)
-                    .onChange(async (value) => {
-                        this.plugin.settings.ffCutLinkToClipboard = value;
-                        await this.plugin.saveSettings();
-                        toggleCutLinkSection(value);
-                    })
-
-            });
-
-        const cutLinkSettingDesc = containerEl.querySelector(".setting-item--insider-cut-2clipboard .setting-item-description");
-
-        if (cutLinkSettingDesc) {
-            cutLinkSettingDesc.appendText(' see ');
-            cutLinkSettingDesc.appendChild(
-                createEl('a', {
-                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/cut-link.md',
-                    text: 'docs'
-                }));
-            cutLinkSettingDesc.appendText('.');
-        }
+        
 
 
     }

@@ -29,6 +29,7 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Create link from clipboard](#create-link-from-clipboard)
   - [Embed / Unembed files](#embed--unembed-files)
   - [Copy link](#copy-link)
+  - [Cut link](#cut-link)
 
 
 # Features
@@ -443,5 +444,19 @@ Copy markdown, wiki, auto, html link or plain url to the clipboard
 <summary>Demo. Copy link to the clipbard </summary>
 
 ![remove link](/docs/img/copy-link-to-clipboard.gif)
+
+</details>
+
+## Cut link
+
+Cut markdown, wiki, auto, html link or plain url to the clipboard
+
+- Command palette: Cut link
+- Context menu: Cut link
+
+<details>
+<summary>Demo. Cut link to the clipbard </summary>
+
+![remove link](/docs/img/cut-link-to-clipboard.gif)
 
 </details>
