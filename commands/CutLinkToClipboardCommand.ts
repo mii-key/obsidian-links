@@ -16,7 +16,6 @@ export class CutLinkToClipboardCommand extends CommandBase {
 		this.icon = 'scissors';
 		this.obsidianProxy = obsidianProxy;
 
-		this.isEnabled = () => this.obsidianProxy.settings.ffCutLinkToClipboard;
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.copyLinkToClipboard;
 	}
 
