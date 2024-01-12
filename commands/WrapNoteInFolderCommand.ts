@@ -33,13 +33,17 @@ export class WrapNoteInFolderCommand extends CommandBase {
 		}
 
 		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
-		if(!currentView){
+		if (!currentView) {
 			return;
 		}
-		const currentNoteParentPath = currentView?.file.parent.path;
-		const currentNotePath = currentView.file.path;
+		const currentNoteParentPath = currentView?.file?.parent?.path;
+		const currentNotePath = currentView.file?.path;
+		if (!currentNotePath || !currentNoteParentPath) {
+			return
+		}
+
 		const matchNoteName = currentNotePath.match(/(.*\/)(.*)\.md/);
-		if(!matchNoteName){
+		if (!matchNoteName) {
 			return;
 		}
 		const currentNoteName = matchNoteName[2];
@@ -48,6 +52,6 @@ export class WrapNoteInFolderCommand extends CommandBase {
 			await this.obsidianProxy.Vault.createFolder(newParentFolder);
 			await this.obsidianProxy.Vault.rename(currentNotePath, `${newParentFolder}/${currentNoteName}.md`)
 		})();
-		
+
 	}
 }

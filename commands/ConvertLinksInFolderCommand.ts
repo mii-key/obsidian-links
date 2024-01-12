@@ -38,7 +38,10 @@ export class ConvertLinksInFolderCommand extends ConvertToMdlinkCommandBase {
 			return;
 		}
 
-		const parentFolder = activeView.file.parent;
+		const parentFolder = activeView.file?.parent;
+		if (!parentFolder) {
+			return
+		}
 		const files = this.obsidianProxy.Vault.getFilesInFolder(parentFolder);
 		if (!files) {
 			this.callback?.(null)

@@ -1,6 +1,6 @@
 import { INoteView } from "INoteView";
 import { IVault } from "IVault";
-import { DataWriteOptions, FileStats, LinkCache, Vault} from "obsidian";
+import { DataWriteOptions, FileStats, LinkCache, Vault } from "obsidian";
 
 export abstract class TAbstractFile {
     /**
@@ -20,7 +20,7 @@ export abstract class TAbstractFile {
      */
     parent: TFolder;
 
-    constructor(path: string, parent: TFolder){
+    constructor(path: string, parent: TFolder) {
         this.path = path;
         const tmp = path.split('/');
         this.name = tmp[tmp.length - 1];
@@ -31,11 +31,11 @@ export abstract class TAbstractFile {
 
 export class TFolder extends TAbstractFile {
 
-    isRootFolder : boolean;
+    isRootFolder: boolean;
 
     children: TAbstractFile[];
 
-    constructor(path: string, parent: TFolder, isRoot: boolean = false){
+    constructor(path: string, parent: TFolder, isRoot: boolean = false) {
         super(path, parent);
         this.children = [];
         this.isRootFolder = isRoot;
@@ -65,23 +65,23 @@ export class TFile extends TAbstractFile {
      */
     extension: string;
 
-    constructor(path: string, parent: TFolder){
+    constructor(path: string, parent: TFolder) {
         super(path, parent);
         const dotIdx = path.lastIndexOf('.');
-        if(dotIdx >= 0){
-            this.extension = path.substring(dotIdx+1);
-        } 
-        
+        if (dotIdx >= 0) {
+            this.extension = path.substring(dotIdx + 1);
+        }
+
         const baseNameEndIdx = dotIdx >= 0 ? dotIdx : path.length;
-        const slashIdx= path.lastIndexOf('/', baseNameEndIdx);
-        this.basename = path.substring(slashIdx >=0 ? slashIdx + 1 : 0, baseNameEndIdx);
+        const slashIdx = path.lastIndexOf('/', baseNameEndIdx);
+        this.basename = path.substring(slashIdx >= 0 ? slashIdx + 1 : 0, baseNameEndIdx);
     }
 
 }
 
 
 export class VaultMock implements IVault {
-    __mocks : {
+    __mocks: {
         getFilesInFolder: jest.Mock,
         read: jest.Mock,
         modify: jest.Mock,
@@ -92,18 +92,18 @@ export class VaultMock implements IVault {
         createNote: jest.Mock,
         getBacklinksForFileByPath: jest.Mock
     } = {
-        getFilesInFolder: jest.fn(),
-        read: jest.fn(),
-        modify: jest.fn(),
-        rename: jest.fn(),
-        createFolder: jest.fn(),
-        getActiveNoteView: jest.fn(),
-        exists: jest.fn(),
-        createNote: jest.fn(),
-        getBacklinksForFileByPath: jest.fn(),
-    }
+            getFilesInFolder: jest.fn(),
+            read: jest.fn(),
+            modify: jest.fn(),
+            rename: jest.fn(),
+            createFolder: jest.fn(),
+            getActiveNoteView: jest.fn(),
+            exists: jest.fn(),
+            createNote: jest.fn(),
+            getBacklinksForFileByPath: jest.fn(),
+        }
 
-    constructor(){
+    constructor() {
         this.getFilesInFolder = this.__mocks.getFilesInFolder;
         this.read = this.__mocks.read;
         this.modify = this.__mocks.modify;
@@ -113,7 +113,7 @@ export class VaultMock implements IVault {
         this.exists = this.__mocks.exists;
         this.createNote = this.__mocks.createNote;
         this.getBacklinksForFileByPath = this.__mocks.getBacklinksForFileByPath;
-    }    
+    }
 
     getFilesInFolder(folder: TFolder): TFile[] {
         throw new Error('Method not implemented.');
@@ -123,7 +123,7 @@ export class VaultMock implements IVault {
     read(file: TFile): Promise<string> {
         throw new Error('Method not implemented.');
     }
-    
+
     modify(file: TFile, data: string, options?: DataWriteOptions | undefined): Promise<void> {
         throw new Error('Method not implemented.');
     }
@@ -131,8 +131,8 @@ export class VaultMock implements IVault {
     rename(normalizedPath: string, normalizedNewPath: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    
-    createFolder(path: string): Promise<void> {
+
+    createFolder(path: string): Promise<TFolder> {
         throw new Error('Method not implemented.');
     }
 
@@ -147,11 +147,11 @@ export class VaultMock implements IVault {
         throw new Error('Method not implemented.');
     }
 
-    getBacklinksForFileByPath(path: string): Record<string, LinkCache[]> | null{
+    getBacklinksForFileByPath(path: string): Record<string, LinkCache[]> | null {
         throw new Error('Method not implemented.');
     }
 
-    getRoot() : TFolder{
+    getRoot(): TFolder {
         return {
             isRootFolder: true,
             children: [],

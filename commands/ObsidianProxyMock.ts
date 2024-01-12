@@ -4,6 +4,8 @@ import { IVault } from "IVault";
 import { VaultMock } from "VaultMock";
 
 export class Notice {
+    noticeEl: HTMLElement;
+
     setMessage(message: string | DocumentFragment): this {
         throw new Error('Method not implemented.');
     }
