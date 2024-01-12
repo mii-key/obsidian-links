@@ -221,8 +221,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 				let target = path;
 				if (path.startsWith('[')) {
 					const links = findLinks(path, LinkTypes.Wiki);
-					if (links.length > 0 && links[0].link?.content) {
-						target = links[0].link?.content;
+					if (links.length > 0 && links[0].destination?.content) {
+						target = links[0].destination?.content;
 					}
 				}
 				this.settings.linkReplacements.push({
@@ -310,7 +310,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 					if (hashIdx + 1 < destination.length - 1) {
 						text = destination.substring(hashIdx + 1)
 					}
-				} else{
+				} else {
 					text = getFileName(destination);
 				}
 
