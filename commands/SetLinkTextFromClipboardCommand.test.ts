@@ -18,6 +18,8 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 clipboard: "some text",
                 expectedEnabled: false,
             },
+
+            // mdlink
             {
                 name: "mdlink",
                 text: "Aliqua minim voluptate [reprehenderit](duis) amet et consectetur in excepteur sint exercitation.",
@@ -27,6 +29,18 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
             {
+                name: "mdlink image with text + size",
+                text: "Aliqua minim voluptate [reprehenderit|100x200](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            //TODO: image links with dimensions
+
+
+            // wikilink
+            {
                 name: "wikilink",
                 text: "Aliqua minim voluptate [[reprehenderit]] duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate [[re".length,
@@ -35,6 +49,26 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
             {
+                name: "wikilink with text",
+                text: "Aliqua minim voluptate [[reprehenderit|some text]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "wikilink image with caption + size",
+                text: "Aliqua minim voluptate [[reprehenderit.png|some text|100x200]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            //TODO: image links with dimensions
+
+
+            //autolink
+            {
                 name: "autolink",
                 text: "Aliqua minim voluptate <http://reprehenderit> duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate <re".length,
@@ -42,6 +76,8 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 clipboard: "some text",
                 expectedEnabled: false,
             },
+
+            //url
             {
                 name: "URL",
                 text: "Aliqua minim voluptate http://reprehenderit duis amet et consectetur in excepteur sint exercitation.",
@@ -79,7 +115,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedReplacement: 'some text',
                 expectedReplacementStart: "Proident laboris [".length,
                 expectedReplacementEnd: "Proident laboris [nisi".length,
-                expectedCursorPos:  "Proident laboris [some text".length
+                expectedCursorPos: "Proident laboris [some text".length
 
             },
             {
@@ -90,9 +126,13 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedReplacement: 'some text',
                 expectedReplacementStart: "Proident laboris [".length,
                 expectedReplacementEnd: "Proident laboris [".length,
-                expectedCursorPos:  "Proident laboris [some text".length
+                expectedCursorPos: "Proident laboris [some text".length
 
             },
+            //TODO: image links with dimensions
+
+
+            // wikilink
             {
                 name: "wikilink",
                 text: "Proident laboris [[nisi|elit]] irure in aliquip nulla aliqua laboris.",
@@ -101,7 +141,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedReplacement: 'some text',
                 expectedReplacementStart: "Proident laboris [[nisi|".length,
                 expectedReplacementEnd: "Proident laboris [[nisi|elit".length,
-                expectedCursorPos:  "Proident laboris [[nisi|some text".length
+                expectedCursorPos: "Proident laboris [[nisi|some text".length
 
             },
             {
@@ -112,7 +152,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedReplacement: '|some text',
                 expectedReplacementStart: "Proident laboris [[nisi".length,
                 expectedReplacementEnd: "Proident laboris [[nisi".length,
-                expectedCursorPos:  "Proident laboris [[nisi|some text".length
+                expectedCursorPos: "Proident laboris [[nisi|some text".length
 
             },
             {
@@ -123,8 +163,11 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedReplacement: '|some text',
                 expectedReplacementStart: "Proident laboris [[nisi".length,
                 expectedReplacementEnd: "Proident laboris [[nisi".length,
-                expectedCursorPos:  "Proident laboris [[nisi|some text".length
+                expectedCursorPos: "Proident laboris [[nisi|some text".length
             },
+            //TODO: image links with dimensions
+
+            // url
             {
                 name: "url http",
                 text: "Proident laboris http://obsidian irure in aliquip nulla aliqua laboris.",
@@ -133,11 +176,11 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedReplacement: '[some text](http://obsidian)',
                 expectedReplacementStart: "Proident laboris ".length,
                 expectedReplacementEnd: "Proident laboris http://obsidian".length,
-                expectedCursorPos:  "Proident laboris [some text".length
+                expectedCursorPos: "Proident laboris [some text".length
             },
         ]
     )
-        ('set text - $name - success', ({ name, text, clipboardText, cursorOffset, 
+        ('set text - $name - success', ({ name, text, clipboardText, cursorOffset,
             expectedReplacement, expectedReplacementStart, expectedReplacementEnd, expectedCursorPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)

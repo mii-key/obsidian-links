@@ -34,7 +34,7 @@ export class ConvertLinkToHtmllinkCommand extends CommandBase {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const links = findLinks(text, LinkTypes.Wiki, cursorOffset, cursorOffset);
 		if (checking) {
-			if (links.length === 0 || links[0].link === undefined) {
+			if (links.length === 0 || links[0].destination === undefined) {
 				return false;
 			}
 
@@ -47,10 +47,10 @@ export class ConvertLinkToHtmllinkCommand extends CommandBase {
 	}
 
 	convertLinkToHtmllink(linkData: LinkData, editor: Editor) {
-		if (linkData.link?.content
+		if (linkData.destination?.content
 			&& (linkData.type === LinkTypes.Wiki)) {
 			const linkText = linkData.text ? linkData.text.content : this.generateLinkText(linkData)
-			const linkContent = `<a href="${linkData.link.content}" class="internal-link">${linkText}</a>`;
+			const linkContent = `<a href="${linkData.destination.content}" class="internal-link">${linkText}</a>`;
 			editor.replaceRange(
 				linkContent,
 				editor.offsetToPos(linkData.position.start),
@@ -61,7 +61,7 @@ export class ConvertLinkToHtmllinkCommand extends CommandBase {
 	}
 
 	generateLinkText(linkData: LinkData): string {
-		if(!linkData.link?.content){
+		if(!linkData.destination?.content){
 			throw new Error('Link destination required')
 		}
 		const titles = getLinkTitles(linkData);
@@ -69,7 +69,7 @@ export class ConvertLinkToHtmllinkCommand extends CommandBase {
 			return titles[titles.length - 1]
 		}
 
-		return getFileName(linkData.link?.content);
+		return getFileName(linkData.destination?.content);
 	}
 
 }

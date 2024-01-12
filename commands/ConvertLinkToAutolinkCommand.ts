@@ -29,19 +29,19 @@ export class ConvertLinkToAutolinkCommand extends CommandBase {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const links = findLinks(text, LinkTypes.Markdown | LinkTypes.PlainUrl, cursorOffset, cursorOffset);
 		if (checking) {
-			if (links.length === 0 || links[0].link === undefined) {
+			if (links.length === 0 || links[0].destination === undefined) {
 				return false;
 			}
 			
 			switch (links[0].type) {
 				case LinkTypes.Markdown:
-					if (!(RegExPatterns.AbsoluteUri.test(links[0].link.content)
-						|| links[0].link.content.startsWith(this.EmailScheme))) {
+					if (!(RegExPatterns.AbsoluteUri.test(links[0].destination.content)
+						|| links[0].destination.content.startsWith(this.EmailScheme))) {
 						return false;
 					}
 				break;
 				case LinkTypes.PlainUrl:
-					if(!RegExPatterns.AbsoluteUri.test(links[0].link.content)){
+					if(!RegExPatterns.AbsoluteUri.test(links[0].destination.content)){
 						return false;
 					}
 				break; 
@@ -55,13 +55,13 @@ export class ConvertLinkToAutolinkCommand extends CommandBase {
 	}
 
 	convertLinkToAutolink(linkData: LinkData, editor: Editor) {
-		if (linkData.link?.content 
+		if (linkData.destination?.content 
 			&& (linkData.type === LinkTypes.Markdown || linkData.type === LinkTypes.PlainUrl)) {
 			let linkContent;
-			if (linkData.link.content.startsWith(this.EmailScheme)) {
-				linkContent = `<${linkData.link.content.substring(this.EmailScheme.length)}>`;
-			} else if (RegExPatterns.AbsoluteUri.test(linkData.link.content)) {
-				linkContent = `<${linkData.link.content}>`;
+			if (linkData.destination.content.startsWith(this.EmailScheme)) {
+				linkContent = `<${linkData.destination.content.substring(this.EmailScheme.length)}>`;
+			} else if (RegExPatterns.AbsoluteUri.test(linkData.destination.content)) {
+				linkContent = `<${linkData.destination.content}>`;
 			}
 
 			if (linkContent) {

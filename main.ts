@@ -226,7 +226,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 					}
 				}
 				this.settings.linkReplacements.push({
-					source: linkData.link!.content,
+					source: linkData.destination!.content,
 					target: target
 				})
 				await this.saveSettings();

@@ -1,6 +1,7 @@
 import exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction, getSafeFilename, CodeBlock, findCodeBlocks } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction, getSafeFilename, DestinationType, CodeBlock, findCodeBlocks } from './utils';
 import { expect, test } from '@jest/globals';
+import { RegExPatterns } from './RegExPatterns';
 
 describe("Utils tests", () => {
     test.each([
@@ -255,12 +256,12 @@ describe("Utils tests", () => {
             expect(result?.text).toBeUndefined();
         }
         if (target) {
-            expect(result?.link?.content).toBe(target);
-            expect(result!.link!.position.start).toBe(targetStart);
-            expect(result!.link!.position.end).toBe(targetEnd);
+            expect(result?.destination?.content).toBe(target);
+            expect(result!.destination!.position.start).toBe(targetStart);
+            expect(result!.destination!.position.end).toBe(targetEnd);
         }
         else {
-            expect(result?.link).toBeUndefined();
+            expect(result?.destination).toBeUndefined();
         }
         if (embedded) {
             expect(result!.embedded).toBe(embedded);
@@ -292,9 +293,9 @@ describe("Utils tests", () => {
         expect(result?.text?.content).toBe(text);
         expect(result!.text!.position.start).toBe(textStart);
         expect(result!.text!.position.end).toBe(textEnd);
-        expect(result?.link?.content).toBe(target);
-        expect(result!.link!.position.start).toBe(targetStart);
-        expect(result!.link!.position.end).toBe(targetEnd);
+        expect(result?.destination?.content).toBe(target);
+        expect(result!.destination!.position.start).toBe(targetStart);
+        expect(result!.destination!.position.end).toBe(targetEnd);
 
     });
 
@@ -816,11 +817,11 @@ describe("Utils tests", () => {
             expect(result[i].content).toBe(expected[i].content);
             expect(result[i].position.start).toBe(expected[i].position.start);
             expect(result[i].position.end).toBe(expected[i].position.end);
-            if (expected[i].link) {
-                expect(result[i].link).toBeDefined();
-                expect(result[i].link?.content).toBe(expected[i].link?.content);
-                expect(result[i].link?.position.start).toBe(expected[i].link?.position.start);
-                expect(result[i].link?.position.end).toBe(expected[i].link?.position.end);
+            if (expected[i].destination) {
+                expect(result[i].destination).toBeDefined();
+                expect(result[i].destination?.content).toBe(expected[i].destination?.content);
+                expect(result[i].destination?.position.start).toBe(expected[i].destination?.position.start);
+                expect(result[i].destination?.position.end).toBe(expected[i].destination?.position.end);
             }
             if (expected[i].text) {
                 expect(result[i].text).toBeDefined();
@@ -945,11 +946,11 @@ describe("Utils tests", () => {
             expect(result[i].content).toBe(expected[i].content);
             expect(result[i].position.start).toBe(expected[i].position.start);
             expect(result[i].position.end).toBe(expected[i].position.end);
-            if (expected[i].link) {
-                expect(result[i].link).toBeDefined();
-                expect(result[i].link?.content).toBe(expected[i].link?.content);
-                expect(result[i].link?.position.start).toBe(expected[i].link?.position.start);
-                expect(result[i].link?.position.end).toBe(expected[i].link?.position.end);
+            if (expected[i].destination) {
+                expect(result[i].destination).toBeDefined();
+                expect(result[i].destination?.content).toBe(expected[i].destination?.content);
+                expect(result[i].destination?.position.start).toBe(expected[i].destination?.position.start);
+                expect(result[i].destination?.position.end).toBe(expected[i].destination?.position.end);
             }
             if (expected[i].text) {
                 expect(result[i].text).toBeDefined();
@@ -1057,13 +1058,15 @@ describe("Utils tests", () => {
     })
 
 
+
+
     test.each([
         {
             name: "empty",
             input: "```\n\n```",
             start: "".length,
             end: "```\n\n```".length,
-            expected:[
+            expected: [
                 new CodeBlock("```\n\n```", new Position("".length, "```\n\n```".length))
             ]
         },
@@ -1085,45 +1088,222 @@ describe("Utils tests", () => {
                 new CodeBlock("```\nconst v = `${12}`\n```", new Position("".length, "```\nconst v = `${12}`\n```".length))
             ]
         },
-    {
-        name: "2 code blocks",
-        input: "Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
-            "```\nconst v = `${12}`\n```\n" +
-            "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
-            "```\nconst v = \"some string\"\n```\n" +
-            "Cillum laboris et laboris ut exercitation. Culpa culpa",
-        start: "".length,
-        end: ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
-            "```\nconst v = `${12}`\n```\n" +
-            "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
-            "```\nconst v = \"some string\"\n```\n" +
-            "Cillum laboris et laboris ut exercitation. Culpa culpa").length,
-        expected: [
-            new CodeBlock("```\nconst v = `${12}`\n```",
-                new Position(
-                    "Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n".length,
-                    ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
-                        "```\nconst v = `${12}`\n```").length)),
-            new CodeBlock("```\nconst v = \"some string\"\n```",
-                new Position(
-                    ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
-                        "```\nconst v = `${12}`\n```\n" +
-                        "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n").length,
-                    ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
-                        "```\nconst v = `${12}`\n```\n" +
-                        "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
-                        "```\nconst v = \"some string\"\n```").length))
-        ]
-    }
+        {
+            name: "2 code blocks",
+            input: "Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+                "```\nconst v = `${12}`\n```\n" +
+                "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
+                "```\nconst v = \"some string\"\n```\n" +
+                "Cillum laboris et laboris ut exercitation. Culpa culpa",
+            start: "".length,
+            end: ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+                "```\nconst v = `${12}`\n```\n" +
+                "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
+                "```\nconst v = \"some string\"\n```\n" +
+                "Cillum laboris et laboris ut exercitation. Culpa culpa").length,
+            expected: [
+                new CodeBlock("```\nconst v = `${12}`\n```",
+                    new Position(
+                        "Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n".length,
+                        ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+                            "```\nconst v = `${12}`\n```").length)),
+                new CodeBlock("```\nconst v = \"some string\"\n```",
+                    new Position(
+                        ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+                            "```\nconst v = `${12}`\n```\n" +
+                            "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n").length,
+                        ("Cillum minim et aliquip proident adipisicing est duis eu do consequat magna\n" +
+                            "```\nconst v = `${12}`\n```\n" +
+                            "In enim veniam non consequat sit occaecat pariatur et laboris cupidatat.\n" +
+                            "```\nconst v = \"some string\"\n```").length))
+            ]
+        }
 
     ])("$# findCodeBlocks at position [$name]", ({ name, input, start, end, expected }) => {
         const result = findCodeBlocks(input, start, end);
         //
         expect(result.length).toBe(expected.length);
-        for(let i = 0; i < expected.length; i++){
+        for (let i = 0; i < expected.length; i++) {
             expect(result[i].content).toBe(expected[i].content);
             expect(result[i].position.start).toBe(expected[i].position.start);
             expect(result[i].position.end).toBe(expected[i].position.end);
         }
     });
+
+    test.only.each([
+        {
+            name: "mdlink",
+            input: "Duis irure [anim](aute.png) adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Markdown,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[anim](aute.png)",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [anim](aute.png)".length,
+            expectedText: "anim",
+            expectedDestination: "aute.png",
+            expectedWidth: undefined,
+            expectedHeight: undefined
+        },
+        {
+            name: "mdlink w/hash",
+            input: "Duis irure [anim](aute.png#someHash) adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Markdown,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[anim](aute.png#someHash)",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [anim](aute.png#someHash)".length,
+            expectedText: "anim",
+            expectedDestination: "aute.png#someHash",
+            expectedWidth: undefined,
+            expectedHeight: undefined
+        },
+        {
+            name: "mdlink w/hash",
+            input: "Duis irure [anim](<dolor aute.png#some Hash#some hash 1>) adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Markdown,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[anim](<dolor aute.png#some Hash#some hash 1>)",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [anim](<dolor aute.png#some Hash#some hash 1>)".length,
+            expectedText: "anim",
+            expectedDestination: "dolor aute.png#some Hash#some hash 1",
+            expectedWidth: undefined,
+            expectedHeight: undefined
+        },
+        {
+            name: "mdlink w/text,width,height",
+            input: "Duis irure [anim|400x200](aute.png) adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Markdown,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[anim|400x200](aute.png)",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [anim|400x200](aute.png)".length,
+            expectedText: "anim",
+            expectedDestination: "aute.png",
+            expectedWidth: 400,
+            expectedHeight: 200
+        },
+        {
+            name: "mdlink w/text,width",
+            input: "Duis irure [anim|400](aute.png) adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Markdown,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[anim|400](aute.png)",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [anim|400](aute.png)".length,
+            expectedText: "anim",
+            expectedDestination: "aute.png",
+            expectedWidth: 400,
+            expectedHeight: undefined
+        },
+        {
+            name: "mdlink url w/text,width",
+            input: "Duis irure [anim|400](http://example.com/p/a/aute.png?a=1&b=2#hs) adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Markdown,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[anim|400](http://example.com/p/a/aute.png?a=1&b=2#hs)",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [anim|400](http://example.com/p/a/aute.png?a=1&b=2#hs)".length,
+            expectedText: "anim",
+            expectedDestination: "http://example.com/p/a/aute.png?a=1&b=2#hs",
+            expectedWidth: 400,
+            expectedHeight: undefined
+        },
+        {
+            name: "mdlink wo/text, w/width ",
+            input: "Duis irure [400](aute.png) adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Markdown,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[400](aute.png)",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [400](aute.png)".length,
+            expectedText: undefined,
+            expectedDestination: "aute.png",
+            expectedWidth: 400,
+            expectedHeight: undefined
+        },
+
+        // wikilink
+        {
+            name: "wikilink",
+            input: "Duis irure [[aute.png]] adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Wiki,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[[aute.png]]",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [[aute.png]]".length,
+            expectedText: undefined,
+            expectedDestination: "aute.png",
+            expectedWidth: undefined,
+            expectedHeight: undefined
+        },
+        {
+            name: "wikilink w/hash",
+            input: "Duis irure [[aute.png#somehash#somehash1|anim]] adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Wiki,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[[aute.png#somehash#somehash1|anim]]",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [[aute.png#somehash#somehash1|anim]]".length,
+            expectedText: "anim",
+            expectedDestination: "aute.png#somehash#somehash1",
+            expectedWidth: undefined,
+            expectedHeight: undefined
+        },
+        {
+            name: "mdlink w/text,width,height",
+            input: "Duis irure [[aute.png|anim|400x200]] adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Wiki,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[[aute.png|anim|400x200]]",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [[aute.png|anim|400x200]]".length,
+            expectedText: "anim",
+            expectedDestination: "aute.png",
+            expectedWidth: 400,
+            expectedHeight: 200
+        },
+        {
+            name: "mdlink w/text,width",
+            input: "Duis irure [[aute.png|anim|400]] adipisicing labore in ut dolor et ",
+            expectedType: LinkTypes.Wiki,
+            expectDestinationType: DestinationType.Image,
+            expectedContent: "[[aute.png|anim|400]]",
+            expectedStart: "Duis irure ".length,
+            expectedEnd: "Duis irure [[aute.png|anim|400]]".length,
+            expectedText: "anim",
+            expectedDestination: "aute.png",
+            expectedWidth: 400,
+            expectedHeight: undefined
+        },
+    ])
+        ('findLinks images - $name', ({ name, input, expectedType, expectDestinationType,
+            expectedContent, expectedStart, expectedEnd, expectedText, expectedDestination, expectedWidth, expectedHeight }) => {
+
+            const result = findLinks(input, LinkTypes.All);
+            //
+            expect(result.length).toBe(1);
+            expect(result[0].type).toBe(expectedType);
+            expect(result[0].destinationType).toBe(expectDestinationType);
+            expect(result[0].content).toBe(expectedContent);
+            expect(result[0].position.start).toBe(expectedStart);
+            expect(result[0].position.end).toBe(expectedEnd);
+            if (expectedText === undefined) {
+                expect(result[0].text).toBeUndefined();
+            } else {
+                expect(result[0].text?.content).toBe(expectedText);
+            }
+            expect(result[0].text?.content).toBe(expectedText);
+            expect(result[0].destination?.content).toBe(expectedDestination);
+            if (expectedWidth === undefined) {
+                expect(result[0].imageDimensions).toBeUndefined()
+            } else {
+                expect(result[0].imageDimensions?.width).toBe(expectedWidth);
+            }
+            if (expectedHeight === undefined) {
+                expect(result[0].imageDimensions?.height).toBeUndefined()
+            } else {
+                expect(result[0].imageDimensions?.height).toBe(expectedHeight);
+            }
+        })
 })

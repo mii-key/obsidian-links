@@ -22,7 +22,7 @@ export class ConvertLinkToWikilinkCommand extends CommandBase {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown);
 		if (checking) {
-			return !!linkData && linkData.link && !linkData.link.content.trim().includes(":");
+			return !!linkData && linkData.destination && !linkData.destination.content.trim().includes(":");
 		}
 
 		if (linkData) {
@@ -31,7 +31,7 @@ export class ConvertLinkToWikilinkCommand extends CommandBase {
 	}
 
 	convertLinkToWikiLink(linkData: LinkData, editor: Editor) {
-		const link = linkData.type === LinkTypes.Markdown ? (linkData.link ? decodeURI(linkData.link.content) : "") : linkData.link;
+		const link = linkData.type === LinkTypes.Markdown ? (linkData.destination ? decodeURI(linkData.destination.content) : "") : linkData.destination;
 		const text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
 		//TODO: use const for !
 		const embededSymbol = linkData.embedded ? '!' : '';

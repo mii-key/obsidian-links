@@ -20,7 +20,7 @@ export class EmbedLinkCommand extends CommandBase {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
 		if (checking) {
-			return !!linkData && !linkData.embedded && !!linkData.link;
+			return !!linkData && !linkData.embedded && !!linkData.destination;
 		}
 
 		if (linkData) {

@@ -46,7 +46,7 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 			
 			let linkDestination : string;
 			if(links.length){
-				linkDestination = links[0].link ? links[0].link.content : ""
+				linkDestination = links[0].destination ? links[0].destination.content : ""
 			} else{
 				linkDestination = clipboardText;
 			}

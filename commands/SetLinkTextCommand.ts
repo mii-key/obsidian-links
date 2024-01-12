@@ -32,8 +32,8 @@ export class SetLinkTextCommand extends CommandBase {
 		if (checking) {
 			return !!linkData
 				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
-				&& !!linkData.link?.content
-				&& (!linkData.text || !linkData?.text.content || (!linkData.link.content.startsWith('#') && linkData.link.content.includes('#')));
+				&& !!linkData.destination?.content
+				&& (!linkData.text || !linkData?.text.content || (!linkData.destination.content.startsWith('#') && linkData.destination.content.includes('#')));
 		}
 		if (linkData) {
 			// workaround: if executed from command palette, whole link is selected.
@@ -49,7 +49,7 @@ export class SetLinkTextCommand extends CommandBase {
 	}
 
 	async setLinkText(linkData: LinkData, editor: Editor) {
-		if (!linkData.link) {
+		if (!linkData.destination) {
 			return;
 		}
 
@@ -57,9 +57,9 @@ export class SetLinkTextCommand extends CommandBase {
 			if (this.showLinkTextSuggestions(linkData, editor)) {
 				return;
 			}
-			const text = linkData.link.content[0] === '#' ? 
-				linkData.link.content.substring(1) : getFileName(linkData.link?.content);
-			let textStart = linkData.position.start + linkData.link.position.end;
+			const text = linkData.destination.content[0] === '#' ? 
+				linkData.destination.content.substring(1) : getFileName(linkData.destination?.content);
+			let textStart = linkData.position.start + linkData.destination.position.end;
 			if (linkData.text) {
 				editor.replaceRange("|" + text, editor.offsetToPos(textStart), editor.offsetToPos(linkData.text.content.length + 1));
 			} else {
@@ -70,11 +70,11 @@ export class SetLinkTextCommand extends CommandBase {
 		} else if (linkData.type == LinkTypes.Markdown) {
 			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
 			let text = "";
-			if (urlRegEx.test(linkData.link.content)) {
+			if (urlRegEx.test(linkData.destination.content)) {
 				if (!(linkData.text && linkData.text.content !== "")) {
 					const notice = this.obsidianProxy.createNotice("Getting title ...", 0);
 					try {
-						text = await getPageTitle(new URL(linkData.link.content), this.getPageText.bind(this));
+						text = await getPageTitle(new URL(linkData.destination.content), this.getPageText.bind(this));
 					}
 					catch (err) {
 						this.obsidianProxy.createNotice(err);
@@ -87,7 +87,7 @@ export class SetLinkTextCommand extends CommandBase {
 				if (this.showLinkTextSuggestions(linkData, editor)) {
 					return;
 				}
-				text = getFileName(decodeURI(linkData.link?.content));
+				text = getFileName(decodeURI(linkData.destination?.content));
 			}
 			const textStart = linkData.position.start + 1;
 			editor.setSelection(editor.offsetToPos(textStart));

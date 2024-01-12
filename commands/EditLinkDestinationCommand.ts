@@ -22,7 +22,7 @@ export class EditLinkDestinationCommand extends CommandBase {
 		if (checking) {
 			return !!linkData
 				&& ((linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Autolink)) != 0)
-				&& !!linkData.link;
+				&& !!linkData.destination;
 		}
 
 		if (linkData) {
@@ -35,9 +35,9 @@ export class EditLinkDestinationCommand extends CommandBase {
     }
 
 	editLinkDestination(linkData: LinkData, editor: Editor) {
-		if (linkData.link) {
-			const start = linkData.position.start + linkData.link.position.start;
-			const end = linkData.position.start + linkData.link.position.end;
+		if (linkData.destination) {
+			const start = linkData.position.start + linkData.destination.position.start;
+			const end = linkData.position.start + linkData.destination.position.end;
 			editor.setSelection(editor.offsetToPos(start), editor.offsetToPos(end));
 		} 
 		// else if (this.generateLinkTextOnEdit) {

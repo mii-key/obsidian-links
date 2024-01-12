@@ -18,7 +18,7 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
 
     async convertLinkToMarkdownLink(linkData: LinkData, editor: Editor, setCursor: boolean = true, linkOffset: number = 0) {
         let text = linkData.text ? linkData.text.content : "";
-        const link = linkData.link ? linkData.link.content : "";
+        const link = linkData.destination ? linkData.destination.content : "";
 
         if (linkData.type === LinkTypes.Wiki && !text) {
             text = link;
@@ -27,10 +27,10 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         let destination = "";
 
         const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-        if ((linkData.type === LinkTypes.Autolink || linkData.type === LinkTypes.PlainUrl) && linkData.link && urlRegEx.test(linkData.link.content)) {
+        if ((linkData.type === LinkTypes.Autolink || linkData.type === LinkTypes.PlainUrl) && linkData.destination && urlRegEx.test(linkData.destination.content)) {
             const notice = this.obsidianProxy.createNotice("Getting title ...", 0);
             try {
-                text = await getPageTitle(new URL(linkData.link.content), this.getPageText.bind(this));
+                text = await getPageTitle(new URL(linkData.destination.content), this.getPageText.bind(this));
             }
             catch (error) {
                 this.obsidianProxy.createNotice(error);
@@ -41,8 +41,8 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         }
 
         let rawLinkText = "";
-        if (linkData.type === LinkTypes.Autolink && linkData.link && RegExPatterns.Email.test(linkData.link.content)) {
-            rawLinkText = `[${text}](${this.EmailScheme}${linkData.link.content})`;
+        if (linkData.type === LinkTypes.Autolink && linkData.destination && RegExPatterns.Email.test(linkData.destination.content)) {
+            rawLinkText = `[${text}](${this.EmailScheme}${linkData.destination.content})`;
         } else {
             destination = encodeURI(link);
             if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
@@ -70,7 +70,7 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
     //TODO: refactor
     async convertLinkToMarkdownLink1(linkData: LinkData, textBuffer: ITextBuffer, setCursor: boolean = true, linkOffset: number = 0) {
         let text = linkData.text ? linkData.text.content : "";
-        const link = linkData.link ? linkData.link.content : "";
+        const link = linkData.destination ? linkData.destination.content : "";
 
         if (linkData.type === LinkTypes.Wiki && !text) {
             text = link;
@@ -79,10 +79,10 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         let destination = "";
 
         const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
-        if ((linkData.type === LinkTypes.Autolink || linkData.type === LinkTypes.PlainUrl) && linkData.link && urlRegEx.test(linkData.link.content)) {
+        if ((linkData.type === LinkTypes.Autolink || linkData.type === LinkTypes.PlainUrl) && linkData.destination && urlRegEx.test(linkData.destination.content)) {
             const notice = this.obsidianProxy.createNotice("Getting title ...", 0);
             try {
-                text = await getPageTitle(new URL(linkData.link.content), this.getPageText.bind(this));
+                text = await getPageTitle(new URL(linkData.destination.content), this.getPageText.bind(this));
             }
             catch (error) {
                 this.obsidianProxy.createNotice(error);
@@ -93,8 +93,8 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         }
 
         let rawLinkText = "";
-        if (linkData.type === LinkTypes.Autolink && linkData.link && RegExPatterns.Email.test(linkData.link.content)) {
-            rawLinkText = `[${text}](${this.EmailScheme}${linkData.link.content})`;
+        if (linkData.type === LinkTypes.Autolink && linkData.destination && RegExPatterns.Email.test(linkData.destination.content)) {
+            rawLinkText = `[${text}](${this.EmailScheme}${linkData.destination.content})`;
         } else {
             destination = encodeURI(link);
             if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
