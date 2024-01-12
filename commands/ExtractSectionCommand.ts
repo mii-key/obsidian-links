@@ -90,7 +90,10 @@ export class ExtractSectionCommand extends CommandBase {
 		const section = editor.getRange(editor.offsetToPos(blockStart), editor.offsetToPos(blockEnd))
 
 		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
-		const currentNoteParentPath = currentView?.file.parent.path;
+		const currentNoteParentPath = currentView?.file?.parent?.path;
+		if (!currentNoteParentPath) {
+			return
+		}
 
 		const headerMatch = section.match(new RegExp(RegExPatterns.NoteHeader.source, 'im'))
 		if (headerMatch) {
