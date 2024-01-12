@@ -60,15 +60,15 @@ export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase 
 			} else {
 				switch (link?.type) {
 					case LinkTypes.Wiki:
-						textStartOffset = link.position.start + (link.link ? link.link.position.end : 2);
-						textEndOffset = link.position.start + (link.link ? link.link.position.end : 2);
+						textStartOffset = link.position.start + (link.destination ? link.destination.position.end : 2);
+						textEndOffset = link.position.start + (link.destination ? link.destination.position.end : 2);
 						linkText = '|' + linkText;
 						break;
 					case LinkTypes.Markdown:
 						textStartOffset = textEndOffset = link.position.start + 1;
 						break;
 					case LinkTypes.PlainUrl:
-						const rawLink = `[${linkText}](${link.link?.content})`;
+						const rawLink = `[${linkText}](${link.destination?.content})`;
 						editor.replaceRange(rawLink, editor.offsetToPos(link.position.start), editor.offsetToPos(link.position.end));
 						editor.setCursor(editor.offsetToPos(link.position.start + linkText.length + 1));
 						this.callback?.(null, undefined)

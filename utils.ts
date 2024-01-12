@@ -2,6 +2,7 @@
 
 import exp from "constants";
 import { RegExPatterns } from "./RegExPatterns";
+import parseFilepath, { ParsedPath } from 'parse-filepath';
 
 const LinkEmbededChar = '!';
 
@@ -11,6 +12,17 @@ export class Position {
 
 export class TextPart {
     constructor(public content: string, public position: Position) { }
+}
+
+export class ImageDimensions extends TextPart {
+    width: Number
+    height?: Number
+
+    constructor(content: string, position: Position, width: Number, height?: Number) {
+        super(content, position)
+        this.width = width
+        this.height = height
+    }
 }
 
 export enum LinkTypes {
@@ -24,11 +36,126 @@ export enum LinkTypes {
 
 type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes.Autolink | LinkTypes.PlainUrl;
 
+export enum DestinationType {
+    Unknown = 'unknown',
+    //Markdown,
+    Image = 'image',
+    //Audio,
+    //Video,
+    //Pdf
+}
+
 
 export class LinkData extends TextPart {
-    constructor(public type: LinkType, content: string, position: Position, public link?: TextPart, public text?: TextPart, public embedded: boolean = false) {
+
+    destinationType: DestinationType = DestinationType.Unknown;
+    hash?: string;
+    _destination?: TextPart;
+    _text?: TextPart;
+    _imageText?: TextPart;
+    _imageDimensions?: ImageDimensions;
+
+    get destination(): TextPart | undefined {
+        return this._destination;
+    }
+
+    set destination(value: TextPart | undefined) {
+        this._destination = value
+        this.parseDestination()
+        this.paseText()
+    }
+
+    get text(): TextPart | undefined {
+        return this._imageDimensions ? this._imageText : this._text;
+    }
+
+    set text(value: TextPart | undefined) {
+        this._text = value;
+        this.paseText()
+    }
+
+    get imageDimensions() {
+        return this._imageDimensions;
+    }
+
+    constructor(public type: LinkType, content: string, position: Position, destination?: TextPart, text?: TextPart, public embedded: boolean = false) {
         super(content, position);
         this.type = type;
+        this.destination = destination;
+        this.text = text;
+    }
+
+    parseDestination() {
+        if (!this._destination?.content
+            || !(this.type === LinkTypes.Markdown || this.type === LinkTypes.Wiki)) {
+            return
+        }
+        const content = this._destination.content
+        let path = '';
+        if (isAbsoluteUri(content)) {
+            path = new URL(content).pathname
+        } else {
+            const hashIdx = this._destination.content.indexOf('#');
+            path = hashIdx >= 0 ? content.substring(0, hashIdx) : content;
+        }
+        const parsedPath = parseFilepath(path);
+        const imageExtensions = ['.png', '.webp', '.jpg', '.jpeg', '.gif', '.bmp', '.svg'];
+        if (imageExtensions.includes(parsedPath.ext)) {
+            this.destinationType = DestinationType.Image;
+        }
+    }
+
+    paseText() {
+        if (!this._text?.content || this.destinationType !== DestinationType.Image) {
+            return
+        }
+        const content = this._text.content
+        const pipeIdx = content.lastIndexOf('|')
+        let potentialDimensions: string
+        let imageText: string | undefined = undefined
+        let dimensionsStart: number
+        if (pipeIdx >= 0) {
+            potentialDimensions = this._text.content.substring(pipeIdx + 1)
+            dimensionsStart = this._text.position.start + pipeIdx + 1
+            imageText = this._text.content.substring(0, pipeIdx)
+        } else {
+            potentialDimensions = this._text.content
+            dimensionsStart = this._text.position.start
+        }
+
+        const match = potentialDimensions.match(RegExPatterns.ImageDimentions)
+        if (match) {
+            const [, dimensions, singleWidth, , width, height] = match
+            if (imageText == undefined) {
+                this._imageText = undefined;
+            } else {
+                this._imageText = new TextPart(imageText,
+                    new Position(this._text.position.start, this._text.position.start + pipeIdx))
+            }
+            const dimensionsPosition = new Position(dimensionsStart, dimensionsStart + dimensions.length)
+            this._imageDimensions = singleWidth ? new ImageDimensions(dimensions, dimensionsPosition, parseInt(singleWidth)) :
+                new ImageDimensions(dimensions, dimensionsPosition, parseInt(width), parseInt(height))
+
+        } else {
+            this._imageText = undefined
+            this._imageDimensions = undefined
+        }
+
+
+        // const match = this._text.content.match(new RegExp(RegExPatterns.ImageDimentions.source))
+        // if (match) {
+        //     const [, text, dimensions, singleWidth, , width, height] = match;
+        //     if (singleWidth || (width && height)) {
+        //         this._imageText = new TextPart(text, new Position(this._text.position.start, this._text.position.start + text.length))
+        //         const dimensionsStart = this._text.position.start + text.length + 1
+        //         const dimensionsPosition = new Position(dimensionsStart, dimensionsStart + dimensions.length)
+        //         this._imageDimensions = singleWidth ? new ImageDimensions(dimensions, dimensionsPosition, parseInt(singleWidth)) :
+        //             new ImageDimensions(dimensions, dimensionsPosition, parseInt(width), parseInt(height))
+        //     } else {
+        //         this._imageText = undefined
+        //         this._imageDimensions = undefined
+        //     }
+        // }
     }
 }
 
@@ -45,7 +172,7 @@ function parseMarkdownLink(regExp: RegExp, match: RegExpMatchArray, raw: string,
     if (destination) {
         const linkIdx = raw.indexOf(destination, linkData.text ? linkData.text.position.end : raw.lastIndexOf('(') + 1)
         const wrappedInAngleBrackets = destination[0] === '<' && destination[destination.length - 1] === '>';
-        linkData.link = wrappedInAngleBrackets ?
+        linkData.destination = wrappedInAngleBrackets ?
             new TextPart(destination.substring(1, destination.length - 1), new Position(linkIdx + 1, linkIdx + destination.length - 1))
             : new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
     }
@@ -65,7 +192,7 @@ function parseWikiLink(regExp: RegExp, match: RegExpMatchArray, raw: string, emb
     }
     if (destination) {
         const linkIdx = raw.indexOf(destination)
-        linkData.link = new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
+        linkData.destination = new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
     }
 
     return linkData;
@@ -80,7 +207,7 @@ function parseAutolink(regExp: RegExp, match: RegExpMatchArray, raw: string, des
     }
     const linkData = new LinkData(LinkTypes.Autolink, raw, new Position(match.index, match.index + raw.length));
     const destinationStartIdx = raw.indexOf(destination)
-    linkData.link = new TextPart(destination, new Position(destinationStartIdx, destinationStartIdx + destination.length))
+    linkData.destination = new TextPart(destination, new Position(destinationStartIdx, destinationStartIdx + destination.length))
 
     return linkData;
 }
@@ -96,7 +223,7 @@ function parseHtmlLink(regExp: RegExp, match: RegExpMatchArray, raw: string, tex
     }
     if (destination) {
         const linkIdx = raw.indexOf(destination)
-        linkData.link = new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
+        linkData.destination = new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
     }
 
     return linkData;
@@ -110,7 +237,7 @@ function parsePlainUrl(regExp: RegExp, match: RegExpMatchArray, raw: string, des
         throw new Error("destination must not be empty")
     }
     const linkData = new LinkData(LinkTypes.PlainUrl, raw, new Position(match.index, match.index + raw.length));
-    linkData.link = new TextPart(destination, new Position(0, destination.length))
+    linkData.destination = new TextPart(destination, new Position(0, destination.length))
 
     return linkData;
 }
@@ -163,7 +290,7 @@ export function findLink(text: string, startPos: number, endPos: number, linkTyp
             if (startPos >= match.index && endPos <= autolinkRegEx.lastIndex) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const [raw, urlAutolink, urlDestination, mailAutolink, mailDestination] = match;
-                const linkData = parseAutolink(autolinkRegEx, match, raw, 
+                const linkData = parseAutolink(autolinkRegEx, match, raw,
                     urlDestination ? urlDestination : mailDestination)
                 return linkData;
             }
@@ -185,10 +312,10 @@ export function findHtmlLink(text: string, startPos: number, endPos: number): Li
             const linkData = new LinkData(LinkTypes.Html, raw, new Position(match.index, htmlLinkRegEx.lastIndex));
             if (url) {
                 const linkIdx = raw.indexOf(url)
-                linkData.link = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
+                linkData.destination = new TextPart(url, new Position(linkIdx, linkIdx + url.length));
             }
             if (text) {
-                const textIdx = raw.indexOf(text, linkData.link ? linkData.link.position.end : raw.indexOf('|') + 1);
+                const textIdx = raw.indexOf(text, linkData.destination ? linkData.destination.position.end : raw.indexOf('|') + 1);
                 linkData.text = new TextPart(text, new Position(textIdx, textIdx + text.length));
             }
 
@@ -238,23 +365,23 @@ export function removeLinksFromHeadings(text: string, options: RemoveLinksFromHe
         if (rawMdLink) {
             linkText = mdText ? mdText : "";
         } else if (rawWikiLink) {
-            if(wkText){
+            if (wkText) {
                 linkText = wkText;
-            } else{
+            } else {
                 // default: text = destination
                 linkText = wkLink;
 
-                switch(options.internalWikilinkWithoutTextAction){
-                    case InternalWikilinkWithoutTextAction.ReplaceWithLowestNoteHeading:{
+                switch (options.internalWikilinkWithoutTextAction) {
+                    case InternalWikilinkWithoutTextAction.ReplaceWithLowestNoteHeading: {
                         let idx = 0;
-                        if(wkLink && (idx = wkLink.lastIndexOf('#')) > -1 && idx + 1 <= wkLink.length){
+                        if (wkLink && (idx = wkLink.lastIndexOf('#')) > -1 && idx + 1 <= wkLink.length) {
                             const subheading = wkLink.substring(idx + 1);
-                            if(subheading){
+                            if (subheading) {
                                 linkText = subheading;
                             }
                         }
                     }
-                    break;
+                        break;
                     case InternalWikilinkWithoutTextAction.Delete:
                         linkText = '';
                         break;
@@ -295,7 +422,7 @@ export function removeLinks(text: string): string {
     return result;
 }
 
-function removeWhitespaces(str :string) : string {
+function removeWhitespaces(str: string): string {
     return str.replace(/\s+/g, ' ').trim();
 }
 
@@ -312,13 +439,13 @@ export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<
 }
 
 export function getLinkTitles(linkData: LinkData): string[] {
-    if (!linkData.link
+    if (!linkData.destination
         || (linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) == 0) {
         return [];
     }
 
     const linkContent = linkData.type == LinkTypes.Markdown ?
-        decodeURI(linkData.link?.content) : linkData.link?.content;
+        decodeURI(linkData.destination?.content) : linkData.destination?.content;
 
     const hashIdx = linkContent.indexOf('#');
     if (hashIdx > 0 && hashIdx < linkContent.length - 1) {
@@ -367,7 +494,7 @@ export function decodeHtmlEntities(text: string): string {
     charByHe.set("quot", "\"");
     charByHe.set("gt", ">");
     charByHe.set("lt", "<");
-   
+
     return text.replace(regexpHe, (match, he) => {
         const entry = charByHe.get(he);
         return entry ?? match;
@@ -377,7 +504,7 @@ export function decodeHtmlEntities(text: string): string {
 export function findLinks(text: string, type?: LinkTypes, start?: number, end?: number): Array<LinkData> {
     const linksRegex = new RegExp(`${RegExPatterns.Markdownlink.source}|${RegExPatterns.Wikilink.source}` +
         `|${RegExPatterns.AutolinkUrl.source}|${RegExPatterns.AutolinkMail.source}` +
-        `|${RegExPatterns.Htmllink.source}|${RegExPatterns.PlainUrl.source}` 
+        `|${RegExPatterns.Htmllink.source}|${RegExPatterns.PlainUrl.source}`
         //+ `|${RegExPatterns.AbsoluteUri.source}`
         , "gmi");
 
@@ -395,44 +522,44 @@ export function findLinks(text: string, type?: LinkTypes, start?: number, end?: 
             htmlLinkDestination, htmlLinkText,
             plainUrl] = match;
 
-        if(startOffset == endOffset){
-            if(!(startOffset >= match.index && startOffset <= (match.index + rawMatch.length))){
+        if (startOffset == endOffset) {
+            if (!(startOffset >= match.index && startOffset <= (match.index + rawMatch.length))) {
                 continue;
             }
-        } else{
-            if(!(match.index >= startOffset && (match.index + rawMatch.length) <= endOffset)){
+        } else {
+            if (!(match.index >= startOffset && (match.index + rawMatch.length) <= endOffset)) {
                 continue;
             }
         }
 
         if ((rawMatch.indexOf("](") >= 0 || mdLinkEmbeded || mdLinkText || mdLinkDestination)) {
-            if(!(linkType & LinkTypes.Markdown)){
+            if (!(linkType & LinkTypes.Markdown)) {
                 continue
             }
             const linkData = parseMarkdownLink(linksRegex, match, rawMatch, mdLinkEmbeded, mdLinkText, mdLinkDestination);
             links.push(linkData);
         } else if ((rawMatch.indexOf("[[") >= 0 || wikiLinkEmbeded || wikiLinkDestination || wikiLinkText)) {
-            if(!(linkType & LinkTypes.Wiki)){
+            if (!(linkType & LinkTypes.Wiki)) {
                 continue
             }
             const linkData = parseWikiLink(linksRegex, match, rawMatch, wikiLinkEmbeded, wikiLinkText, wikiLinkDestination);
             links.push(linkData);
         } else if (rawMatch.startsWith('<a')) {
-            if(!(linkType & LinkTypes.Html)){
+            if (!(linkType & LinkTypes.Html)) {
                 continue
             }
             const linkData = parseHtmlLink(linksRegex, match, rawMatch,
                 htmlLinkText, htmlLinkDestination);
             links.push(linkData)
         } else if (rawMatch[0] === '<') {
-            if(!(linkType & LinkTypes.Autolink)){
+            if (!(linkType & LinkTypes.Autolink)) {
                 continue
             }
             const linkData = parseAutolink(linksRegex, match, rawMatch,
                 autoLinkUrlDestination ? autoLinkUrlDestination : autoLinkMailDestination)
             links.push(linkData)
-        } else if(plainUrl){
-            if(!(linkType & LinkTypes.PlainUrl)){
+        } else if (plainUrl) {
+            if (!(linkType & LinkTypes.PlainUrl)) {
                 continue
             }
             const linkData = parsePlainUrl(linksRegex, match, rawMatch, plainUrl)
@@ -442,13 +569,21 @@ export function findLinks(text: string, type?: LinkTypes, start?: number, end?: 
     return links;
 }
 
-export function getSafeFilename(filename: string) : string {
+export function getSafeFilename(filename: string): string {
     const regex = new RegExp(RegExPatterns.InvalidNoteNameChars.source, 'g');
-    if(!filename){
+    if (!filename) {
         return filename;
     }
 
     return filename.replace(regex, '');
+}
+
+export function isAbsoluteUri(path: string): boolean {
+    return new RegExp(RegExPatterns.AbsoluteUri.source, 'i').test(path);
+}
+
+export function isAbsoluteFilePath(path: string) {
+    return new RegExp(RegExPatterns.AbsoluteFilePathCheck.source, 'i').test(path);
 }
 
 export class CodeBlock extends TextPart {
@@ -462,7 +597,7 @@ function parseCodeBlock(regExp: RegExp, match: RegExpMatchArray, raw: string): C
         throw new Error("match: index must be defined.");
     }
     const codeBlock = new CodeBlock(raw, new Position(match.index, match.index + raw.length));
-   
+
     return codeBlock;
 }
 
@@ -478,12 +613,12 @@ export function findCodeBlocks(text: string, start?: number, end?: number): Arra
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [rawMatch, firstLine, header, content, lastLine] = match;
 
-        if(startOffset == endOffset){
-            if(!(startOffset >= match.index && startOffset <= (match.index + rawMatch.length))){
+        if (startOffset == endOffset) {
+            if (!(startOffset >= match.index && startOffset <= (match.index + rawMatch.length))) {
                 continue;
             }
-        } else{
-            if(!(match.index >= startOffset && (match.index + rawMatch.length) <= endOffset)){
+        } else {
+            if (!(match.index >= startOffset && (match.index + rawMatch.length) <= endOffset)) {
                 continue;
             }
         }

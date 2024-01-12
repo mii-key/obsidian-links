@@ -25,7 +25,7 @@ export class CopyLinkDestinationToClipboardCommand extends CommandBase {
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
 		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Autolink);
 		if (checking) {
-			return !!linkData && !!linkData.link;
+			return !!linkData && !!linkData.destination;
 		}
 		if (linkData) {
 			this.copyLinkUnderCursorToClipboard(linkData);
@@ -33,9 +33,9 @@ export class CopyLinkDestinationToClipboardCommand extends CommandBase {
     }
 
     copyLinkUnderCursorToClipboard(linkData: LinkData) {
-		if (linkData?.link) {
+		if (linkData?.destination) {
 			// navigator.clipboard.writeText(linkData.link?.content);
-			this.obdisianProxy.clipboardWriteText(linkData.link?.content);
+			this.obdisianProxy.clipboardWriteText(linkData.destination?.content);
 			this.obdisianProxy.createNotice("Link destination copied to your clipboard");
 		}
 	}

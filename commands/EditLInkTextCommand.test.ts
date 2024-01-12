@@ -9,7 +9,7 @@ describe('EditLinkTextCommand test', () => {
         const cmd = new EditLinkTextCommand()
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
         //
         const result = cmd.handler(editor, true)
         //
@@ -40,6 +40,21 @@ describe('EditLinkTextCommand test', () => {
                 expected: false
             },
             {
+                name: "mdlink image wo/text w/width",
+                text: "[text|400](image.png)",
+                expected: true
+            },
+            {
+                name: "mdlink image wo/text w/width",
+                text: "[400](image.png)",
+                expected: false
+            },
+            {
+                name: "mdlink image wo/text w/dimensions",
+                text: "[400x200](image.png)",
+                expected: false
+            },
+            {
                 name: "wikilink",
                 text: "[[google.com|google]]",
                 expected: true
@@ -48,6 +63,26 @@ describe('EditLinkTextCommand test', () => {
                 name: "wikilink empty text",
                 text: "[[google.com]]",
                 expected: false
+            },
+            {
+                name: "wikilink image wo/text w/width",
+                text: "[[image.png|400]]",
+                expected: false
+            },
+            {
+                name: "wikilink image wo/text w/dimensions",
+                text: "[[image.png|400x200]]",
+                expected: false
+            },
+            {
+                name: "wikilink image w/text w/width",
+                text: "[[image.png|text|400]]",
+                expected: true
+            },
+            {
+                name: "wikilink image w/text w/dimensions",
+                text: "[[image.png|text|400x200]]",
+                expected: true
             },
             {
                 name: "autolink",
@@ -60,7 +95,7 @@ describe('EditLinkTextCommand test', () => {
             const cmd = new EditLinkTextCommand()
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 1})
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
             //
             const result = cmd.handler(editor, true)
             //
@@ -89,10 +124,34 @@ describe('EditLinkTextCommand test', () => {
                 selectionEnd: "[google".length
             },
             {
+                name: "mdlink image w/text w/width",
+                text: "[text|400](image.png)",
+                selectionStart: "[".length,
+                selectionEnd: "[text".length
+            },
+            {
+                name: "mdlink image w/text w/dimensions",
+                text: "[text|400x200](image.png)",
+                selectionStart: "[".length,
+                selectionEnd: "[text".length
+            },
+            {
                 name: "wikilink",
                 text: "[[google.com|google]]",
                 selectionStart: "[[google.com|".length,
                 selectionEnd: "[[google.com|google".length
+            },
+            {
+                name: "wikilink image w/text w/width",
+                text: "[[image.png|text|300]]",
+                selectionStart: "[[image.png|".length,
+                selectionEnd: "[[image.png|text".length
+            },
+            {
+                name: "wikilink image w/text w/dimensions",
+                text: "[[image.png|text|300x100]]",
+                selectionStart: "[[image.png|".length,
+                selectionEnd: "[[image.png|text".length
             }
         ]
     )
@@ -100,7 +159,7 @@ describe('EditLinkTextCommand test', () => {
             const cmd = new EditLinkTextCommand()
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({line: 0, ch: 0})
+            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
             //
             cmd.handler(editor, false)
             //

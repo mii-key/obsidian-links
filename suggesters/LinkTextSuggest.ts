@@ -33,9 +33,9 @@ export class LinkTextSuggest extends EditorSuggest<string> {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		let noteName = this.suggestContext.linkData!.type == LinkTypes.Markdown ? 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			getFileName(decodeURI(this.suggestContext.linkData!.link!.content))
+			getFileName(decodeURI(this.suggestContext.linkData!.destination!.content))
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			:getFileName(this.suggestContext.linkData!.link!.content);
+			:getFileName(this.suggestContext.linkData!.destination!.content);
 		noteName = noteName.substring(0, noteName.indexOf('#'));
 
 		return [
@@ -55,14 +55,14 @@ export class LinkTextSuggest extends EditorSuggest<string> {
 
 	// TODO: refactor
 	selectSuggestion(suggestion: string): void {
-		if (!this.context?.editor || !this.suggestContext.linkData?.link) {
+		if (!this.context?.editor || !this.suggestContext.linkData?.destination) {
 			return;
 		}
 		const linkData = this.suggestContext.linkData;
 		if (linkData?.type == LinkTypes.Wiki) {
 			const editor = this.context.editor;
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			let textStartOffset = linkData.position.start + linkData.link!.position.end;
+			let textStartOffset = linkData.position.start + linkData.destination!.position.end;
 			if(linkData.text?.content){
 				editor.replaceRange("|" + suggestion, editor?.offsetToPos(textStartOffset), 
 					editor?.offsetToPos(textStartOffset + linkData.text?.content.length + 1));

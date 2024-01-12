@@ -35,7 +35,7 @@ export class CutLinkToClipboardCommand extends CommandBase {
 	}
 
 	cutLinkUnderCursorToClipboard(linkData: LinkData, editor: Editor) {
-		if (linkData?.link) {
+		if (linkData?.destination) {
 			// navigator.clipboard.writeText(linkData.link?.content);
 			this.obsidianProxy.clipboardWriteText(linkData.content);
 			editor.replaceRange('',

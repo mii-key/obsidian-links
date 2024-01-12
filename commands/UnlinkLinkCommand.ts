@@ -45,7 +45,7 @@ export class UnlinkLinkCommand extends CommandBase {
 	unlinkLink(linkData: LinkData, editor: Editor) {
 		let text = linkData.text ? linkData.text.content : "";
 		if (linkData.type === LinkTypes.Wiki && !text) {
-			text = linkData.link ? linkData.link.content : "";
+			text = linkData.destination ? linkData.destination.content : "";
 		}
 		editor.replaceRange(
 			text,

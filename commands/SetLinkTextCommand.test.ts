@@ -14,6 +14,8 @@ describe('SetLinkTextCommand test', () => {
                 text: "some text",
                 expected: false
             },
+
+            // html
             {
                 name: "html - href in '",
                 text: "<a href='google.com'>google1</a>",
@@ -24,6 +26,8 @@ describe('SetLinkTextCommand test', () => {
                 text: "<a href=\"google.com\">google1</a>",
                 expected: false
             },
+
+            // wiki
             {
                 name: "wikilink",
                 text: "[[google.com|google]]",
@@ -59,6 +63,9 @@ describe('SetLinkTextCommand test', () => {
                 text: "[[google.com]]",
                 expected: true
             },
+            //TODO: image links with dimensions
+
+            // mdlink
             {
                 name: "mdlink",
                 text: "[google](google.com)",
@@ -79,6 +86,10 @@ describe('SetLinkTextCommand test', () => {
                 text: "[](https://google.com)",
                 expected: true
             },
+            //TODO: image links with dimensions
+
+
+            // autolink
             {
                 name: "autolink ssh://",
                 text: "<ssh://192.168.1.1>",
@@ -142,6 +153,10 @@ describe('SetLinkTextCommand test', () => {
                     titles: ["heading1"]
                 }
             },
+            //TODO: image links with dimensions
+
+
+            // mdlink
             {
                 name: "mdlink wo/text",
                 text: "[](google.com)",
@@ -176,6 +191,8 @@ describe('SetLinkTextCommand test', () => {
                     titles: ["heading1"]
                 }
             },
+            //TODO: image links with dimensions
+
         ]
     )
         ('set text - cursor on [$name] - success', ({ name, text, isDestinationUrl, linkHasText, expected,

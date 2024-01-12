@@ -11,6 +11,7 @@
     "importHelpers": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
 	"strictNullChecks": true,
     "lib": [
       "DOM",

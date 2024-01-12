@@ -35,7 +35,7 @@ export class CopyLinkToClipboardCommand extends CommandBase {
     }
 
     copyLinkUnderCursorToClipboard(linkData: LinkData) {
-		if (linkData?.link) {
+		if (linkData?.destination) {
 			// navigator.clipboard.writeText(linkData.link?.content);
 			this.obsidianProxy.clipboardWriteText(linkData.content);
 			this.obsidianProxy.createNotice("Link copied to your clipboard");
