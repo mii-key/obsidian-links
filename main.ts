@@ -51,12 +51,12 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	measurePerformance(func: Function): number {
-		const start = moment();
+		const start = moment.default();
 		try {
 			func();
 		}
 		finally {
-			return moment().diff(start);
+			return moment.default().diff(start);
 		}
 	}
 
