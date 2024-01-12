@@ -1130,7 +1130,7 @@ describe("Utils tests", () => {
         }
     });
 
-    test.only.each([
+    test.each([
         {
             name: "mdlink",
             input: "Duis irure [anim](aute.png) adipisicing labore in ut dolor et ",
