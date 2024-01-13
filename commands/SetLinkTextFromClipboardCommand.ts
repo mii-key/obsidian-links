@@ -55,8 +55,8 @@ export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase 
 			let textStartOffset: number;
 			let textEndOffset: number;
 			if (link?.text) {
-				textStartOffset = link.position.start + link.text.position.start;
-				textEndOffset = link.position.start + link.text.position.end;
+				textStartOffset = link.position.start + link.text.position.start
+				textEndOffset = link.position.start + link.text.position.end
 			} else {
 				switch (link?.type) {
 					case LinkTypes.Wiki:
@@ -65,7 +65,7 @@ export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase 
 						linkText = '|' + linkText;
 						break;
 					case LinkTypes.Markdown:
-						textStartOffset = textEndOffset = link.position.start + 1;
+						textStartOffset = textEndOffset = link.position.start + (link.embedded ? 2 : 1);
 						break;
 					case LinkTypes.PlainUrl:
 						const rawLink = `[${linkText}](${link.destination?.content})`;
