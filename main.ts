@@ -290,7 +290,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 	//TOOD: refactor
 	processObsidianLink(evt: ClipboardEvent, editor: Editor, view: MarkdownView | MarkdownFileInfo) {
 		const text = evt.clipboardData?.getData('text/plain');
-		console.log(text)
 		if (!text?.startsWith('obsidian://open?vault=')) {
 			return;
 		}
@@ -298,7 +297,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 
 		const url = new URL(text)
 		const targetVaultName = url.searchParams.get('vault')
-		console.log(targetVaultName)
 		const vaultName = this.app.vault.getName()
 		let link = text;
 		if (targetVaultName === vaultName) {
