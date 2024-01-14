@@ -4,7 +4,7 @@ export interface IObsidianLinksSettings {
 	linkReplacements: { source: string, target: string }[];
 	titleSeparator: string;
 	showPerformanceNotification: boolean;
-	
+
 	//TODO: remove
 	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: string;
 
@@ -16,6 +16,7 @@ export interface IObsidianLinksSettings {
 	ffWrapNoteInFolder: boolean;
 	ffConvertLinksInFolder: boolean;
 	ffConvertLinkToHtmllink: boolean;
+	ffObsidianUrlSupport: boolean;
 
 	//context menu
 	contexMenu: {
@@ -35,7 +36,7 @@ export interface IObsidianLinksSettings {
 		createLink: boolean;
 		createLinkFromClipboard: boolean;
 		convertAllLinksToMdLinks: boolean;
-		convertWikilinkToMdLinks : boolean;
+		convertWikilinkToMdLinks: boolean;
 		convertUrlsToMdlinks: boolean;
 		convertAutolinksToMdlinks: boolean;
 		convertHtmllinksToMdlinks: boolean;
@@ -63,6 +64,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffWrapNoteInFolder: false,
 	ffConvertLinksInFolder: false,
 	ffConvertLinkToHtmllink: false,
+	ffObsidianUrlSupport: false,
 
 	//context menu
 	contexMenu: {
@@ -82,7 +84,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		createLink: true,
 		createLinkFromClipboard: true,
 		convertAllLinksToMdLinks: false,
-		convertWikilinkToMdLinks : false,
+		convertWikilinkToMdLinks: false,
 		convertUrlsToMdlinks: false,
 		convertAutolinksToMdlinks: false,
 		convertHtmllinksToMdlinks: false,

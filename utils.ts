@@ -31,10 +31,11 @@ export enum LinkTypes {
     Wiki = 2,
     Html = 4,
     Autolink = 8,
-    PlainUrl = 16
+    PlainUrl = 16,
+    ObsidianUrl = 32
 }
 
-type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes.Autolink | LinkTypes.PlainUrl;
+type LinkType = LinkTypes.Markdown | LinkTypes.Html | LinkTypes.Wiki | LinkTypes.Autolink | LinkTypes.PlainUrl | LinkTypes.ObsidianUrl;
 
 export enum DestinationType {
     Unknown = 'unknown',
@@ -54,6 +55,7 @@ export class LinkData extends TextPart {
     _text?: TextPart;
     _imageText?: TextPart;
     _imageDimensions?: ImageDimensions;
+    vault: string | undefined;
 
     get destination(): TextPart | undefined {
         return this._destination;
@@ -140,22 +142,6 @@ export class LinkData extends TextPart {
             this._imageText = undefined
             this._imageDimensions = undefined
         }
-
-
-        // const match = this._text.content.match(new RegExp(RegExPatterns.ImageDimentions.source))
-        // if (match) {
-        //     const [, text, dimensions, singleWidth, , width, height] = match;
-        //     if (singleWidth || (width && height)) {
-        //         this._imageText = new TextPart(text, new Position(this._text.position.start, this._text.position.start + text.length))
-        //         const dimensionsStart = this._text.position.start + text.length + 1
-        //         const dimensionsPosition = new Position(dimensionsStart, dimensionsStart + dimensions.length)
-        //         this._imageDimensions = singleWidth ? new ImageDimensions(dimensions, dimensionsPosition, parseInt(singleWidth)) :
-        //             new ImageDimensions(dimensions, dimensionsPosition, parseInt(width), parseInt(height))
-        //     } else {
-        //         this._imageText = undefined
-        //         this._imageDimensions = undefined
-        //     }
-        // }
     }
 }
 
@@ -236,8 +222,14 @@ function parsePlainUrl(regExp: RegExp, match: RegExpMatchArray, raw: string, des
     if (!destination) {
         throw new Error("destination must not be empty")
     }
-    const linkData = new LinkData(LinkTypes.PlainUrl, raw, new Position(match.index, match.index + raw.length));
+    const type = destination.startsWith('obsidian://open?vault=') ? LinkTypes.PlainUrl | LinkTypes.ObsidianUrl : LinkTypes.PlainUrl
+    const linkData = new LinkData(type, raw, new Position(match.index, match.index + raw.length));
     linkData.destination = new TextPart(destination, new Position(0, destination.length))
+    if ((type & LinkTypes.ObsidianUrl) === LinkTypes.ObsidianUrl) {
+        const url = new URL(destination)
+        const vault = url.searchParams.get('vault')
+        linkData.vault = vault ? vault : undefined
+    }
 
     return linkData;
 }

@@ -108,7 +108,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
     test.each(
         [
             {
-                name: "mdlink",
+                name: "mdlink w/text",
                 text: "Proident laboris [nisi](elit) irure in aliquip nulla aliqua laboris.",
                 clipboardText: "some text",
                 cursorOffset: "Proident laboris [n".length,
@@ -119,7 +119,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
 
             },
             {
-                name: "mdlink",
+                name: "mdlink wo/text",
                 text: "Proident laboris [](elit) irure in aliquip nulla aliqua laboris.",
                 clipboardText: "some text",
                 cursorOffset: "Proident laboris [".length,
@@ -129,7 +129,30 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedCursorPos: "Proident laboris [some text".length
 
             },
-            //TODO: image links with dimensions
+            {
+                name: "mdlink ! w/text",
+                text: "Proident laboris ![nisi](elit) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![n".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![".length,
+                expectedReplacementEnd: "Proident laboris ![nisi".length,
+                expectedCursorPos: "Proident laboris ![some text".length
+
+            },
+            {
+                name: "mdlink ! wo/text",
+                text: "Proident laboris ![](elit) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![".length,
+                expectedReplacementEnd: "Proident laboris ![".length,
+                expectedCursorPos: "Proident laboris ![some text".length
+
+            },
+
+            // //TODO: image links with dimensions
 
 
             // wikilink
