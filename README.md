@@ -408,7 +408,7 @@ Create link from textual content of the system clipboard.
 <details>
 <summary>Demo</summary>
 
-![Create link from selection](docs/img/create-mdlink-from-clipboard.gif)
+![Create link from clipboard](docs/img/create-mdlink-from-clipboard.gif)
 
 </details>
 

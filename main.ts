@@ -51,13 +51,14 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	measurePerformance(func: Function): number {
-		const start = moment.default();
-		try {
-			func();
-		}
-		finally {
-			return moment.default().diff(start);
-		}
+		// const start = moment();
+		// try {
+		// 	func();
+		// }
+		// finally {
+		// 	return moment().diff(start);
+		// }
+		return 0;
 	}
 
 	async onload() {
@@ -118,9 +119,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 			this.registerEvent(
 				this.app.workspace.on('editor-paste', (evt, editor, view) => this.onEditorPaste(evt, editor, view))
 			);
-			this.registerEvent(
-				this.app.workspace.on('editor-paste', (evt, editor, view) => this.processObsidianLink(evt, editor, view))
-			);
+			// this.registerEvent(
+			// 	this.app.workspace.on('editor-paste', (evt, editor, view) => this.processObsidianLink(evt, editor, view))
+			// );
 
 			if (this.settings.ffReplaceLink) {
 				//TODO: temp command.

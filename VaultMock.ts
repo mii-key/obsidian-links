@@ -90,7 +90,8 @@ export class VaultMock implements IVault {
         getActiveNoteView: jest.Mock,
         exists: jest.Mock,
         createNote: jest.Mock,
-        getBacklinksForFileByPath: jest.Mock
+        getBacklinksForFileByPath: jest.Mock,
+        getName: jest.Mock
     } = {
             getFilesInFolder: jest.fn(),
             read: jest.fn(),
@@ -101,6 +102,7 @@ export class VaultMock implements IVault {
             exists: jest.fn(),
             createNote: jest.fn(),
             getBacklinksForFileByPath: jest.fn(),
+            getName: jest.fn()
         }
 
     constructor() {
@@ -113,6 +115,7 @@ export class VaultMock implements IVault {
         this.exists = this.__mocks.exists;
         this.createNote = this.__mocks.createNote;
         this.getBacklinksForFileByPath = this.__mocks.getBacklinksForFileByPath;
+        this.getName = this.__mocks.getName;
     }
 
     getFilesInFolder(folder: TFolder): TFile[] {
@@ -148,6 +151,9 @@ export class VaultMock implements IVault {
     }
 
     getBacklinksForFileByPath(path: string): Record<string, LinkCache[]> | null {
+        throw new Error('Method not implemented.');
+    }
+    getName(): string {
         throw new Error('Method not implemented.');
     }
 

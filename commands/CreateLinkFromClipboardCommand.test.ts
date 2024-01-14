@@ -4,6 +4,7 @@ import { EditorMock } from './EditorMock'
 import { CreateLinkFromClipboardCommand } from './CreateLinkFromClipboardCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
 import exp from 'constants';
+import { VaultMock } from './../VaultMock';
 
 describe('CreateLinkFromClipboardCommand test', () => {
 
@@ -65,7 +66,7 @@ describe('CreateLinkFromClipboardCommand test', () => {
         [
             // selection
             // --------
-            
+
             // text
             {
                 name: "selection, text in clipboard",
@@ -89,6 +90,16 @@ describe('CreateLinkFromClipboardCommand test', () => {
                 expected: '[some selection](<cupidatat ut>)',
                 cursurPos: "[some selection](<cupidatat ut>)".length
             },
+
+            // obsidian link
+            {
+                name: "selection, obsidian link in clipboard, same vault",
+                selection: "some selection",
+                clipboard: "obsidian://open?vault=defaultVault&file=file1",
+                expected: '[some selection](file1)',
+                cursurPos: "[some selection](file1)".length
+            },
+
 
             //no selection
             //------
@@ -128,7 +139,9 @@ describe('CreateLinkFromClipboardCommand test', () => {
             const linkStart = 1;
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: linkStart })
 
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock()
+            vault.__mocks.getName.mockReturnValue('defaultVault')
+            const obsidianProxyMock = new ObsidianProxyMock(vault)
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"

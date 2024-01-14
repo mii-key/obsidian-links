@@ -650,31 +650,31 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // ------------------------------------
         // Obsidian URL support
 
-        // new Setting(containerEl)
-        //     .setName("Obsidian URL support")
-        //     .setDesc("Add support for Obsidian URL")
-        //     .setClass("setting-item-featureObsidianUrl")
-        //     .addToggle((toggle) => {
-        //         toggle
-        //             .setValue(this.plugin.settings.ffObsidianUrlSupport)
-        //             .onChange(async (value) => {
-        //                 this.plugin.settings.ffObsidianUrlSupport = value;
-        //                 await this.plugin.saveSettings();
-        //             })
+        console.log('123')
+        new Setting(containerEl)
+            .setName("Obsidian URL support")
+            .setDesc("Add support for Obsidian URL")
+            .setClass("setting-item-featureObsidianUrl")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffObsidianUrlSupport)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffObsidianUrlSupport = value;
+                        await this.plugin.saveSettings();
+                    })
 
-        //     });
+            });
 
-        // const featureObsidianUrlSettingDesc = containerEl.querySelector(".setting-item-featureObsidianUrl .setting-item-description");
+        const featureObsidianUrlSettingDesc = containerEl.querySelector(".setting-item-featureObsidianUrl .setting-item-description");
 
-        // if (featureObsidianUrlSettingDesc) {
-        //     featureObsidianUrlSettingDesc.appendText(' see ');
-        //     featureObsidianUrlSettingDesc.appendChild(
-        //         createEl('a', {
-        //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/obsidian-url.md',
-        //             text: 'docs'
-        //         }));
-        //     featureObsidianUrlSettingDesc.appendText('.');
-        // }
-
+        if (featureObsidianUrlSettingDesc) {
+            featureObsidianUrlSettingDesc.appendText(' see ');
+            featureObsidianUrlSettingDesc.appendChild(
+                createEl('a', {
+                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/obsidian-url.md',
+                    text: 'docs'
+                }));
+            featureObsidianUrlSettingDesc.appendText('.');
+        }
     }
 }

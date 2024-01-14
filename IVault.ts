@@ -12,4 +12,5 @@ export interface IVault {
     modify(file: TFile, data: string, options?: DataWriteOptions): Promise<void>;
     getFilesInFolder(folder: TFolder): TFile[];
     getRoot(): TFolder;
+    getName(): string;
 }

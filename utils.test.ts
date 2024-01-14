@@ -1026,7 +1026,7 @@ describe("Utils tests", () => {
                     new TextPart("tempor", new Position("<a href=\"tempor-dest\">".length, "<a href=\"tempor-dest\">tempor".length)))
         },
         {
-            name: "plain link",
+            name: "plain url",
             input: "Consectetur in http://dolore.com id ad voluptate https://sunt.com tempor sit irc://foo.bar:2233/baz " +
                 "laborum http://foo.bar.baz/test?q=hello&id=22&boolean aliqua consequatvoluptate esse officia in ad voluptate voluptate-dest ",
             start: "Consectetur in ht".length,
@@ -1036,13 +1036,26 @@ describe("Utils tests", () => {
                     new Position("Consectetur in ".length, "Consectetur in http://dolore.com".length),
                     new TextPart("http://dolore.com", new Position("".length, "http://dolore.com".length)),
                     undefined)
+        },
+        {
+            name: "obsidian url",
+            input: "Consectetur in obsidian://open?vault=test&file=file1 id ad voluptate tempor sit " +
+                "laborum aliqua consequatvoluptate esse officia in ad voluptate voluptate-dest ",
+            start: "Consectetur in ht".length,
+            end: "Consectetur in ht".length,
+            expected:
+                new LinkData(LinkTypes.PlainUrl, "obsidian://open?vault=test&file=file1",
+                    new Position("Consectetur in ".length, "Consectetur in obsidian://open?vault=test&file=file1".length),
+                    new TextPart("obsidian://open?vault=test&file=file1", new Position("".length, "obsidian://open?vault=test&file=file1".length)),
+                    undefined)
         }
 
     ])("$# findLinks at position [$name]", ({ name, input, start, end, expected }) => {
         const result = findLinks(input, LinkTypes.All, start, end);
+
         //
         expect(result.length).toBe(1);
-        expect(result[0].type).toBe(expected.type);
+        expect(result[0].type & expected.type).toBe(expected.type);
         expect(result[0].content).toBe(expected.content);
         expect(result[0].position.start).toBe(expected.position.start);
         expect(result[0].position.end).toBe(expected.position.end);

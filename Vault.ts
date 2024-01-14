@@ -49,6 +49,9 @@ export class VaultImp implements IVault {
     getActiveNoteView(): INoteView | null {
         return app.workspace.getActiveViewOfType(MarkdownView);
     }
+    getName(): string {
+        return app.vault.getName();
+    }
 
     exists(path: string, caseSensitive?: boolean): Promise<boolean> {
         return this.app.vault.adapter.exists(path, caseSensitive)

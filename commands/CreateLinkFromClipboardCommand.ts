@@ -22,7 +22,7 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		if(checking && !this.isEnabled()){
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 		// TODO: no check clipboard
@@ -30,32 +30,46 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 			const noteText = editor.getValue();
 			const cursorOffset = editor.posToOffset(editor.getCursor('from'))
 			const link = findLink(noteText, cursorOffset, cursorOffset, LinkTypes.All)
-			if(link && link.position.start < cursorOffset && link.position.end > cursorOffset){
+			if (link && link.position.start < cursorOffset && link.position.end > cursorOffset) {
 				return false;
 			}
 			return true;
 		}
 
 		(async () => {
-			const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
+			const httpUrlRegEx = /^(http|https):\/\/[^ "]+$/i;
 			// const linkDestination = await navigator.clipboard.readText();
-			
-			
+
+
 			const clipboardText = await this.obsidianProxy.clipboardReadText();
 			const links = findLinks(clipboardText, LinkTypes.All)
-			
-			let linkDestination : string;
-			if(links.length){
-				linkDestination = links[0].destination ? links[0].destination.content : ""
-			} else{
+
+			let linkDestination: string = ""
+			if (links.length) {
+				const link = links[0];
+				if (this.obsidianProxy.settings.ffObsidianUrlSupport && (link.type & LinkTypes.ObsidianUrl) === LinkTypes.ObsidianUrl) {
+					if (link.destination) {
+						const url = new URL(link.destination?.content)
+						if (this.obsidianProxy.Vault.getName() === url.searchParams.get('vault')) {
+							const filePath = url.searchParams.get('file')
+							if (filePath) {
+								linkDestination = decodeURI(filePath)
+							}
+						}
+					}
+				} else {
+					linkDestination = links[0].destination ? links[0].destination.content : ""
+				}
+			} else {
 				linkDestination = clipboardText;
 			}
-			
+
 			let linkText = linkDestination;
+
 			const selection = editor.getSelection();
 			let isUrl = false;
 
-			if (selection.length == 0 && urlRegEx.test(linkDestination)) {
+			if (selection.length == 0 && httpUrlRegEx.test(linkDestination)) {
 				isUrl = true;
 				const notice = this.obsidianProxy.createNotice("Getting title ...", 0);
 				try {
@@ -81,7 +95,7 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 
 			const requireAngleBrackets = !isUrl && linkDestination && linkDestination.indexOf(' ') > 0;
 
-			const linkRawText = requireAngleBrackets ?`[${linkText}](<${linkDestination}>)` : `[${linkText}](${linkDestination})`;
+			const linkRawText = requireAngleBrackets ? `[${linkText}](<${linkDestination}>)` : `[${linkText}](${linkDestination})`;
 			const endOffset = editor.posToOffset(posRangeStart) + linkRawText.length;
 			editor.replaceRange(linkRawText, posRangeStart, posRangeEnd);
 			editor.setCursor(editor.offsetToPos(endOffset));
