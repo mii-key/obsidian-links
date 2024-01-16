@@ -46,7 +46,9 @@ export class DeleteLinkCommand extends CommandBase {
 
 		//TODO: draft!
 
-		if (linkData.destination && !isAbsoluteFilePath(linkData.destination.content)) {
+		if (this.obsidianProxy.settings.ffDeleteUnreferencedLinkTarget
+			&& linkData.destination
+			&& !isAbsoluteFilePath(linkData.destination.content)) {
 			const cache = this.obsidianProxy.Vault.getBacklinksForFileByPath(linkData.destination.content);
 			if (cache) {
 				const backlinksCount = Object.keys(cache).length;
