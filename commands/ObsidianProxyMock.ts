@@ -2,6 +2,7 @@ import { IObsidianLinksSettings } from "settings";
 import { LinkData, InternalWikilinkWithoutTextAction } from "../utils";
 import { IVault } from "IVault";
 import { VaultMock } from "VaultMock";
+import { App } from "obsidian";
 
 export class Notice {
     noticeEl: HTMLElement;
@@ -57,6 +58,7 @@ export interface RequestUrlResponsePromise extends Promise<RequestUrlResponse> {
 
 export class ObsidianProxyMock {
 
+    app: App;
 
     __mocks: {
         NoticeMock: {
@@ -101,6 +103,7 @@ export class ObsidianProxyMock {
         ffConvertLinksInFolder: true,
         ffConvertLinkToHtmllink: true,
         ffObsidianUrlSupport: true,
+        ffDeleteUnreferencedLinkTarget: false,
 
         //context menu
         contexMenu: {

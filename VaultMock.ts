@@ -91,7 +91,10 @@ export class VaultMock implements IVault {
         exists: jest.Mock,
         createNote: jest.Mock,
         getBacklinksForFileByPath: jest.Mock,
-        getName: jest.Mock
+        getName: jest.Mock,
+        delete: jest.Mock,
+        trash: jest.Mock,
+        getAbstractFileByPath: jest.Mock
     } = {
             getFilesInFolder: jest.fn(),
             read: jest.fn(),
@@ -102,7 +105,10 @@ export class VaultMock implements IVault {
             exists: jest.fn(),
             createNote: jest.fn(),
             getBacklinksForFileByPath: jest.fn(),
-            getName: jest.fn()
+            getName: jest.fn(),
+            delete: jest.fn(),
+            trash: jest.fn(),
+            getAbstractFileByPath: jest.fn()
         }
 
     constructor() {
@@ -116,6 +122,9 @@ export class VaultMock implements IVault {
         this.createNote = this.__mocks.createNote;
         this.getBacklinksForFileByPath = this.__mocks.getBacklinksForFileByPath;
         this.getName = this.__mocks.getName;
+        this.delete = this.__mocks.delete;
+        this.trash = this.__mocks.trash;
+        this.getAbstractFileByPath = this.__mocks.getAbstractFileByPath;
     }
 
     getFilesInFolder(folder: TFolder): TFile[] {
@@ -167,6 +176,17 @@ export class VaultMock implements IVault {
             name: '/',
             parent: null as any
         };
+    }
+
+    delete(file: TAbstractFile, force?: boolean | undefined): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    trash(file: TAbstractFile, system: boolean): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+    getAbstractFileByPath(path: string): TAbstractFile | null {
+        throw new Error("Method not implemented.");
     }
 
 }

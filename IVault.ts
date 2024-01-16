@@ -1,5 +1,5 @@
 import { INoteView } from "INoteView";
-import { Constructor, DataWriteOptions, LinkCache, TFile, TFolder, View } from "obsidian";
+import { DataWriteOptions, LinkCache, TAbstractFile, TFile, TFolder } from "obsidian";
 
 export interface IVault {
     exists(path: string, caseSensitive?: boolean): Promise<boolean>;
@@ -13,4 +13,7 @@ export interface IVault {
     getFilesInFolder(folder: TFolder): TFile[];
     getRoot(): TFolder;
     getName(): string;
+    delete(file: TAbstractFile, force?: boolean): Promise<void>;
+    trash(file: TAbstractFile, system: boolean): Promise<void>;
+    getAbstractFileByPath(path: string): TAbstractFile | null;
 }

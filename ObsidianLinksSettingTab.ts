@@ -530,7 +530,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName("Convert links in folder")
             .setDesc("Convert links in a folder")
-            .setClass("setting-item--insider-feature-convert-links-in-folder")
+            .setClass("setting-item--feature-convert-links-in-folder")
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.ffConvertLinksInFolder)
@@ -541,16 +541,16 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             });
 
-        const feature1SettingDesc = containerEl.querySelector(".setting-item--insider-feature-convert-links-in-folder .setting-item-description");
+        const featureConvertLinksInFolderSettingDesc = containerEl.querySelector(".setting-item--feature-convert-links-in-folder .setting-item-description");
 
-        if (feature1SettingDesc) {
-            feature1SettingDesc.appendText(' see ');
-            feature1SettingDesc.appendChild(
+        if (featureConvertLinksInFolderSettingDesc) {
+            featureConvertLinksInFolderSettingDesc.appendText(' see ');
+            featureConvertLinksInFolderSettingDesc.appendChild(
                 createEl('a', {
                     href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-links-in-folder.md',
                     text: 'docs'
                 }));
-            feature1SettingDesc.appendText('.');
+            featureConvertLinksInFolderSettingDesc.appendText('.');
         }
 
         // ------------------------------
@@ -650,7 +650,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // ------------------------------------
         // Obsidian URL support
 
-        console.log('123')
         new Setting(containerEl)
             .setName("Obsidian URL support")
             .setDesc("Add support for Obsidian URL")
@@ -675,6 +674,35 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     text: 'docs'
                 }));
             featureObsidianUrlSettingDesc.appendText('.');
+        }
+
+        // ------------------------------------
+        // delete unreferenced link target on delete link
+
+        new Setting(containerEl)
+            .setName("Delete unreferenced link target")
+            .setDesc("")
+            .setClass("setting-item-feature-delete-unreferenced-target")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffDeleteUnreferencedLinkTarget)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffDeleteUnreferencedLinkTarget = value;
+                        await this.plugin.saveSettings();
+                    })
+
+            });
+
+        const featureDeleteUnreferencedTargetSettingDesc = containerEl.querySelector(".setting-item-feature-delete-unreferenced-target .setting-item-description");
+
+        if (featureDeleteUnreferencedTargetSettingDesc) {
+            featureDeleteUnreferencedTargetSettingDesc.appendText(' see ');
+            featureDeleteUnreferencedTargetSettingDesc.appendChild(
+                createEl('a', {
+                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature-delete-unreferenced-file.md',
+                    text: 'docs'
+                }));
+            featureDeleteUnreferencedTargetSettingDesc.appendText('.');
         }
     }
 }
