@@ -48,10 +48,8 @@ export class DeleteLinkCommand extends CommandBase {
 
 		if (linkData.destination && !isAbsoluteFilePath(linkData.destination.content)) {
 			const cache = this.obsidianProxy.Vault.getBacklinksForFileByPath(linkData.destination.content);
-			console.log(cache);
 			if (cache) {
 				const backlinksCount = Object.keys(cache).length;
-				console.log(backlinksCount);
 				//TODO: check duplicate links in the file
 				if (backlinksCount === 1) {
 					new PromptModal(this.obsidianProxy.app, "Delete file?", (result) => {
