@@ -1,6 +1,6 @@
 import { INoteView } from "INoteView";
 import { IVault } from "IVault";
-import { App, Constructor, DataWriteOptions, LinkCache, MarkdownView, TFile, TFolder, Vault, View } from "obsidian";
+import { App, Constructor, DataWriteOptions, LinkCache, MarkdownView, TAbstractFile, TFile, TFolder, Vault, View } from "obsidian";
 
 export class VaultImp implements IVault {
     app: App;
@@ -72,6 +72,13 @@ export class VaultImp implements IVault {
 
     getRoot(): TFolder {
         return this.app.vault.getRoot();
+    }
+
+    delete(file: TAbstractFile, force?: boolean | undefined): Promise<void> {
+        return this.app.vault.delete(file, force);
+    }
+    trash(file: TAbstractFile, system: boolean): Promise<void> {
+        return this.app.vault.trash(file, system);
     }
 
 }
