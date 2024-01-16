@@ -81,4 +81,7 @@ export class VaultImp implements IVault {
         return this.app.vault.trash(file, system);
     }
 
+    getAbstractFileByPath(path: string): TAbstractFile | null {
+        return this.app.vault.getAbstractFileByPath(path);
+    }
 }

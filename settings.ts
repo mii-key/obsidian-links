@@ -17,6 +17,7 @@ export interface IObsidianLinksSettings {
 	ffConvertLinksInFolder: boolean;
 	ffConvertLinkToHtmllink: boolean;
 	ffObsidianUrlSupport: boolean;
+	ffDeleteUnreferencedLinkTarget: boolean;
 
 	//context menu
 	contexMenu: {
@@ -44,6 +45,7 @@ export interface IObsidianLinksSettings {
 		wrapNoteInFolder: boolean;
 		copyLinkToClipboard: boolean;
 		cutLinkToClipboard: boolean;
+
 	}
 }
 
@@ -65,6 +67,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffConvertLinksInFolder: false,
 	ffConvertLinkToHtmllink: false,
 	ffObsidianUrlSupport: false,
+	ffDeleteUnreferencedLinkTarget: false,
 
 	//context menu
 	contexMenu: {

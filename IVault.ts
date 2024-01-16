@@ -15,4 +15,5 @@ export interface IVault {
     getName(): string;
     delete(file: TAbstractFile, force?: boolean): Promise<void>;
     trash(file: TAbstractFile, system: boolean): Promise<void>;
+    getAbstractFileByPath(path: string): TAbstractFile | null;
 }

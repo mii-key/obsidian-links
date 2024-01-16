@@ -36,7 +36,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
         return;
     }
     commands.set(UnlinkLinkCommand.name, new UnlinkLinkCommand(() => settings.contexMenu.unlink));
-    commands.set(DeleteLinkCommand.name, new DeleteLinkCommand(() => settings.contexMenu.deleteLink));
+    commands.set(DeleteLinkCommand.name, new DeleteLinkCommand(obsidianProxy));
     commands.set(ConvertLinkToMdlinkCommand.name, new ConvertLinkToMdlinkCommand(obsidianProxy, () => settings.contexMenu.convertToMakrdownLink));
     commands.set(ConvertLinkToWikilinkCommand.name, new ConvertLinkToWikilinkCommand(() => settings.contexMenu.convertToWikilink));
     commands.set(ConvertLinkToHtmllinkCommand.name, new ConvertLinkToHtmllinkCommand(obsidianProxy));

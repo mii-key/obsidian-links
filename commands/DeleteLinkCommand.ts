@@ -1,11 +1,20 @@
-import { Editor } from "obsidian";
+import { Editor, TAbstractFile } from "obsidian";
 import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
+import { HasLinks, LinkData, LinkTypes, findLink, isAbsoluteFilePath, removeLinks } from "../utils";
+import { IObsidianProxy } from "./IObsidianProxy";
+import { PromptModal } from "ui/PromptModal";
 
 export class DeleteLinkCommand extends CommandBase {
 
-	constructor(isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
+	obsidianProxy: IObsidianProxy;
+
+	constructor(obsidianProxy: IObsidianProxy, isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
 		super(isPresentInContextMenu, isEnabled);
+
+		this.obsidianProxy = obsidianProxy;
+
+		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.deleteLink;
+
 		this.id = 'editor-delete-link';
 		this.displayNameCommand = 'Delete link';
 		this.displayNameContextMenu = 'Delete';
@@ -13,7 +22,7 @@ export class DeleteLinkCommand extends CommandBase {
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		if(checking && !this.isEnabled()){
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
@@ -29,9 +38,34 @@ export class DeleteLinkCommand extends CommandBase {
 	}
 
 	deleteLink(linkData: LinkData, editor: Editor) {
+
 		editor.replaceRange(
 			'',
 			editor.offsetToPos(linkData.position.start),
 			editor.offsetToPos(linkData.position.end));
+
+		//TODO: draft!
+
+		if (linkData.destination && !isAbsoluteFilePath(linkData.destination.content)) {
+			const cache = this.obsidianProxy.Vault.getBacklinksForFileByPath(linkData.destination.content);
+			console.log(cache);
+			if (cache) {
+				const backlinksCount = Object.keys(cache).length;
+				console.log(backlinksCount);
+				//TODO: check duplicate links in the file
+				if (backlinksCount === 1) {
+					new PromptModal(this.obsidianProxy.app, "Delete file?", (result) => {
+						if (result === 'Yes') {
+							const targetFile = this.obsidianProxy.Vault.getAbstractFileByPath(linkData.destination!.content);
+							if (targetFile) {
+								this.obsidianProxy.Vault.delete(targetFile);
+							}
+						}
+					})
+						.open();
+				}
+			}
+		}
+
 	}
 }
