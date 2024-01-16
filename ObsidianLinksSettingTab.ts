@@ -699,7 +699,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             featureDeleteUnreferencedTargetSettingDesc.appendText(' see ');
             featureDeleteUnreferencedTargetSettingDesc.appendChild(
                 createEl('a', {
-                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/delete-unreferenced-file.md',
+                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature-delete-unreferenced-file.md',
                     text: 'docs'
                 }));
             featureDeleteUnreferencedTargetSettingDesc.appendText('.');
