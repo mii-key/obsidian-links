@@ -1,8 +1,9 @@
-import { Editor, TAbstractFile } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, isAbsoluteFilePath, removeLinks } from "../utils";
+import { Editor, TFile } from "obsidian";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, findLink, isAbsoluteFilePath, isAbsoluteUri } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
-import { PromptModal } from "ui/PromptModal";
+import { ButtonInfo, PromptModal } from "ui/PromptModal";
+import parseFilepath from "parse-filepath";
 
 export class DeleteLinkCommand extends CommandBase {
 
@@ -38,34 +39,62 @@ export class DeleteLinkCommand extends CommandBase {
 	}
 
 	deleteLink(linkData: LinkData, editor: Editor) {
-
-		editor.replaceRange(
-			'',
-			editor.offsetToPos(linkData.position.start),
-			editor.offsetToPos(linkData.position.end));
-
 		//TODO: draft!
 
-		if (this.obsidianProxy.settings.ffDeleteUnreferencedLinkTarget
-			&& linkData.destination
-			&& !isAbsoluteFilePath(linkData.destination.content)) {
-			const cache = this.obsidianProxy.Vault.getBacklinksForFileByPath(linkData.destination.content);
-			if (cache) {
+		const destination = linkData.destination?.content;
+		try {
+			if (this.obsidianProxy.settings.ffDeleteUnreferencedLinkTarget
+				&& destination !== undefined
+				&& !isAbsoluteUri(destination)
+				&& !isAbsoluteFilePath(destination)) {
+				const hashIdx = destination.indexOf('#');
+				if (hashIdx == 0) {
+					return;
+				}
+
+				const filePath = hashIdx > 0 ? destination.substring(0, hashIdx) : destination;
+				let file = this.obsidianProxy.Vault.getAbstractFileByPath(filePath) as TFile;
+				if (!file) {
+					const path = parseFilepath(filePath);
+					if (path.ext === '') {
+						file = this.obsidianProxy.Vault.getAbstractFileByPath(filePath + '.md') as TFile;
+					}
+				}
+				if (!file) {
+					return;
+				}
+				const cache = this.obsidianProxy.Vault.getBacklinksForFileByPath(file);
+				if (!cache) {
+					return;
+				}
 				const backlinksCount = Object.keys(cache).length;
 				//TODO: check duplicate links in the file
-				if (backlinksCount === 1) {
-					new PromptModal(this.obsidianProxy.app, "Delete file?", (result) => {
-						if (result === 'Yes') {
-							const targetFile = this.obsidianProxy.Vault.getAbstractFileByPath(linkData.destination!.content);
-							if (targetFile) {
-								this.obsidianProxy.Vault.delete(targetFile);
-							}
+				if (backlinksCount != 1) {
+					return;
+				}
+				new PromptModal(this.obsidianProxy.app,
+					"Delete file",
+					[
+						`The file "${filePath}" is no longer referenced by any note.`,
+						"Do you want to delete it?"
+					],
+					[
+						new ButtonInfo('Delete', 'Delete', true, true),
+						new ButtonInfo('Cancel', 'Cancel')
+					],
+					(result) => {
+						if (result === 'Delete') {
+							this.obsidianProxy.Vault.delete(file);
 						}
 					})
-						.open();
-				}
+					.open();
 			}
 		}
-
+		finally {
+			editor.replaceRange(
+				'',
+				editor.offsetToPos(linkData.position.start),
+				editor.offsetToPos(linkData.position.end));
+		}
 	}
 }

@@ -1,41 +1,52 @@
 import { App, Modal, Setting } from 'obsidian';
 
-//TODO: refactor
+export class ButtonInfo {
+	constructor(public text: string, public result: string, public isCta = false, public isWarning = false) {
+	}
+}
 
 export class PromptModal extends Modal {
 	buttonContainerEl: HTMLDivElement;
-	prompt: string;
+	text: string[];
+	title: string;
+	buttons: ButtonInfo[];
+
 
 	onSubmit: (result: string) => void;
 
-	constructor(app: App, prompt: string, onSubmit: (result: string) => void) {
+	constructor(app: App, title: string, text: string[], buttons: ButtonInfo[], onSubmit: (result: string) => void) {
 		super(app);
-		this.prompt = prompt;
+		this.text = text;
+		this.title = title;
+		this.buttons = buttons;
 		this.onSubmit = onSubmit;
 	}
 
 	onOpen() {
 		const { contentEl } = this;
-		contentEl.createEl("div", { text: this.prompt });
+		contentEl.createDiv({ cls: 'modal-title', text: this.title });
+		const contentDiv = contentEl.createDiv({ cls: 'modal-content' });
+		this.text.forEach((t) => {
+			contentDiv.createEl('p', { text: t })
+		});
+		const buttonsContainer = contentEl.createDiv({ cls: 'modal-button-container' });
 
-		new Setting(contentEl)
-			.addButton((btn) =>
-				btn
-					.setButtonText("Yes")
-					.setCta()
-					.onClick(() => {
-						this.close();
-						this.onSubmit('Yes');
-					}))
-			.addButton((btn) =>
-				btn
-					.setButtonText("No")
-					.setCta()
-					.onClick(() => {
-						this.close();
-						this.onSubmit('No');
-					}));
-
+		const buttonsSetting = new Setting(buttonsContainer);
+		this.buttons.forEach((b) => {
+			buttonsSetting.addButton(c => {
+				c.setButtonText(b.text);
+				if (b.isCta) {
+					c.setCta();
+				}
+				if (b.isWarning) {
+					c.setWarning();
+				}
+				c.onClick(() => {
+					this.close();
+					this.onSubmit(b.result);
+				})
+			});
+		});
 	}
 
 	onClose() {

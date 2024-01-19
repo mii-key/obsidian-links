@@ -60,15 +60,15 @@ export class VaultImp implements IVault {
         return this.app.vault.create(path, content)
     }
 
-    getBacklinksForFileByPath(path: string): Record<string, LinkCache[]> | null {
-        const file = this.app.vault.getAbstractFileByPath(path) as TFile;
-
-        if (file) {
-            return this.app.metadataCache.getBacklinksForFile(file).data;
+    getBacklinksForFileByPath(file: string | TFile): Record<string, LinkCache[]> | null {
+        const _file = typeof (file) === 'string' ? this.app.vault.getAbstractFileByPath(file) as TFile : file;
+        if (_file) {
+            return this.app.metadataCache.getBacklinksForFile(_file).data;
         }
 
         return null;
     }
+
 
     getRoot(): TFolder {
         return this.app.vault.getRoot();

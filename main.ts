@@ -50,16 +50,19 @@ export default class ObsidianLinksPlugin extends Plugin {
 		return requestUrl(request);
 	}
 
-	measurePerformance(func: Function): number {
-		// const start = moment();
-		// try {
-		// 	func();
-		// }
-		// finally {
-		// 	return moment().diff(start);
-		// }
-		return 0;
+	measurePerformance(func: () => void): number {
+		// @ts-ignore
+		const start = moment();
+		try {
+			func();
+		}
+		finally {
+			// @ts-ignore
+			// eslint-disable-next-line no-unsafe-finally
+			return moment().diff(start);
+		}
 	}
+
 
 	async onload() {
 		await this.loadSettings();
