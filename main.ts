@@ -7,6 +7,7 @@ import { ObsidianProxy } from 'commands/ObsidianProxy';
 import { DEFAULT_SETTINGS, IObsidianLinksSettings } from 'settings';
 import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
 import { getContextMenuCommands, getPaletteCommands } from 'commands/Commands';
+import { UiFactory } from 'ui/UiFactory';
 
 export default class ObsidianLinksPlugin extends Plugin {
 	settings: IObsidianLinksSettings;
@@ -67,7 +68,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		//TODO:
-		this.obsidianProxy = new ObsidianProxy(this.app, this.linkTextSuggestContext, this.settings);
+		this.obsidianProxy = new ObsidianProxy(this.app, this.linkTextSuggestContext, this.settings, new UiFactory(this.app));
 
 		//TODO: remove
 		if (this.settings.removeLinksFromHeadingsInternalWikilinkWithoutTextAction === InternalWikilinkWithoutTextAction.None) {
@@ -139,7 +140,6 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
 				const linkData = this.getLink(editor);
-				const selection = editor.getSelection();
 				let addTopSeparator = function () {
 					menu.addSeparator();
 					addTopSeparator = function () { };

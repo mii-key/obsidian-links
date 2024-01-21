@@ -1,6 +1,7 @@
 import { IVault } from "IVault";
 import { App, Notice, RequestUrlParam, RequestUrlResponsePromise } from "obsidian";
 import { IObsidianLinksSettings } from "settings";
+import { ButtonInfo } from "ui/PromotModal.common";
 import { LinkData } from "utils";
 
 export interface IObsidianProxy {
@@ -13,4 +14,5 @@ export interface IObsidianProxy {
     clipboardWriteText(text: string): void;
     clipboardReadText(): Promise<string>;
     linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]): void;
+    showPromptModal(title: string, text: string[], buttons: ButtonInfo[], onSubmit: (result: string) => void): void;
 }

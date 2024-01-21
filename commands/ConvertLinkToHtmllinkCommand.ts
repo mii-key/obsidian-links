@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, findLinks, getFileName, getLinkTitles, removeLinks } from "../utils";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, LinkTypes, findLinks, getFileName, getLinkTitles } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 
 export class ConvertLinkToHtmllinkCommand extends CommandBase {
@@ -61,11 +61,11 @@ export class ConvertLinkToHtmllinkCommand extends CommandBase {
 	}
 
 	generateLinkText(linkData: LinkData): string {
-		if(!linkData.destination?.content){
+		if (!linkData.destination?.content) {
 			throw new Error('Link destination required')
 		}
 		const titles = getLinkTitles(linkData);
-		if(titles.length > 0){
+		if (titles.length > 0) {
 			return titles[titles.length - 1]
 		}
 

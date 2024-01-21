@@ -2,8 +2,8 @@ import { Editor, TFile } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
 import { LinkData, findLink, isAbsoluteFilePath, isAbsoluteUri } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
-import { ButtonInfo, PromptModal } from "ui/PromptModal";
 import parseFilepath from "parse-filepath";
+import { ButtonInfo } from "../ui/PromotModal.common";
 
 export class DeleteLinkCommand extends CommandBase {
 
@@ -72,22 +72,21 @@ export class DeleteLinkCommand extends CommandBase {
 				if (backlinksCount != 1) {
 					return;
 				}
-				new PromptModal(this.obsidianProxy.app,
+				this.obsidianProxy.showPromptModal(
 					"Delete file",
 					[
 						`The file "${filePath}" is no longer referenced by any note.`,
 						"Do you want to delete it?"
 					],
 					[
-						new ButtonInfo('Delete', 'Delete', true, true),
-						new ButtonInfo('Cancel', 'Cancel')
+						new ButtonInfo('Yes', 'Yes', true, true),
+						new ButtonInfo('No', 'No')
 					],
 					(result) => {
-						if (result === 'Delete') {
+						if (result === 'Yes') {
 							this.obsidianProxy.Vault.delete(file);
 						}
-					})
-					.open();
+					});
 			}
 		}
 		finally {

@@ -1,9 +1,6 @@
-import { App, Modal, Setting } from 'obsidian';
 
-export class ButtonInfo {
-	constructor(public text: string, public result: string, public isCta = false, public isWarning = false) {
-	}
-}
+import { App, Modal, Setting } from 'obsidian';
+import { ButtonInfo } from './PromotModal.common';
 
 export class PromptModal extends Modal {
 	buttonContainerEl: HTMLDivElement;

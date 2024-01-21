@@ -1,8 +1,9 @@
 import { IObsidianLinksSettings } from "settings";
 import { LinkData, InternalWikilinkWithoutTextAction } from "../utils";
 import { IVault } from "IVault";
-import { VaultMock } from "VaultMock";
 import { App } from "obsidian";
+import { ButtonInfo } from "ui/PromotModal.common";
+import { IUiFactory } from "ui/IUiFactory";
 
 export class Notice {
     noticeEl: HTMLElement;
@@ -70,6 +71,7 @@ export class ObsidianProxyMock {
         clipboardReadText: jest.Mock
         createNotice: jest.Mock
         linkTextSuggestContextSetLinkData: jest.Mock
+        showPromptModal: jest.Mock
 
     } = {
             NoticeMock: {
@@ -80,10 +82,12 @@ export class ObsidianProxyMock {
             clipboardWriteText: jest.fn(),
             clipboardReadText: jest.fn(),
             createNotice: jest.fn(),
-            linkTextSuggestContextSetLinkData: jest.fn()
+            linkTextSuggestContextSetLinkData: jest.fn(),
+            showPromptModal: jest.fn()
         }
 
     Vault: IVault;
+    uiFactory: IUiFactory;
 
     settings: IObsidianLinksSettings = {
         linkReplacements: [],
@@ -103,7 +107,7 @@ export class ObsidianProxyMock {
         ffConvertLinksInFolder: true,
         ffConvertLinkToHtmllink: true,
         ffObsidianUrlSupport: true,
-        ffDeleteUnreferencedLinkTarget: false,
+        ffDeleteUnreferencedLinkTarget: true,
 
         //context menu
         contexMenu: {
@@ -134,15 +138,19 @@ export class ObsidianProxyMock {
         }
     }
 
-    constructor(vault?: IVault) {
+    constructor(vault?: IVault, uiFactory?: IUiFactory) {
         this.clipboardWriteText = this.__mocks.clipboardWriteText;
         this.clipboardReadText = this.__mocks.clipboardReadText;
         this.__mocks.createNotice.mockReturnValue(this.__mocks.NoticeMock);
         this.createNotice = this.__mocks.createNotice;
         this.linkTextSuggestContextSetLinkData = this.__mocks.linkTextSuggestContextSetLinkData;
+        // this.showPromptModal = this.__mocks.showPromptModal;
 
         if (vault) {
             this.Vault = vault;
+        }
+        if (uiFactory) {
+            this.uiFactory = uiFactory;
         }
     }
 
@@ -166,4 +174,11 @@ export class ObsidianProxyMock {
     linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]): void {
         throw new Error('Method not implemented.');
     }
+
+    showPromptModal(title: string, text: string[], buttons: ButtonInfo[], onSubmit: (result: string) => void): void {
+        this.__mocks.showPromptModal(title, text, buttons, onSubmit);
+        this.uiFactory.createPromptModal(title, text, buttons, onSubmit)
+            .open();
+    }
+
 }

@@ -1,6 +1,7 @@
 import { INoteView } from "INoteView";
 import { IVault } from "IVault";
-import { DataWriteOptions, FileStats, LinkCache, Vault } from "obsidian";
+import { DataWriteOptions, FileStats, Vault } from "obsidian";
+import { LinkData } from "utils";
 
 export abstract class TAbstractFile {
     /**
@@ -159,7 +160,7 @@ export class VaultMock implements IVault {
         throw new Error('Method not implemented.');
     }
 
-    getBacklinksForFileByPath(path: string): Record<string, LinkCache[]> | null {
+    getBacklinksForFileByPath(path: string): Record<string, LinkData[]> | null {
         throw new Error('Method not implemented.');
     }
     getName(): string {
