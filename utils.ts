@@ -143,6 +143,11 @@ export class LinkData extends TextPart {
             this._imageDimensions = undefined
         }
     }
+
+    static parse(linkText: string): LinkData | null {
+        const links = findLinks(linkText, LinkTypes.All, 0, linkText.length);
+        return links.length === 1 ? links[0] : null;
+    }
 }
 
 function parseMarkdownLink(regExp: RegExp, match: RegExpMatchArray, raw: string, embeddedChar?: string, text?: string, destination?: string): LinkData {

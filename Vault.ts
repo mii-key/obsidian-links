@@ -1,6 +1,7 @@
 import { INoteView } from "INoteView";
 import { IVault } from "IVault";
-import { App, Constructor, DataWriteOptions, LinkCache, MarkdownView, TAbstractFile, TFile, TFolder, Vault, View } from "obsidian";
+import { App, DataWriteOptions, MarkdownView, TAbstractFile, TFile, TFolder } from "obsidian";
+import { LinkData, Position } from "utils";
 
 export class VaultImp implements IVault {
     app: App;
@@ -60,10 +61,28 @@ export class VaultImp implements IVault {
         return this.app.vault.create(path, content)
     }
 
-    getBacklinksForFileByPath(file: string | TFile): Record<string, LinkCache[]> | null {
+    getBacklinksForFileByPath(file: string | TFile): Record<string, LinkData[]> | null {
         const _file = typeof (file) === 'string' ? this.app.vault.getAbstractFileByPath(file) as TFile : file;
         if (_file) {
-            return this.app.metadataCache.getBacklinksForFile(_file).data;
+            const backlinks = this.app.metadataCache.getBacklinksForFile(_file).data;
+            if (backlinks === null) {
+                return null;
+            }
+            const backlinksLinkData: Record<string, LinkData[]> = {};
+
+            for (const sourceFile in backlinks) {
+                const linkCaches = backlinks[sourceFile];
+                const linkDataArray = new Array<LinkData>();
+                for (const linkCache of linkCaches) {
+                    const linkData = LinkData.parse(linkCache.original);
+                    if (linkData) {
+                        linkData.position = new Position(linkCache.position.start.offset, linkCache.position.end.offset);
+                        linkDataArray.push(linkData);
+                    }
+                }
+                backlinksLinkData[sourceFile] = linkDataArray;
+            }
+            return backlinksLinkData;
         }
 
         return null;
