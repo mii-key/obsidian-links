@@ -86,21 +86,74 @@ describe('DeleteLinkCommand test', () => {
             {
                 name: "wikilink local note.md 1 ref",
                 text: "[[note.md]]",
-                referencedFilePath: 'note.md',
+                linkTarget: 'note.md',
                 backlinks: {
                     'file1.md': [LinkData.parse('[[note.md]]')]
                 },
                 expectedShowPrompt: true,
-                deleteFile: true
+                expectedDeleteFile: true
+            },
+            {
+                name: "wikilink to heading",
+                text: "[[#heading 1]]",
+                linkTarget: undefined,
+                backlinks: null,
+                expectedShowPrompt: false,
+                expectedDeleteFile: false
+            },
+            {
+                name: "wikilink note wo/.md extension",
+                text: "[[folder 1/note 1]]",
+                linkTarget: 'folder 1/note 1.md',
+                backlinks: {
+                    'file1.md': [LinkData.parse('[[folder 1/note 1]]')]
+                },
+                expectedShowPrompt: true,
+                expectedDeleteFile: true
+            },
+            {
+                name: "mdlink <> note wo/.md extension",
+                text: "[folder 1/note 1](<folder 1/note 1>)",
+                linkTarget: 'folder 1/note 1.md',
+                backlinks: {
+                    'file1.md': [LinkData.parse('[folder 1/note 1](<folder 1/note 1>)')]
+                },
+                expectedShowPrompt: true,
+                expectedDeleteFile: true
+            },
+            {
+                name: "wikilink w/multiple backlinks different notes",
+                text: "[[folder 1/note 1]]",
+                linkTarget: 'folder 1/note 1.md',
+                backlinks: {
+                    'file1.md': [LinkData.parse('[[folder 1/note 1]]')],
+                    'file2.md': [LinkData.parse('(note1)[folder 1/note 1]')]
+                },
+                expectedShowPrompt: false,
+                expectedDeleteFile: false
+            },
+            {
+                name: "wikilink w/multiple backlinks same note",
+                text: "[[folder 1/note 1]]",
+                linkTarget: 'folder 1/note 1.md',
+                backlinks: {
+                    'file1.md': [LinkData.parse('[[folder 1/note 1]]'), LinkData.parse('[[folder 1/note 1]]')],
+                },
+                expectedShowPrompt: false,
+                expectedDeleteFile: false
+            },
+            {
+                name: "wikilink w/prompt user click 'No'",
+                text: "[[folder 1/note 1]]",
+                linkTarget: 'folder 1/note 1.md',
+                backlinks: {
+                    'file1.md': [LinkData.parse('[[folder 1/note 1]]')]
+                },
+                expectedShowPrompt: true,
+                expectedDeleteFile: false
             }
-            // TODO: 
-            // - link to a header
-            // - link to a note without extension
-            // - backlinks > 1
-            // - backlinks in the same note
-            // - click on No button
         ]
-    )('delete link - cursor in selection [$name] - success', ({ name, text, referencedFilePath, backlinks, expectedShowPrompt, deleteFile }) => {
+    )('delete link - cursor in selection [$name] - success', ({ name, text, linkTarget, backlinks, expectedShowPrompt, expectedDeleteFile }) => {
 
         const uiFactory = new UiFactoryMock();
         let promptModal: PromptModalMock | undefined;
@@ -128,13 +181,23 @@ describe('DeleteLinkCommand test', () => {
         //
         if (expectedShowPrompt) {
             expect(obsidianProxy.__mocks.showPromptModal.mock.calls).toHaveLength(1);
-            if (deleteFile) {
+            if (expectedDeleteFile) {
                 expect(promptModal).toBeDefined();
                 promptModal?.buttonClick(0);
                 expect(vault.__mocks.delete.mock.calls).toHaveLength(1);
-                expect(vault.__mocks.delete.mock.calls[0][0].path).toBe(referencedFilePath);
+                expect(vault.__mocks.delete.mock.calls[0][0].path).toBe(linkTarget);
+            } else {
+                expect(promptModal).toBeDefined();
+                promptModal?.buttonClick(1);
+                expect(vault.__mocks.delete.mock.calls).toHaveLength(0);
             }
+        } else {
+            expect(obsidianProxy.__mocks.showPromptModal.mock.calls).toHaveLength(0);
         }
+        if (!expectedDeleteFile) {
+            expect(vault.__mocks.delete.mock.calls).toHaveLength(0);
+        }
+
         expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
         expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe('')
         expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(0)

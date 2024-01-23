@@ -67,9 +67,9 @@ export class DeleteLinkCommand extends CommandBase {
 				if (!cache) {
 					return;
 				}
-				const backlinksCount = Object.keys(cache).length;
-				//TODO: check duplicate links in the file
-				if (backlinksCount != 1) {
+				const backlinks = Object.keys(cache);
+				if (backlinks.length != 1
+					|| (backlinks.length === 1 && cache[backlinks[0]].length > 1)) {
 					return;
 				}
 				this.obsidianProxy.showPromptModal(
