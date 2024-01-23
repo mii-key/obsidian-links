@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, TAbstractFile, htmlToMarkdown, requestUrl, moment, RequestUrlParam, RequestUrlResponsePromise } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtention, InternalWikilinkWithoutTextAction, findLinks, LinkTypes, getLinkTitles, getFileName } from './utils';
+import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtension, InternalWikilinkWithoutTextAction, findLinks, LinkTypes, getLinkTitles, getFileName } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -330,7 +330,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	}
 
 	deleteFileHandler(file: TAbstractFile) {
-		const [pathWithoutExtention, success] = removeExtention(file.path);
+		const [pathWithoutExtension, success] = removeExtension(file.path);
 		if (!success) {
 			return;
 		}
@@ -338,15 +338,15 @@ export default class ObsidianLinksPlugin extends Plugin {
 		const replacements = this.settings.linkReplacements.filter(r => {
 			const hashIdx = r.target.indexOf('#');
 			return hashIdx > 0 ?
-				r.target.substring(0, hashIdx) !== pathWithoutExtention
-				: r.target !== pathWithoutExtention;
+				r.target.substring(0, hashIdx) !== pathWithoutExtension
+				: r.target !== pathWithoutExtension;
 		});
 		this.settings.linkReplacements = replacements;
 		this.saveSettings();
 	}
 
 	renameFileHandler(file: TAbstractFile, oldPath: string) {
-		const [oldPathWithoutExtention, success] = removeExtention(oldPath);
+		const [oldPathWithoutExtension, success] = removeExtension(oldPath);
 		if (!success) {
 			return;
 		}
@@ -355,8 +355,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 		this.settings.linkReplacements.forEach(r => {
 			const hashIdx = r.target.indexOf('#');
 			const targetPath = hashIdx > 0 ? r.target.substring(0, hashIdx) : r.target;
-			if (targetPath === oldPathWithoutExtention) {
-				const [newPathWithoutExtension] = removeExtention(file.path);
+			if (targetPath === oldPathWithoutExtension) {
+				const [newPathWithoutExtension] = removeExtension(file.path);
 				r.target = hashIdx > 0 ?
 					newPathWithoutExtension + r.target.substring(hashIdx) : newPathWithoutExtension;
 				settingsChanged = true;

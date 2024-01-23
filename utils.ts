@@ -456,10 +456,10 @@ export function getFileName(path: string): string {
     return path.replace(/^.*[\\\/]/, '');
 }
 
-export function removeExtention(path: string, extention = ".md"): [string, boolean] {
-    const extIdx = path.lastIndexOf(extention);
+export function removeExtension(path: string, extension = ".md"): [string, boolean] {
+    const extIdx = path.lastIndexOf(extension);
 
-    if (extIdx < 0 || extIdx < path.length - extention.length) {
+    if (extIdx < 0 || extIdx < path.length - extension.length) {
         return [path, false];
     }
 
