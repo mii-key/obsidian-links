@@ -102,11 +102,21 @@ describe('DeleteLinkCommand test', () => {
                 expectedDeleteFile: false
             },
             {
-                name: "wikilink a note wo/.md extension",
+                name: "wikilink note wo/.md extension",
                 text: "[[folder 1/note 1]]",
                 linkTarget: 'folder 1/note 1.md',
                 backlinks: {
                     'file1.md': [LinkData.parse('[[folder 1/note 1]]')]
+                },
+                expectedShowPrompt: true,
+                expectedDeleteFile: true
+            },
+            {
+                name: "mdlink <> note wo/.md extension",
+                text: "[folder 1/note 1](<folder 1/note 1>)",
+                linkTarget: 'folder 1/note 1.md',
+                backlinks: {
+                    'file1.md': [LinkData.parse('[folder 1/note 1](<folder 1/note 1>)')]
                 },
                 expectedShowPrompt: true,
                 expectedDeleteFile: true
