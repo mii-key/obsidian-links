@@ -69,19 +69,27 @@ describe('DeleteLinkCommand test', () => {
         [
             {
                 name: "html links",
-                text: "<a href=\"https://obsidian.md\">obsidian</a>"
+                text: "<a href=\"https://obsidian.md\">obsidian</a>",
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "mdlink",
-                text: "[obsidian](http://obsidian.md)"
+                text: "[obsidian](http://obsidian.md)",
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "wikilink",
-                text: "[[http://obsidian.md|obsidian]]"
+                text: "[[http://obsidian.md|obsidian]]",
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "wikilink empty text",
-                text: "[[http://obsidian.md]]"
+                text: "[[http://obsidian.md]]",
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "wikilink local note.md 1 ref",
@@ -91,7 +99,9 @@ describe('DeleteLinkCommand test', () => {
                     'file1.md': [LinkData.parse('[[note.md]]')]
                 },
                 expectedShowPrompt: true,
-                expectedDeleteFile: true
+                expectedDeleteFile: true,
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "wikilink to heading",
@@ -99,7 +109,9 @@ describe('DeleteLinkCommand test', () => {
                 linkTarget: undefined,
                 backlinks: null,
                 expectedShowPrompt: false,
-                expectedDeleteFile: false
+                expectedDeleteFile: false,
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "wikilink note wo/.md extension",
@@ -109,7 +121,9 @@ describe('DeleteLinkCommand test', () => {
                     'file1.md': [LinkData.parse('[[folder 1/note 1]]')]
                 },
                 expectedShowPrompt: true,
-                expectedDeleteFile: true
+                expectedDeleteFile: true,
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "mdlink <> note wo/.md extension",
@@ -119,7 +133,9 @@ describe('DeleteLinkCommand test', () => {
                     'file1.md': [LinkData.parse('[folder 1/note 1](<folder 1/note 1>)')]
                 },
                 expectedShowPrompt: true,
-                expectedDeleteFile: true
+                expectedDeleteFile: true,
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "wikilink w/multiple backlinks different notes",
@@ -130,7 +146,9 @@ describe('DeleteLinkCommand test', () => {
                     'file2.md': [LinkData.parse('(note1)[folder 1/note 1]')]
                 },
                 expectedShowPrompt: false,
-                expectedDeleteFile: false
+                expectedDeleteFile: false,
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "wikilink w/multiple backlinks same note",
@@ -140,7 +158,9 @@ describe('DeleteLinkCommand test', () => {
                     'file1.md': [LinkData.parse('[[folder 1/note 1]]'), LinkData.parse('[[folder 1/note 1]]')],
                 },
                 expectedShowPrompt: false,
-                expectedDeleteFile: false
+                expectedDeleteFile: false,
+                deleteLinkTargetEnabled: true
+
             },
             {
                 name: "wikilink w/prompt user click 'No'",
@@ -150,10 +170,22 @@ describe('DeleteLinkCommand test', () => {
                     'file1.md': [LinkData.parse('[[folder 1/note 1]]')]
                 },
                 expectedShowPrompt: true,
-                expectedDeleteFile: false
+                expectedDeleteFile: false,
+                deleteLinkTargetEnabled: true
+            },
+            {
+                name: "wikilink w/prompt, deleteFile=OFF",
+                text: "[[folder 1/note 1]]",
+                linkTarget: 'folder 1/note 1.md',
+                backlinks: {
+                    'file1.md': [LinkData.parse('[[folder 1/note 1]]')]
+                },
+                expectedShowPrompt: false,
+                expectedDeleteFile: false,
+                deleteLinkTargetEnabled: false
             }
         ]
-    )('delete link - cursor in selection [$name] - success', ({ name, text, linkTarget, backlinks, expectedShowPrompt, expectedDeleteFile }) => {
+    )('delete link - cursor in selection [$name] - success', ({ name, text, linkTarget, backlinks, expectedShowPrompt, expectedDeleteFile, deleteLinkTargetEnabled }) => {
 
         const uiFactory = new UiFactoryMock();
         let promptModal: PromptModalMock | undefined;
@@ -172,6 +204,7 @@ describe('DeleteLinkCommand test', () => {
         });
 
         const obsidianProxy = new ObsidianProxyMock(vault, uiFactory);
+        obsidianProxy.settings.deleteOrphanedLinkTargetOnDeleteLink = !!deleteLinkTargetEnabled;
         const cmd = new DeleteLinkCommand(obsidianProxy)
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue(text)

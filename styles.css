@@ -11,3 +11,7 @@ If your plugin does not need CSS, delete this file.
     color:grey;
     font-size: smaller;
 }
+
+span.broken-link {
+    color: red !important;
+}
