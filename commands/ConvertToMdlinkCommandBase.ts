@@ -44,7 +44,11 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         if (linkData.type === LinkTypes.Autolink && linkData.destination && RegExPatterns.Email.test(linkData.destination.content)) {
             rawLinkText = `[${text}](${this.EmailScheme}${linkData.destination.content})`;
         } else {
+
             destination = encodeURI(link);
+			if (linkData.destinationType==DestinationType.Unknown&& linkData._destination instanceof TextPart &&!/.*\.md/.exec(text)) {
+				destination=destination+".md";
+			}
             if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
                 destination = `<${destination.replace(/%20/g, " ")}>`;
             }
@@ -97,6 +101,9 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
             rawLinkText = `[${text}](${this.EmailScheme}${linkData.destination.content})`;
         } else {
             destination = encodeURI(link);
+			if (linkData.destinationType==DestinationType.Unknown&& linkData._destination instanceof TextPart &&!/.*\.md/.exec(text)) {
+				destination=destination+".md";
+			}
             if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
                 destination = `<${destination.replace(/%20/g, " ")}>`;
             }
