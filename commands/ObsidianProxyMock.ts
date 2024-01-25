@@ -97,6 +97,7 @@ export class ObsidianProxyMock {
         //TODO: remove
         removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: "Delete",
 
+        deleteOrphanedLinkTargetOnDeleteLink: true,
         removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
 
         //feature flags

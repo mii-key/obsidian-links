@@ -7,6 +7,7 @@ export interface IObsidianLinksSettings {
 
 	//TODO: remove
 	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: string;
+	deleteOrphanedLinkTargetOnDeleteLink: boolean;
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction;
 	// feature flags
@@ -57,6 +58,8 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 
 	//TODO: remove
 	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: "Destination",
+
+	deleteOrphanedLinkTargetOnDeleteLink: true,
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.None,
 	//feature flags

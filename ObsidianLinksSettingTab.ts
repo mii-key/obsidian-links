@@ -27,8 +27,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 }));
 
 
-        const removeLinksFromHeadingCaptionEl = containerEl.createEl('h4', { text: 'Remove links from headings' });
-        const settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn = new Setting(containerEl)
+        containerEl.createEl('h4', { text: 'Remove links from headings' });
+        new Setting(containerEl)
             .setName('Internal wikilink without text')
             .addDropdown(dropDown =>
                 dropDown
@@ -43,10 +43,41 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     }));
 
-        // if (!this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions) {
-        //     removeLinksFromHeadingCaptionEl.hide();
-        //     settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.hide();
+
+        const deleteLinkCaptionEl = containerEl.createEl('h4', { text: 'Delete link' });
+        const settingDeleteOrphantFileOnDeleteLink = new Setting(containerEl)
+            .setName('Delete unreferenced link target')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.deleteOrphanedLinkTargetOnDeleteLink)
+                    .onChange(async (value) => {
+                        this.plugin.settings.deleteOrphanedLinkTargetOnDeleteLink = value;
+                        await this.plugin.saveSettings();
+                    })
+            });
+
+        const showDeleteOrphantLinkTargetOnDeleteLinkSetting = (show: boolean) => {
+            if (show) {
+                deleteLinkCaptionEl.show();
+                settingDeleteOrphantFileOnDeleteLink.settingEl.show();
+            } else {
+                deleteLinkCaptionEl.hide();
+                settingDeleteOrphantFileOnDeleteLink.settingEl.hide();
+            }
+        }
+
+        showDeleteOrphantLinkTargetOnDeleteLinkSetting(this.plugin.settings.ffDeleteUnreferencedLinkTarget);
+
+        // const toggleFeature1Section = (enabled: boolean) => {
+        //     if (enabled) {
+        //         feature1Settings.settingEl.show();
+        //     } else {
+        //         feature1Settings.settingEl.hide();
+        //     }
         // }
+
+        // toggleFeature1Section(this.plugin.settings.ffFeature1);
+
 
         // -- Configure context menu
         containerEl.createEl('h3', { text: 'Context menu' });
@@ -689,6 +720,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     .onChange(async (value) => {
                         this.plugin.settings.ffDeleteUnreferencedLinkTarget = value;
                         await this.plugin.saveSettings();
+                        showDeleteOrphantLinkTargetOnDeleteLinkSetting(value);
                     })
 
             });
