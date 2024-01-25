@@ -17,6 +17,8 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
+		"@codemirror/language": "^6.10.0",
+		"@codemirror/state": "^6.4.0",
 		"@types/jest": "^29.5.0",
 		"@types/node": "^16.11.6",
 		"@types/parse-filepath": "^1.0.2",

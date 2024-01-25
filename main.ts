@@ -8,6 +8,7 @@ import { DEFAULT_SETTINGS, IObsidianLinksSettings } from 'settings';
 import { ObsidianLinksSettingTab } from 'ObsidianLinksSettingTab';
 import { getContextMenuCommands, getPaletteCommands } from 'commands/Commands';
 import { UiFactory } from 'ui/UiFactory';
+// import { MarkLinkState } from 'extensions/markLinkState';
 
 export default class ObsidianLinksPlugin extends Plugin {
 	settings: IObsidianLinksSettings;
@@ -177,6 +178,9 @@ export default class ObsidianLinksPlugin extends Plugin {
 				}
 			})
 		);
+
+		//TODO: 
+		// this.registerEditorExtension(MarkLinkState);
 	}
 
 	onunload() {
