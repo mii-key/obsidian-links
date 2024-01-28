@@ -575,6 +575,14 @@ export function getSafeFilename(filename: string): string {
     return filename.replace(regex, '');
 }
 
+export function getPathWithoutHash(path: string): string {
+    const hashIdx = path.indexOf('#');
+    if (hashIdx < 0) {
+        return path;
+    }
+    return path.substring(0, hashIdx);
+}
+
 export function isAbsoluteUri(path: string): boolean {
     return new RegExp(RegExPatterns.AbsoluteUri.source, 'i').test(path);
 }

@@ -68,6 +68,30 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         showDeleteOrphantLinkTargetOnDeleteLinkSetting(this.plugin.settings.ffDeleteUnreferencedLinkTarget);
 
+        const convertToMdlinkCaptionEl = containerEl.createEl('h4', { text: 'Convert to Markdown link' });
+        const settingOnConvertToMdlinkAppendMdExtension = new Setting(containerEl)
+            .setName('Append .md extension')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.onConvertToMdlinkAppendMdExtension)
+                    .onChange(async (value) => {
+                        this.plugin.settings.onConvertToMdlinkAppendMdExtension = value;
+                        await this.plugin.saveSettings();
+                    })
+            });
+
+        const showOnConvertToMdLinkkAppendMdExtensionSetting = (show: boolean) => {
+            if (show) {
+                convertToMdlinkCaptionEl.show();
+                settingOnConvertToMdlinkAppendMdExtension.settingEl.show();
+            } else {
+                convertToMdlinkCaptionEl.hide();
+                settingOnConvertToMdlinkAppendMdExtension.settingEl.hide();
+            }
+        }
+
+        showOnConvertToMdLinkkAppendMdExtensionSetting(this.plugin.settings.ffOnConvertToMdlinkAppendMdExtension);
+
         // const toggleFeature1Section = (enabled: boolean) => {
         //     if (enabled) {
         //         feature1Settings.settingEl.show();
@@ -735,6 +759,35 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     text: 'docs'
                 }));
             featureDeleteUnreferencedTargetSettingDesc.appendText('.');
+        }
+
+        // ------------------------------------
+        // append .md extension during conversion to markdown link
+
+        new Setting(containerEl)
+            .setName("Append .md file extension")
+            .setDesc("Append .md file extension during convertion to a markdown link.")
+            .setClass("setting-item-feature1")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffOnConvertToMdlinkAppendMdExtension)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffOnConvertToMdlinkAppendMdExtension = value;
+                        await this.plugin.saveSettings();
+                        showOnConvertToMdLinkkAppendMdExtensionSetting(value);
+                    })
+            });
+
+        const featureOnConvertToMdlinkAppendMdExtensionSettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
+
+        if (featureOnConvertToMdlinkAppendMdExtensionSettingDesc) {
+            featureOnConvertToMdlinkAppendMdExtensionSettingDesc.appendText(' see ');
+            featureOnConvertToMdlinkAppendMdExtensionSettingDesc.appendChild(
+                createEl('a', {
+                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-to-mdlink-append-mdextension.md',
+                    text: 'docs'
+                }));
+            featureOnConvertToMdlinkAppendMdExtensionSettingDesc.appendText('.');
         }
     }
 }

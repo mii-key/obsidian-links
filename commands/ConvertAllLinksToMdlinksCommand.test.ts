@@ -3,6 +3,7 @@ import { expect, test } from '@jest/globals';
 import { EditorMock } from './EditorMock'
 import { ConvertAllLinksToMdlinksCommand } from './ConvertAllLinksToMdlinksCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
+import { VaultMock } from '../VaultMock';
 
 describe('ConvertAllLinksToMdlinksCommand test', () => {
 
@@ -95,7 +96,6 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     end: "<a href='google1.com'>google1</a>".length
                 }
             ],
-            cursurPos: "[google1](google.com)".length
         },
         // TODO:
         // {
@@ -117,8 +117,6 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     end: "[[google1.com|google1]]".length
                 }
             ],
-
-            cursurPos: "[google](google.com)".length
         },
         {
             name: "wikilink empty text",
@@ -135,7 +133,33 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     end: "[[google1.com]]".length
                 }
             ],
-            cursurPos: "[google.com](google.com)".length
+        },
+        {
+            name: "wikilink local mdlinkAppendMdExtension=true",
+            text: "[[folder1/note1|note1]] [[folder 1/note 1#heading 1#heading 2|heading 2]]",
+            targetFiles: [
+                {
+                    filePath: 'folder 1/note 1.md',
+                    fileExists: true
+                },
+                {
+                    filePath: 'folder1/note1.md',
+                    fileExists: true
+                }
+            ],
+            expected: [
+                {
+                    text: '[heading 2](<folder 1/note 1.md#heading 1#heading 2>)',
+                    start: "[[folder1/note1|note1]] ".length,
+                    end: "[[folder1/note1|note1]] [[folder 1/note 1#heading 1#heading 2|heading 2]]".length,
+                },
+                {
+                    text: '[note1](folder1/note1.md)',
+                    start: 0,
+                    end: "[[folder1/note1|note1]]".length,
+                }
+            ],
+            mdlinkAppendMdExtension: true
         },
         {
             name: "autolink https://",
@@ -152,7 +176,6 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     end: "<http://google.com>".length
                 }
             ],
-            cursurPos: "[Google](https://google.com)".length
         },
         {
             name: "autolink ssh://",
@@ -169,7 +192,6 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     end: "<ssh://192.168.1.1>".length
                 }
             ],
-            cursurPos: "[".length
         },
         {
             name: "autolink email",
@@ -186,20 +208,30 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     end: "<jack.smith@example1.com>".length
                 }
             ],
-            cursurPos: "[".length
         }
     ];
 
     test.each(convertData)
-        ('convert - text - success', ({ name, text, expected, cursurPos }, done) => {
+        ('convert - text -[$name] - success', ({ name, text, targetFiles, expected, mdlinkAppendMdExtension }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock();
+            vault.__mocks.exists.mockImplementation((path, cs) => {
+                if (!targetFiles) {
+                    return false;
+                }
+                const found = targetFiles.find(tf => tf.filePath === path);
+                return found ? found.fileExists : false;
+            });
+
+            const obsidianProxyMock = new ObsidianProxyMock(vault)
+            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"
             })
+
             const cmd = new ConvertAllLinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
@@ -225,12 +257,22 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         })
 
     test.each(convertData)
-        ('convert - selection - success', ({ name, text, expected, cursurPos }, done) => {
+        ('convert - selection - success', ({ name, text, targetFiles, expected }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
 
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock();
+            vault.__mocks.exists.mockImplementation((path, cs) => {
+                if (!targetFiles) {
+                    return false;
+                }
+                const found = targetFiles.find(tf => tf.filePath === path);
+                return found ? found.fileExists : false;
+            });
+
+            const obsidianProxyMock = new ObsidianProxyMock(vault)
+
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"
@@ -259,39 +301,43 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
             //
         })
 
-        const skipCodeBlockData = [
-            {
-                name: "simple block",
-                text: "Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" + 
-                "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" + 
+    const skipCodeBlockData = [
+        {
+            name: "simple block",
+            text: "Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" +
+                "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" +
                 "Ullamco ipsum in aliqua [[tempor]] excepteur et excepteur incididunt. ",
-                expected: [
-                    {
-                        text: '[tempor](tempor)',
-                        start: ("Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" + 
-                        "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" + 
+            expected: [
+                {
+                    text: '[tempor](tempor)',
+                    start: ("Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" +
+                        "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" +
                         "Ullamco ipsum in aliqua ").length,
-                        end: ("Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" + 
-                        "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" + 
+                    end: ("Est deserunt [[officia]] tempor adipisicing non. Anim anim laboris amet cillum qui do aliquip nostrud \n" +
+                        "```\nLorem nulla [[quis]] fugiat non consequat\n```\n" +
                         "Ullamco ipsum in aliqua [[tempor]]").length
-                    },
-                    {
-                        text: '[officia](officia)',
-                        start: "Est deserunt ".length,
-                        end: "Est deserunt [[officia]]".length
-                    }
-                ],
-                cursurPos: "Est deserunt [officia](officia)".length
+                },
+                {
+                    text: '[officia](officia)',
+                    start: "Est deserunt ".length,
+                    end: "Est deserunt [[officia]]".length
+                }
+            ],
+            cursurPos: "Est deserunt [officia](officia)".length
 
-            }
-        ]
+        }
+    ]
 
-        test.each(skipCodeBlockData)
+    test.each(skipCodeBlockData)
         ('convert & skip code blocks - text - success', ({ name, text, expected, cursurPos }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock();
+            vault.__mocks.exists.mockReturnValue(false);
+            const obsidianProxyMock = new ObsidianProxyMock(vault)
+            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
+
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"

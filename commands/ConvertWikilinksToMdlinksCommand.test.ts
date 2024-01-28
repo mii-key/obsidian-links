@@ -3,6 +3,7 @@ import { expect, test } from '@jest/globals';
 import { EditorMock } from './EditorMock'
 import { ConvertWikilinksToMdlinksCommand } from './ConvertWikilinksToMdlinksCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
+import { VaultMock } from '../VaultMock';
 
 
 describe('ConvertWikilinksToMdlinksCommand test', () => {
@@ -56,7 +57,13 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
 
     test.each(statusData)
         ('status - selection with $name - enabled:$expected', ({ name, text, expected }) => {
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock();
+            vault.__mocks.exists.mockReturnValue(false);
+
+            const obsidianProxyMock = new ObsidianProxyMock(vault);
+            //TODO: add tests with true value
+            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
+
             const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
@@ -113,11 +120,21 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock();
+            vault.__mocks.exists.mockReturnValue(false);
+
+            const obsidianProxyMock = new ObsidianProxyMock(vault);
+            //TODO: add tests with true value
+            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
+
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"
             })
+
+            const d = obsidianProxyMock.Vault.exists('123');
+            expect(d).toBeFalsy();
+
             const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
@@ -148,7 +165,13 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
             editor.__mocks.getSelection.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
 
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock();
+            vault.__mocks.exists.mockReturnValue(false);
+
+            const obsidianProxyMock = new ObsidianProxyMock(vault);
+            //TODO: add tests with true value
+            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
+
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"

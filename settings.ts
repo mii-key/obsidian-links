@@ -10,6 +10,8 @@ export interface IObsidianLinksSettings {
 	deleteOrphanedLinkTargetOnDeleteLink: boolean;
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction;
+	onConvertToMdlinkAppendMdExtension: boolean;
+
 	// feature flags
 	ffReplaceLink: boolean;
 	ffExtractSection: boolean;
@@ -19,6 +21,7 @@ export interface IObsidianLinksSettings {
 	ffConvertLinkToHtmllink: boolean;
 	ffObsidianUrlSupport: boolean;
 	ffDeleteUnreferencedLinkTarget: boolean;
+	ffOnConvertToMdlinkAppendMdExtension: boolean;
 
 	//context menu
 	contexMenu: {
@@ -46,10 +49,8 @@ export interface IObsidianLinksSettings {
 		wrapNoteInFolder: boolean;
 		copyLinkToClipboard: boolean;
 		cutLinkToClipboard: boolean;
-
 	}
 }
-
 
 export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	linkReplacements: [],
@@ -62,6 +63,9 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	deleteOrphanedLinkTargetOnDeleteLink: true,
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.None,
+	onConvertToMdlinkAppendMdExtension: false,
+
+
 	//feature flags
 	ffReplaceLink: false,
 	ffExtractSection: false,
@@ -71,6 +75,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffConvertLinkToHtmllink: false,
 	ffObsidianUrlSupport: false,
 	ffDeleteUnreferencedLinkTarget: false,
+	ffOnConvertToMdlinkAppendMdExtension: false,
 
 	//context menu
 	contexMenu: {

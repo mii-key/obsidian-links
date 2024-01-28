@@ -3,6 +3,7 @@ import { expect, test } from '@jest/globals';
 import { EditorMock } from './EditorMock'
 import { ConvertLinkToMdlinkCommand } from './ConvertLinkToMdlinkCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
+import { VaultMock } from '../VaultMock';
 
 describe('ConvertLinkToMdlinkCommand test', () => {
     test.each(
@@ -159,18 +160,82 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 expected: '[](irc://google.com)',
                 cursurPos: "[".length
             },
+            {
+                name: "wikilink local wo/ext file-!exists mdlinkAppendMdExtension=true",
+                text: "[[folder1/note1|note 1]]",
+                expected: '[note 1](folder1/note1.md)',
+                cursurPos: "[note 1](folder1/note1.md)".length,
+                filePath: 'folder1/note1.md',
+                fileExists: true,
+                mdlinkAppendMdExtension: true
+
+            },
+            //TODO:
+            // {
+            //     name: "wikilink local wo/ext w/# file-!exists mdlinkAppendMdExtension=true",
+            //     text: "[[folder1/note1#heading1|note 1]]",
+            //     expected: '[note 1](folder1/note1.md#heading1)',
+            //     cursurPos: "[note 1](folder1/note1.md#heading1)".length,
+            //     filePath: 'folder1/note1.md',
+            //     fileExists: true,
+            //     mdlinkAppendMdExtension: true
+            // },
+            // {
+            //     name: "wikilink local wo/ext w/# file-!exists mdlinkAppendMdExtension=true",
+            //     text: "[[folder1/note1#heading1|note 1]]",
+            //     expected: '[note 1](folder1/note1#heading1)',
+            //     cursurPos: "[note 1](folder1/note1#heading1)".length,
+            //     filePath: 'folder1/note1',
+            //     fileExists: true,
+            //     mdlinkAppendMdExtension: true
+            // },
+            {
+                name: "wikilink local wo/ext file-!exists mdlinkAppendMdExtension=false",
+                text: "[[folder1/note1|note 1]]",
+                expected: '[note 1](folder1/note1)',
+                cursurPos: "[note 1](folder1/note1)".length,
+                filePath: 'folder1/note1',
+                fileExists: false,
+                mdlinkAppendMdExtension: false
+            },
+            //TODO:
+            // {
+            //     name: "wikilink local wo/ext file-exists mdlinkAppendMdExtension=true",
+            //     text: "[[folder1/note1|note 1]]",
+            //     expected: '[note 1](folder1/note1)',
+            //     cursurPos: "[note 1](folder1/note1)".length,
+            //     filePath: 'folder1/note1',
+            //     fileExists: true,
+            //     mdlinkAppendMdExtension: true
+
+            // },
+            {
+                name: "wikilink local w/ext file-!exists mdlinkAppendMdExtension=true",
+                text: "[[folder1/note1.dat|note 1]]",
+                expected: '[note 1](folder1/note1.dat)',
+                cursurPos: "[note 1](folder1/note1.dat)".length,
+                filePath: 'folder1/note1.dat',
+                fileExists: false,
+                mdlinkAppendMdExtension: true
+            },
         ]
     )
-        ('convert - cursor on [$name] - success', ({ name, text, expected, cursurPos }, done) => {
+        ('convert - cursor on [$name] - success', ({ name, text, expected, cursurPos, filePath, fileExists, mdlinkAppendMdExtension }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
 
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock();
+            vault.__mocks.exists.mockImplementation((p, cs) => p === filePath ? !!fileExists : false);
+
+            const obsidianProxyMock = new ObsidianProxyMock(vault);
+
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"
             })
+            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
+
             const cmd = new ConvertLinkToMdlinkCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
                     done(err)
