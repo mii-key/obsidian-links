@@ -3,6 +3,7 @@ import { expect, test } from '@jest/globals';
 import { EditorMock } from './EditorMock'
 import { ConvertHtmlLinksToMdlinksCommand } from './ConvertHtmlLinksToMdlinksCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
+import { VaultMock } from '../VaultMock';
 
 describe('ConvertHtmlLinksToMdlinksCommand test', () => {
 
@@ -94,7 +95,7 @@ describe('ConvertHtmlLinksToMdlinksCommand test', () => {
         },
         {
             name: "html links + other links",
-            text:  "deserunt <a href=\"http://commodo\">cupidatat</a> ex <a href=\"https://quis\">in</a> Lorem eu nisi eu." +
+            text: "deserunt <a href=\"http://commodo\">cupidatat</a> ex <a href=\"https://quis\">in</a> Lorem eu nisi eu." +
                 "Commodo sint <https://cupidatat> elit Lorem veniam culpa <cupidatat@occaecat.com> reprehenderit ad incididunt labore fugiat incididunt. Velit labore officia " +
                 "Consectetur [[cillum]] magna sint laboris [[elit|elit text]] nisi. Sint aliqua esse duis consequat." +
                 "sint [labore](Esse) enim ipsum tempor [mollit](https://hello.com) laborum mollit nostrud magna excepteur aute quis. Eiusmod adipisicing velit ",
@@ -111,7 +112,6 @@ describe('ConvertHtmlLinksToMdlinksCommand test', () => {
                 }
             ]
         },
-
     ];
 
     test.each(convertData)
@@ -154,7 +154,8 @@ describe('ConvertHtmlLinksToMdlinksCommand test', () => {
             editor.__mocks.getSelection.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
 
-            const obsidianProxyMock = new ObsidianProxyMock()
+            const vault = new VaultMock();
+            const obsidianProxyMock = new ObsidianProxyMock(vault)
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>URL text</title>"
