@@ -227,6 +227,11 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 fileExists: false,
                 mdlinkAppendMdExtension: true
             },
+            //TODO: 
+            // - #header1#header2
+            // - #header 1
+            // - #header 1#header 2
+
         ]
     )
         ('convert - cursor on [$name] - success', ({ name, text, expected, cursurPos, filePath, fileExists, mdlinkAppendMdExtension }, done) => {
