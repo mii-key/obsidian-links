@@ -218,6 +218,15 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 fileExists: false,
                 mdlinkAppendMdExtension: true
             },
+            {
+                name: "wikilink header mdlinkAppendMdExtension=true",
+                text: "[[#header1|some text]]",
+                expected: '[some text](#header1)',
+                cursurPos: "[some text](#header1)".length,
+                filePath: undefined,
+                fileExists: false,
+                mdlinkAppendMdExtension: true
+            },
         ]
     )
         ('convert - cursor on [$name] - success', ({ name, text, expected, cursurPos, filePath, fileExists, mdlinkAppendMdExtension }, done) => {
