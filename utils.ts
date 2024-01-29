@@ -587,6 +587,10 @@ export function isAbsoluteUri(path: string): boolean {
     return new RegExp(RegExPatterns.AbsoluteUri.source, 'i').test(path);
 }
 
+export function isLinkToFragment(path: string): boolean {
+    return path[0] === '#';
+}
+
 export function isAbsoluteFilePath(path: string) {
     return new RegExp(RegExPatterns.AbsoluteFilePathCheck.source, 'i').test(path);
 }
