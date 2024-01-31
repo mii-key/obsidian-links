@@ -136,18 +136,13 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         },
         {
             name: "wikilink local mdlinkAppendMdExtension=true",
-            text: "[[folder1/note1|note1]] [[folder 1/note 1#heading 1#heading 2|heading 2]]",
-            targetFiles: [
-                {
-                    filePath: 'folder 1/note 1.md',
-                    fileExists: true
-                },
-                {
-                    filePath: 'folder1/note1.md',
-                    fileExists: true
-                }
-            ],
+            text: "[[folder1/note1|note1]] [[folder 1/note 1#heading 1#heading 2|heading 2]] [[#heading 1#heading 2|heading 2]]",
             expected: [
+                {
+                    text: '[heading 2](<#heading 1#heading 2>)',
+                    start: "[[folder1/note1|note1]] [[folder 1/note 1#heading 1#heading 2|heading 2]] ".length,
+                    end: "[[folder1/note1|note1]] [[folder 1/note 1#heading 1#heading 2|heading 2]] [[#heading 1#heading 2|heading 2]]".length,
+                },
                 {
                     text: '[heading 2](<folder 1/note 1.md#heading 1#heading 2>)',
                     start: "[[folder1/note1|note1]] ".length,
@@ -212,20 +207,11 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
     ];
 
     test.each(convertData)
-        ('convert - text -[$name] - success', ({ name, text, targetFiles, expected, mdlinkAppendMdExtension }, done) => {
+        ('convert - text -[$name] - success', ({ name, text, expected, mdlinkAppendMdExtension }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
-            const vault = new VaultMock();
-            vault.__mocks.exists.mockImplementation((path, cs) => {
-                if (!targetFiles) {
-                    return false;
-                }
-                const found = targetFiles.find(tf => tf.filePath === path);
-                return found ? found.fileExists : false;
-            });
-
-            const obsidianProxyMock = new ObsidianProxyMock(vault)
+            const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
@@ -257,21 +243,12 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         })
 
     test.each(convertData)
-        ('convert - selection - success', ({ name, text, targetFiles, expected }, done) => {
+        ('convert - selection - success', ({ name, text, expected }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
 
-            const vault = new VaultMock();
-            vault.__mocks.exists.mockImplementation((path, cs) => {
-                if (!targetFiles) {
-                    return false;
-                }
-                const found = targetFiles.find(tf => tf.filePath === path);
-                return found ? found.fileExists : false;
-            });
-
-            const obsidianProxyMock = new ObsidianProxyMock(vault)
+            const obsidianProxyMock = new ObsidianProxyMock();
 
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,

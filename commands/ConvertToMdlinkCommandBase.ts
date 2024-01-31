@@ -43,9 +43,9 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         } else {
             if (this.obsidianProxy.settings.ffOnConvertToMdlinkAppendMdExtension
                 && this.obsidianProxy.settings.onConvertToMdlinkAppendMdExtension
-                && !isAbsoluteUri(destination) && !isAbsoluteFilePath(destination)
                 && !isSectionLink(destination)
-                //&& !this.obsidianProxy.Vault.exists(getPathWithoutHash(destination))
+                && !isAbsoluteUri(destination)
+                && !isAbsoluteFilePath(destination)
             ) {
                 const extRegEx = /(.*?)(\.([^*"\/\<>:|\?]*?))?(#.*)?$/;
                 const match = extRegEx.exec(destination);

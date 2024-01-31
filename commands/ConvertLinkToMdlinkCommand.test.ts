@@ -101,6 +101,7 @@ describe('ConvertLinkToMdlinkCommand test', () => {
 
     test.each(
         [
+            // HTML link
             {
                 name: "html - href in '",
                 text: "<a href='google.com'>google1</a>",
@@ -112,6 +113,8 @@ describe('ConvertLinkToMdlinkCommand test', () => {
             //     name: "html - href in \"",
             //     text: "<a href=\"google.com\">google1</a>"
             // },
+
+            // wiki link
             {
                 name: "wikilink",
                 text: "[[google.com|google]]",
@@ -124,6 +127,58 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 expected: '[google.com](google.com)',
                 cursurPos: "[google.com](google.com)".length
             },
+            {
+                name: "wikilink local wo/ext file-!exists mdlinkAppendMdExtension=true",
+                text: "[[folder1/note1|note 1]]",
+                expected: '[note 1](folder1/note1.md)',
+                cursurPos: "[note 1](folder1/note1.md)".length,
+                mdlinkAppendMdExtension: true
+
+            },
+            {
+                name: "wikilink local wo/ext file-!exists mdlinkAppendMdExtension=false",
+                text: "[[folder1/note1|note 1]]",
+                expected: '[note 1](folder1/note1)',
+                cursurPos: "[note 1](folder1/note1)".length,
+                mdlinkAppendMdExtension: false
+            },
+            {
+                name: "wikilink local w/ext file-!exists mdlinkAppendMdExtension=true",
+                text: "[[folder1/note1.dat|note 1]]",
+                expected: '[note 1](folder1/note1.dat)',
+                cursurPos: "[note 1](folder1/note1.dat)".length,
+                mdlinkAppendMdExtension: true
+            },
+            {
+                name: "wikilink #header1 mdlinkAppendMdExtension=true",
+                text: "[[#header1|some text]]",
+                expected: '[some text](#header1)',
+                cursurPos: "[some text](#header1)".length,
+                mdlinkAppendMdExtension: true
+            },
+            {
+                name: "wikilink #header1#header2 mdlinkAppendMdExtension=true",
+                text: "[[#header1#header2|some text]]",
+                expected: '[some text](#header1#header2)',
+                cursurPos: "[some text](#header1#header2)".length,
+                mdlinkAppendMdExtension: true
+            },
+            {
+                name: "wikilink #header 1 mdlinkAppendMdExtension=true",
+                text: "[[#header 1|some text]]",
+                expected: '[some text](<#header 1>)',
+                cursurPos: "[some text](<#header 1>)".length,
+                mdlinkAppendMdExtension: true
+            },
+            {
+                name: "wikilink #header 1#header 2 mdlinkAppendMdExtension=true",
+                text: "[[#header 1#header 2|some text]]",
+                expected: '[some text](<#header 1#header 2>)',
+                cursurPos: "[some text](<#header 1#header 2>)".length,
+                mdlinkAppendMdExtension: true
+            },
+
+            // autolink
             {
                 name: "autolink https://",
                 text: "<https://google.com>",
@@ -142,6 +197,8 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 expected: '[](mailto:jack.smith@example.com)',
                 cursurPos: "[".length
             },
+
+            // URL
             {
                 name: "url http",
                 text: "http://google.com",
@@ -160,89 +217,14 @@ describe('ConvertLinkToMdlinkCommand test', () => {
                 expected: '[](irc://google.com)',
                 cursurPos: "[".length
             },
-            {
-                name: "wikilink local wo/ext file-!exists mdlinkAppendMdExtension=true",
-                text: "[[folder1/note1|note 1]]",
-                expected: '[note 1](folder1/note1.md)',
-                cursurPos: "[note 1](folder1/note1.md)".length,
-                filePath: 'folder1/note1.md',
-                fileExists: true,
-                mdlinkAppendMdExtension: true
-
-            },
-            //TODO:
-            // {
-            //     name: "wikilink local wo/ext w/# file-!exists mdlinkAppendMdExtension=true",
-            //     text: "[[folder1/note1#heading1|note 1]]",
-            //     expected: '[note 1](folder1/note1.md#heading1)',
-            //     cursurPos: "[note 1](folder1/note1.md#heading1)".length,
-            //     filePath: 'folder1/note1.md',
-            //     fileExists: true,
-            //     mdlinkAppendMdExtension: true
-            // },
-            // {
-            //     name: "wikilink local wo/ext w/# file-!exists mdlinkAppendMdExtension=true",
-            //     text: "[[folder1/note1#heading1|note 1]]",
-            //     expected: '[note 1](folder1/note1#heading1)',
-            //     cursurPos: "[note 1](folder1/note1#heading1)".length,
-            //     filePath: 'folder1/note1',
-            //     fileExists: true,
-            //     mdlinkAppendMdExtension: true
-            // },
-            {
-                name: "wikilink local wo/ext file-!exists mdlinkAppendMdExtension=false",
-                text: "[[folder1/note1|note 1]]",
-                expected: '[note 1](folder1/note1)',
-                cursurPos: "[note 1](folder1/note1)".length,
-                filePath: 'folder1/note1',
-                fileExists: false,
-                mdlinkAppendMdExtension: false
-            },
-            //TODO:
-            // {
-            //     name: "wikilink local wo/ext file-exists mdlinkAppendMdExtension=true",
-            //     text: "[[folder1/note1|note 1]]",
-            //     expected: '[note 1](folder1/note1)',
-            //     cursurPos: "[note 1](folder1/note1)".length,
-            //     filePath: 'folder1/note1',
-            //     fileExists: true,
-            //     mdlinkAppendMdExtension: true
-
-            // },
-            {
-                name: "wikilink local w/ext file-!exists mdlinkAppendMdExtension=true",
-                text: "[[folder1/note1.dat|note 1]]",
-                expected: '[note 1](folder1/note1.dat)',
-                cursurPos: "[note 1](folder1/note1.dat)".length,
-                filePath: 'folder1/note1.dat',
-                fileExists: false,
-                mdlinkAppendMdExtension: true
-            },
-            {
-                name: "wikilink header mdlinkAppendMdExtension=true",
-                text: "[[#header1|some text]]",
-                expected: '[some text](#header1)',
-                cursurPos: "[some text](#header1)".length,
-                filePath: undefined,
-                fileExists: false,
-                mdlinkAppendMdExtension: true
-            },
-            //TODO: 
-            // - #header1#header2
-            // - #header 1
-            // - #header 1#header 2
-
         ]
     )
-        ('convert - cursor on [$name] - success', ({ name, text, expected, cursurPos, filePath, fileExists, mdlinkAppendMdExtension }, done) => {
+        ('convert - cursor on [$name] - success', ({ name, text, expected, cursurPos, mdlinkAppendMdExtension }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
 
-            const vault = new VaultMock();
-            vault.__mocks.exists.mockImplementation((p, cs) => p === filePath ? !!fileExists : false);
-
-            const obsidianProxyMock = new ObsidianProxyMock(vault);
+            const obsidianProxyMock = new ObsidianProxyMock();
 
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
