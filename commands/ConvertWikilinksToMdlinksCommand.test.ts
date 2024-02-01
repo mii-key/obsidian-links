@@ -61,7 +61,6 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
             vault.__mocks.exists.mockReturnValue(false);
 
             const obsidianProxyMock = new ObsidianProxyMock(vault);
-            //TODO: add tests with true value
             obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
 
             const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
