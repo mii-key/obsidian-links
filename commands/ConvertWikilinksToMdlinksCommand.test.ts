@@ -61,7 +61,6 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
             vault.__mocks.exists.mockReturnValue(false);
 
             const obsidianProxyMock = new ObsidianProxyMock(vault);
-            //TODO: add tests with true value
             obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
 
             const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
@@ -80,17 +79,44 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
     const convertData = [
         {
             name: "wikilink",
-            text: "Consectetur [[cillum]] magna sint laboris [[elit|elit text]] nisi laborum. Sint aliqua esse duis consequat.",
+            text: "Consectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. [[#Sint se|aliqua]] esse duis consequat.",
             expected: [
                 {
-                    text: '[elit text](elit)',
-                    start: "Consectetur [[cillum]] magna sint laboris ".length,
-                    end: "Consectetur [[cillum]] magna sint laboris [[elit|elit text]]".length
+                    text: '[aliqua](<#Sint se>)',
+                    start: "Consectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. ".length,
+                    end: "Consectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. [[#Sint se|aliqua]]".length
                 },
                 {
-                    text: '[cillum](cillum)',
+                    text: '[elit text](elit)',
+                    start: "Consectetur [[cillum#heading 1]] magna sint laboris ".length,
+                    end: "Consectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]]".length
+                },
+                {
+                    text: '[cillum#heading 1](<cillum#heading 1>)',
                     start: "Consectetur ".length,
-                    end: "Consectetur [[cillum]]".length
+                    end: "Consectetur [[cillum#heading 1]]".length
+                }
+            ]
+        },
+        {
+            name: "wikilink mdlinkAppendMdExtension=true",
+            text: "Consectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. [[#Sint se|aliqua]] esse duis consequat.",
+            mdlinkAppendMdExtension: true,
+            expected: [
+                {
+                    text: '[aliqua](<#Sint se>)',
+                    start: "Consectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. ".length,
+                    end: "Consectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. [[#Sint se|aliqua]]".length
+                },
+                {
+                    text: '[elit text](elit.md)',
+                    start: "Consectetur [[cillum#heading 1]] magna sint laboris ".length,
+                    end: "Consectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]]".length
+                },
+                {
+                    text: '[cillum#heading 1](<cillum.md#heading 1>)',
+                    start: "Consectetur ".length,
+                    end: "Consectetur [[cillum#heading 1]]".length
                 }
             ]
         },
@@ -116,24 +142,17 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
         },
     ];
     test.each(convertData)
-        ('convert wiki links - text with $name - success', ({ name, text, expected }, done) => {
+        ('convert wiki links - text with $name - success', ({ name, text, mdlinkAppendMdExtension, expected }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
 
-            const vault = new VaultMock();
-            vault.__mocks.exists.mockReturnValue(false);
-
-            const obsidianProxyMock = new ObsidianProxyMock(vault);
-            //TODO: add tests with true value
-            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
+            const obsidianProxyMock = new ObsidianProxyMock();
+            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
 
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,
                 text: "<title>Google</title>"
             })
-
-            const d = obsidianProxyMock.Vault.exists('123');
-            expect(d).toBeFalsy();
 
             const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
                 if (err) {
@@ -160,17 +179,13 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
         })
 
     test.each(convertData)
-        ('convert wiki links - selection with $name - success', ({ name, text, expected }, done) => {
+        ('convert wiki links - selection with $name - success', ({ name, text, mdlinkAppendMdExtension, expected }, done) => {
             const editor = new EditorMock()
             editor.__mocks.getSelection.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
 
-            const vault = new VaultMock();
-            vault.__mocks.exists.mockReturnValue(false);
-
-            const obsidianProxyMock = new ObsidianProxyMock(vault);
-            //TODO: add tests with true value
-            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
+            const obsidianProxyMock = new ObsidianProxyMock();
+            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
 
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
                 status: 200,

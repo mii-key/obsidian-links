@@ -1,4 +1,4 @@
-import { LinkData, LinkTypes, getPageTitle, getPathWithoutHash, getSafeFilename, isAbsoluteFilePath, isAbsoluteUri, isLinkToFragment } from "../utils";
+import { LinkData, LinkTypes, getPageTitle, getPathWithoutHash, getSafeFilename, isAbsoluteFilePath, isAbsoluteUri, isSectionLink } from "../utils";
 import { Editor } from "obsidian";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
@@ -43,9 +43,9 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         } else {
             if (this.obsidianProxy.settings.ffOnConvertToMdlinkAppendMdExtension
                 && this.obsidianProxy.settings.onConvertToMdlinkAppendMdExtension
-                && !isAbsoluteUri(destination) && !isAbsoluteFilePath(destination)
-                && !isLinkToFragment(destination)
-                //&& !this.obsidianProxy.Vault.exists(getPathWithoutHash(destination))
+                && !isSectionLink(destination)
+                && !isAbsoluteUri(destination)
+                && !isAbsoluteFilePath(destination)
             ) {
                 const extRegEx = /(.*?)(\.([^*"\/\<>:|\?]*?))?(#.*)?$/;
                 const match = extRegEx.exec(destination);

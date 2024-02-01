@@ -587,7 +587,7 @@ export function isAbsoluteUri(path: string): boolean {
     return new RegExp(RegExPatterns.AbsoluteUri.source, 'i').test(path);
 }
 
-export function isLinkToFragment(path: string): boolean {
+export function isSectionLink(path: string): boolean {
     return path[0] === '#';
 }
 
