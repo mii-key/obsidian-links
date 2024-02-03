@@ -1,10 +1,10 @@
 ## Delete link
 
 > [!NOTE] 
-> Insider feature. Enable in settings.
+> Early access feature. Enable in settings.
 
 
-If the target file for the deleted link is unreferenced (i.e. orphaned) the prompt to delete the file is displayed.
+If the target file for the deleted link is unreferenced the prompt to delete the file is displayed.
 
 Configure this feature in the plugin settings:
 
