@@ -204,7 +204,7 @@ describe('DeleteLinkCommand test', () => {
         });
 
         const obsidianProxy = new ObsidianProxyMock(vault, uiFactory);
-        obsidianProxy.settings.deleteOrphanedLinkTargetOnDeleteLink = !!deleteLinkTargetEnabled;
+        obsidianProxy.settings.deleteUnreferencedLinkTarget = !!deleteLinkTargetEnabled;
         const cmd = new DeleteLinkCommand(obsidianProxy)
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue(text)

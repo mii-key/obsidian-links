@@ -7,7 +7,7 @@ export interface IObsidianLinksSettings {
 
 	//TODO: remove
 	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: string;
-	deleteOrphanedLinkTargetOnDeleteLink: boolean;
+	deleteUnreferencedLinkTarget: boolean;
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction;
 	onConvertToMdlinkAppendMdExtension: boolean;
@@ -20,7 +20,6 @@ export interface IObsidianLinksSettings {
 	ffConvertLinksInFolder: boolean;
 	ffConvertLinkToHtmllink: boolean;
 	ffObsidianUrlSupport: boolean;
-	ffDeleteUnreferencedLinkTarget: boolean;
 	ffOnConvertToMdlinkAppendMdExtension: boolean;
 
 	//context menu
@@ -60,7 +59,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	//TODO: remove
 	removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: "Destination",
 
-	deleteOrphanedLinkTargetOnDeleteLink: true,
+	deleteUnreferencedLinkTarget: true,
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.None,
 	onConvertToMdlinkAppendMdExtension: false,
@@ -74,7 +73,6 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffConvertLinksInFolder: false,
 	ffConvertLinkToHtmllink: false,
 	ffObsidianUrlSupport: false,
-	ffDeleteUnreferencedLinkTarget: false,
 	ffOnConvertToMdlinkAppendMdExtension: false,
 
 	//context menu

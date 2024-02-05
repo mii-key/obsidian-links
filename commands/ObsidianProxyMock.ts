@@ -97,7 +97,7 @@ export class ObsidianProxyMock {
         //TODO: remove
         removeLinksFromHeadingsInternalWikilinkWithoutTextReplacement: "Delete",
 
-        deleteOrphanedLinkTargetOnDeleteLink: true,
+        deleteUnreferencedLinkTarget: true,
         removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
         onConvertToMdlinkAppendMdExtension: true,
 
@@ -109,7 +109,6 @@ export class ObsidianProxyMock {
         ffConvertLinksInFolder: true,
         ffConvertLinkToHtmllink: true,
         ffObsidianUrlSupport: true,
-        ffDeleteUnreferencedLinkTarget: true,
         ffOnConvertToMdlinkAppendMdExtension: true,
 
         //context menu
