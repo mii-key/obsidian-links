@@ -43,8 +43,7 @@ export class DeleteLinkCommand extends CommandBase {
 
 		const destination = linkData.destination?.content;
 		try {
-			if (this.obsidianProxy.settings.ffDeleteUnreferencedLinkTarget
-				&& this.obsidianProxy.settings.deleteOrphanedLinkTargetOnDeleteLink
+			if (this.obsidianProxy.settings.deleteUnreferencedLinkTarget
 				&& destination !== undefined
 				&& !isAbsoluteUri(destination)
 				&& !isAbsoluteFilePath(destination)) {
