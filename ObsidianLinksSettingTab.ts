@@ -44,29 +44,17 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     }));
 
 
-        const deleteLinkCaptionEl = containerEl.createEl('h4', { text: 'Delete link' });
-        const settingDeleteOrphantFileOnDeleteLink = new Setting(containerEl)
+        containerEl.createEl('h4', { text: 'Delete link' });
+        new Setting(containerEl)
             .setName('Delete unreferenced link target')
             .addToggle((toggle) => {
                 toggle
-                    .setValue(this.plugin.settings.deleteOrphanedLinkTargetOnDeleteLink)
+                    .setValue(this.plugin.settings.deleteUnreferencedLinkTarget)
                     .onChange(async (value) => {
-                        this.plugin.settings.deleteOrphanedLinkTargetOnDeleteLink = value;
+                        this.plugin.settings.deleteUnreferencedLinkTarget = value;
                         await this.plugin.saveSettings();
                     })
             });
-
-        const showDeleteOrphantLinkTargetOnDeleteLinkSetting = (show: boolean) => {
-            if (show) {
-                deleteLinkCaptionEl.show();
-                settingDeleteOrphantFileOnDeleteLink.settingEl.show();
-            } else {
-                deleteLinkCaptionEl.hide();
-                settingDeleteOrphantFileOnDeleteLink.settingEl.hide();
-            }
-        }
-
-        showDeleteOrphantLinkTargetOnDeleteLinkSetting(this.plugin.settings.ffDeleteUnreferencedLinkTarget);
 
         const convertToMdlinkCaptionEl = containerEl.createEl('h4', { text: 'Convert to Markdown link' });
         const settingOnConvertToMdlinkAppendMdExtension = new Setting(containerEl)
@@ -498,34 +486,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // }
         // ----------
 
-        // ------------------------------------
-        // delete unreferenced link target on delete link
 
-        new Setting(containerEl)
-            .setName("Delete unreferenced link target")
-            .setDesc("")
-            .setClass("setting-item-feature-delete-unreferenced-target")
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.ffDeleteUnreferencedLinkTarget)
-                    .onChange(async (value) => {
-                        this.plugin.settings.ffDeleteUnreferencedLinkTarget = value;
-                        await this.plugin.saveSettings();
-                        showDeleteOrphantLinkTargetOnDeleteLinkSetting(value);
-                    })
-            });
-
-        const featureDeleteUnreferencedTargetSettingDesc = containerEl.querySelector(".setting-item-feature-delete-unreferenced-target .setting-item-description");
-
-        if (featureDeleteUnreferencedTargetSettingDesc) {
-            featureDeleteUnreferencedTargetSettingDesc.appendText(' see ');
-            featureDeleteUnreferencedTargetSettingDesc.appendChild(
-                createEl('a', {
-                    href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature-delete-unreferenced-file.md',
-                    text: 'docs'
-                }));
-            featureDeleteUnreferencedTargetSettingDesc.appendText('.');
-        }
 
         // ----------------------------------------------
         // --            Insider features              --

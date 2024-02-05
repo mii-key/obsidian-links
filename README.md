@@ -61,6 +61,11 @@ Unlink single link or all links in a selection.
 - Command palette: **Delete link**
 - Context menu: **Delete**
 
+
+If the target file for the deleted link is unreferenced the prompt to delete the file is displayed.
+Configure this feature in the plugin settings:
+![delete unreferenced link target on delete link](/docs/img/delete-unreferenced-link-target-on-delete-link-setting.png)
+
 <details>
 <summary>Demo. Wikilink</summary>
 
@@ -81,6 +86,11 @@ Unlink single link or all links in a selection.
 ![delete link](docs/img/delete-autolink.gif)
 
 </details>
+
+
+
+
+
 
 ## Convert wikilink or html link to markdown link
 
