@@ -11,6 +11,7 @@ export interface IObsidianLinksSettings {
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction;
 	onConvertToMdlinkAppendMdExtension: boolean;
+	autoselectWordOnCreateLinkFromClipboard: boolean;
 
 	// feature flags
 	ffReplaceLink: boolean;
@@ -21,6 +22,7 @@ export interface IObsidianLinksSettings {
 	ffConvertLinkToHtmllink: boolean;
 	ffObsidianUrlSupport: boolean;
 	ffOnConvertToMdlinkAppendMdExtension: boolean;
+	ffAutoselectWordOnCreateLinkFromClipboard: boolean;
 
 	//context menu
 	contexMenu: {
@@ -63,7 +65,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.None,
 	onConvertToMdlinkAppendMdExtension: false,
-
+	autoselectWordOnCreateLinkFromClipboard: false,
 
 	//feature flags
 	ffReplaceLink: false,
@@ -74,6 +76,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffConvertLinkToHtmllink: false,
 	ffObsidianUrlSupport: false,
 	ffOnConvertToMdlinkAppendMdExtension: false,
+	ffAutoselectWordOnCreateLinkFromClipboard: false,
 
 	//context menu
 	contexMenu: {

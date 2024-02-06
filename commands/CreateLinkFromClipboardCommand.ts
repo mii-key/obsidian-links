@@ -44,7 +44,7 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 			const clipboardText = await this.obsidianProxy.clipboardReadText();
 			const links = findLinks(clipboardText, LinkTypes.All)
 
-			let linkDestination: string = ""
+			let linkDestination = "";
 			if (links.length) {
 				const link = links[0];
 				if (this.obsidianProxy.settings.ffObsidianUrlSupport && (link.type & LinkTypes.ObsidianUrl) === LinkTypes.ObsidianUrl) {
@@ -66,7 +66,33 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 
 			let linkText = linkDestination;
 
-			const selection = editor.getSelection();
+
+			let selection = editor.getSelection();
+
+			if (!selection
+				&& this.obsidianProxy.settings.ffAutoselectWordOnCreateLinkFromClipboard
+				&& this.obsidianProxy.settings.autoselectWordOnCreateLinkFromClipboard) {
+				const cursorOffset = editor.posToOffset(editor.getCursor('from'));
+				const text = editor.getValue();
+				const stopChar = new Set<string>([' ', '\t', '(', ')', '{', '}', '[', ']', '.', ',']);
+				if (!stopChar.has(text[cursorOffset])) {
+					let leftIdx = cursorOffset;
+					while (--leftIdx > 0 && !stopChar.has(text[leftIdx]));
+					if (++leftIdx < 0) {
+						leftIdx = 0;
+					}
+
+					let rightIdx = cursorOffset;
+					while (++rightIdx < text.length && !stopChar.has(text[rightIdx]));
+
+					if (leftIdx < rightIdx) {
+						editor.setSelection(editor.offsetToPos(leftIdx), editor.offsetToPos(rightIdx));
+						selection = text.substring(leftIdx, rightIdx);
+					}
+				}
+			}
+
+
 			let isUrl = false;
 
 			if (selection.length == 0 && httpUrlRegEx.test(linkDestination)) {

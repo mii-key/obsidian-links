@@ -5,6 +5,7 @@ import { CreateLinkFromClipboardCommand } from './CreateLinkFromClipboardCommand
 import { ObsidianProxyMock } from './ObsidianProxyMock';
 import exp from 'constants';
 import { VaultMock } from './../VaultMock';
+import { EditorPosition } from 'obsidian';
 
 describe('CreateLinkFromClipboardCommand test', () => {
 
@@ -173,6 +174,73 @@ describe('CreateLinkFromClipboardCommand test', () => {
             //
         })
 
+    test.each(
+        [
+            {
+                name: "no selection, text in clipboard",
+                text: "Ea non laboris ut magna amet laborum",
+                cursorPos: "Ea non labo".length,
+                expectedSelectionStart: "Ea non ".length,
+                expectedSelectionEnd: "Ea non laboris".length,
+                clipboard: "some-text",
+                expected: '[laboris](some-text)'
+            },
+        ]
+    )
+        ('create link - selectWordUnderCursor - $name - success', ({ name, text, cursorPos, expectedSelectionStart, expectedSelectionEnd, clipboard, expected }, done) => {
+            const editor = new EditorMock();
 
+            editor.__mocks.getValue.mockReturnValue(text);
+            let currentCursorPos = cursorPos;
+            let currentSelection = '';
+            editor.__mocks.getSelection.mockImplementation(() => currentSelection);
+
+            editor.__mocks.getCursor.mockImplementation((pos?: string) => {
+                switch (pos) {
+                    case 'from':
+                        return { line: 0, ch: currentCursorPos }
+                    case 'to':
+                        return { line: 0, ch: currentCursorPos + currentSelection.length }
+                }
+            });
+            editor.__mocks.setSelection.mockImplementation((anchor: EditorPosition, head?: EditorPosition) => {
+                currentCursorPos = anchor.ch
+                currentSelection = text.substring(anchor.ch, head?.ch);
+            });
+
+            const vault = new VaultMock()
+            vault.__mocks.getName.mockReturnValue('defaultVault')
+            const obsidianProxyMock = new ObsidianProxyMock(vault)
+            obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
+                status: 200,
+                text: "<title>Google</title>"
+            })
+            obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
+            obsidianProxyMock.settings.autoselectWordOnCreateLinkFromClipboard = true;
+
+            const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+                if (err) {
+                    done(err)
+                    return
+                }
+                try {
+                    expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
+                    expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
+                    expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(expectedSelectionStart)
+                    expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(expectedSelectionEnd)
+
+                    expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
+                    expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(expectedSelectionStart + expected.length)
+                    done()
+                }
+                catch (err) {
+                    done(err)
+                }
+            })
+
+            //
+            cmd.handler(editor, false)
+            //
+        })
 
 })
