@@ -185,6 +185,9 @@ describe('CreateLinkFromClipboardCommand test', () => {
                 clipboard: "some-text",
                 expected: '[laboris](some-text)'
             },
+            //TODO:
+            // - wordEOL
+            // - EOLword
         ]
     )
         ('create link - selectWordUnderCursor - $name - success', ({ name, text, cursorPos, expectedSelectionStart, expectedSelectionEnd, clipboard, expected }, done) => {
