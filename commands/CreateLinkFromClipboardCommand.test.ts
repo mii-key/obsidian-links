@@ -3,7 +3,6 @@ import { expect, test } from '@jest/globals';
 import { EditorMock } from './EditorMock'
 import { CreateLinkFromClipboardCommand } from './CreateLinkFromClipboardCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
-import exp from 'constants';
 import { VaultMock } from './../VaultMock';
 import { EditorPosition } from 'obsidian';
 
@@ -45,23 +44,22 @@ describe('CreateLinkFromClipboardCommand test', () => {
                 expectedEnabled: false,
             },
         ]
-    )
-        ('status - $name - success', ({ name, text, cursorPos, selection, clipboard, expectedEnabled }) => {
-            const editor = new EditorMock()
-            editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorPos })
-            editor.__mocks.getSelection.mockReturnValue(selection)
+    )('status - $name - success', ({ name, text, cursorPos, selection, clipboard, expectedEnabled }) => {
+        const editor = new EditorMock()
+        editor.__mocks.getValue.mockReturnValue(text)
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorPos })
+        editor.__mocks.getSelection.mockReturnValue(selection)
 
-            const obsidianProxyMock = new ObsidianProxyMock()
-            obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
+        const obsidianProxyMock = new ObsidianProxyMock()
+        obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
 
-            const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock);
-            //
-            const enabled = cmd.handler(editor, true)
-            //
-            expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
-            expect(enabled).toBe(expectedEnabled)
-        })
+        const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock);
+        //
+        const enabled = cmd.handler(editor, true)
+        //
+        expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
+        expect(enabled).toBe(expectedEnabled)
+    })
 
     test.each(
         [
@@ -133,46 +131,45 @@ describe('CreateLinkFromClipboardCommand test', () => {
                 cursurPos: "[Google](https://google.com)".length
             },
         ]
-    )
-        ('create link - $name - success', ({ name, selection, clipboard: clipboard, expected, cursurPos }, done) => {
-            const editor = new EditorMock()
-            editor.__mocks.getSelection.mockReturnValue(selection)
-            const linkStart = 1;
-            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: linkStart })
+    )('create link - $name - success', ({ name, selection, clipboard: clipboard, expected, cursurPos }, done) => {
+        const editor = new EditorMock()
+        editor.__mocks.getSelection.mockReturnValue(selection)
+        const linkStart = 1;
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: linkStart })
 
-            const vault = new VaultMock()
-            vault.__mocks.getName.mockReturnValue('defaultVault')
-            const obsidianProxyMock = new ObsidianProxyMock(vault)
-            obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
-                status: 200,
-                text: "<title>Google</title>"
-            })
-            obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
-
-            const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
-                if (err) {
-                    done(err)
-                    return
-                }
-                try {
-                    expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(linkStart)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(linkStart)
-
-                    expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
-                    expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(linkStart + cursurPos)
-                    done()
-                }
-                catch (err) {
-                    done(err)
-                }
-            })
-
-            //
-            cmd.handler(editor, false)
-            //
+        const vault = new VaultMock()
+        vault.__mocks.getName.mockReturnValue('defaultVault')
+        const obsidianProxyMock = new ObsidianProxyMock(vault)
+        obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
+            status: 200,
+            text: "<title>Google</title>"
         })
+        obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
+
+        const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            if (err) {
+                done(err)
+                return
+            }
+            try {
+                expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
+                expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
+                expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(linkStart)
+                expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(linkStart)
+
+                expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
+                expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(linkStart + cursurPos)
+                done()
+            }
+            catch (err) {
+                done(err)
+            }
+        })
+
+        //
+        cmd.handler(editor, false)
+        //
+    })
 
     test.each(
         [
@@ -185,62 +182,63 @@ describe('CreateLinkFromClipboardCommand test', () => {
                 clipboard: "some-text",
                 expected: '[laboris](some-text)'
             },
+            //TODO:
+            // - wordEOL
+            // - EOLword
         ]
-    )
-        ('create link - selectWordUnderCursor - $name - success', ({ name, text, cursorPos, expectedSelectionStart, expectedSelectionEnd, clipboard, expected }, done) => {
-            const editor = new EditorMock();
+    )('create link - selectWordUnderCursor - $name - success', ({ name, text, cursorPos, expectedSelectionStart, expectedSelectionEnd, clipboard, expected }, done) => {
+        const editor = new EditorMock();
 
-            editor.__mocks.getValue.mockReturnValue(text);
-            let currentCursorPos = cursorPos;
-            let currentSelection = '';
-            editor.__mocks.getSelection.mockImplementation(() => currentSelection);
+        editor.__mocks.getValue.mockReturnValue(text);
+        let currentCursorPos = cursorPos;
+        let currentSelection = '';
+        editor.__mocks.getSelection.mockImplementation(() => currentSelection);
 
-            editor.__mocks.getCursor.mockImplementation((pos?: string) => {
-                switch (pos) {
-                    case 'from':
-                        return { line: 0, ch: currentCursorPos }
-                    case 'to':
-                        return { line: 0, ch: currentCursorPos + currentSelection.length }
-                }
-            });
-            editor.__mocks.setSelection.mockImplementation((anchor: EditorPosition, head?: EditorPosition) => {
-                currentCursorPos = anchor.ch
-                currentSelection = text.substring(anchor.ch, head?.ch);
-            });
+        editor.__mocks.getCursor.mockImplementation((pos?: string) => {
+            switch (pos) {
+                case 'from':
+                    return { line: 0, ch: currentCursorPos }
+                case 'to':
+                    return { line: 0, ch: currentCursorPos + currentSelection.length }
+            }
+        });
+        editor.__mocks.setSelection.mockImplementation((anchor: EditorPosition, head?: EditorPosition) => {
+            currentCursorPos = anchor.ch
+            currentSelection = text.substring(anchor.ch, head?.ch);
+        });
 
-            const vault = new VaultMock()
-            vault.__mocks.getName.mockReturnValue('defaultVault')
-            const obsidianProxyMock = new ObsidianProxyMock(vault)
-            obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
-                status: 200,
-                text: "<title>Google</title>"
-            })
-            obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
-            obsidianProxyMock.settings.autoselectWordOnCreateLinkFromClipboard = true;
+        const vault = new VaultMock()
+        vault.__mocks.getName.mockReturnValue('defaultVault')
+        const obsidianProxyMock = new ObsidianProxyMock(vault)
+        obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
+            status: 200,
+            text: "<title>Google</title>"
+        })
+        obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
+        obsidianProxyMock.settings.autoselectWordOnCreateLink = true;
 
-            const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
-                if (err) {
-                    done(err)
-                    return
-                }
-                try {
-                    expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(expectedSelectionStart)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(expectedSelectionEnd)
+        const cmd = new CreateLinkFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            if (err) {
+                done(err)
+                return
+            }
+            try {
+                expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
+                expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expected)
+                expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(expectedSelectionStart)
+                expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(expectedSelectionEnd)
 
-                    expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
-                    expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(expectedSelectionStart + expected.length)
-                    done()
-                }
-                catch (err) {
-                    done(err)
-                }
-            })
-
-            //
-            cmd.handler(editor, false)
-            //
+                expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
+                expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(expectedSelectionStart + expected.length)
+                done()
+            }
+            catch (err) {
+                done(err)
+            }
         })
 
+        //
+        cmd.handler(editor, false)
+        //
+    })
 })
