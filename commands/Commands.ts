@@ -29,7 +29,7 @@ import { ConvertLinkToHtmllinkCommand } from "./ConvertLinkToHtmllinkCommand";
 import { CutLinkToClipboardCommand } from "./CutLinkToClipboardCommand";
 
 
-let commands: Map<string, ICommand> = new Map<string, ICommand>();
+const commands: Map<string, ICommand> = new Map<string, ICommand>();
 
 function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksSettings) {
     if (commands.size > 0) {
@@ -54,7 +54,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(EditLinkTextCommand.name, new EditLinkTextCommand(() => settings.contexMenu.editLinkText));
     commands.set(SetLinkTextCommand.name, new SetLinkTextCommand(obsidianProxy, () => settings.contexMenu.setLinkText));
     commands.set(EditLinkDestinationCommand.name, new EditLinkDestinationCommand(() => settings.contexMenu.editLinkDestination));
-    commands.set(CreateLinkFromSelectionCommand.name, new CreateLinkFromSelectionCommand(() => settings.contexMenu.createLink));
+    commands.set(CreateLinkFromSelectionCommand.name, new CreateLinkFromSelectionCommand(obsidianProxy, () => settings.contexMenu.createLink));
     commands.set(CreateLinkFromClipboardCommand.name, new CreateLinkFromClipboardCommand(obsidianProxy, () => settings.contexMenu.createLinkFromClipboard));
     commands.set(EmbedLinkCommand.name, new EmbedLinkCommand(() => settings.contexMenu.embedUnembedLink));
     commands.set(UnembedLinkCommand.name, new UnembedLinkCommand(() => settings.contexMenu.embedUnembedLink));
@@ -113,7 +113,7 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         WrapNoteInFolderCommand.name
     ];
 
-    let contextMenuCommands = [];
+    const contextMenuCommands = [];
     for (const cmdName of commandNames) {
         if (cmdName == null) {
             contextMenuCommands.push(null);

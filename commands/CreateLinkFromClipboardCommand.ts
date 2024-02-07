@@ -1,8 +1,8 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, findLinks, getPageTitle, removeLinks } from "../utils";
-import { ObsidianProxy } from "./ObsidianProxy";
+import { CommandBase, Func } from "./ICommand"
+import { LinkTypes, findLink, findLinks, getPageTitle } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
+import { selectWordUnderCursor } from "../editorUtils";
 
 export class CreateLinkFromClipboardCommand extends CommandBase {
 	obsidianProxy: IObsidianProxy;
@@ -70,28 +70,10 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 			let selection = editor.getSelection();
 
 			if (!selection
-				&& this.obsidianProxy.settings.ffAutoselectWordOnCreateLinkFromClipboard
-				&& this.obsidianProxy.settings.autoselectWordOnCreateLinkFromClipboard) {
-				const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-				const text = editor.getValue();
-				const stopChar = new Set<string>([' ', '\t', '(', ')', '{', '}', '[', ']', '.', ',', '\r', '\n', ':', ';']);
-				if (!stopChar.has(text[cursorOffset])) {
-					let leftIdx = cursorOffset;
-					while (--leftIdx > 0 && !stopChar.has(text[leftIdx]));
-					if (++leftIdx < 0) {
-						leftIdx = 0;
-					}
-
-					let rightIdx = cursorOffset;
-					while (++rightIdx < text.length && !stopChar.has(text[rightIdx]));
-
-					if (leftIdx < rightIdx) {
-						editor.setSelection(editor.offsetToPos(leftIdx), editor.offsetToPos(rightIdx));
-						selection = text.substring(leftIdx, rightIdx);
-					}
-				}
+				&& this.obsidianProxy.settings.ffAutoselectWordOnCreateLink
+				&& this.obsidianProxy.settings.autoselectWordOnCreateLink) {
+				selection = selectWordUnderCursor(editor);
 			}
-
 
 			let isUrl = false;
 

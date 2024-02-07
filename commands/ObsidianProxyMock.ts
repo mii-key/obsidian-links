@@ -100,7 +100,7 @@ export class ObsidianProxyMock {
         deleteUnreferencedLinkTarget: true,
         removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
         onConvertToMdlinkAppendMdExtension: true,
-        autoselectWordOnCreateLinkFromClipboard: false,
+        autoselectWordOnCreateLink: false,
 
         //feature flags
         ffReplaceLink: true,
@@ -111,7 +111,7 @@ export class ObsidianProxyMock {
         ffConvertLinkToHtmllink: true,
         ffObsidianUrlSupport: true,
         ffOnConvertToMdlinkAppendMdExtension: true,
-        ffAutoselectWordOnCreateLinkFromClipboard: true,
+        ffAutoselectWordOnCreateLink: true,
 
         //context menu
         contexMenu: {
