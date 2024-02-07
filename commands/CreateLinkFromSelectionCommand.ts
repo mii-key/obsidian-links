@@ -28,7 +28,8 @@ export class CreateLinkFromSelectionCommand extends CommandBase {
 					&& this.obsidianProxy.settings.autoselectWordOnCreateLink);
 		}
 
-		if (this.obsidianProxy.settings.ffAutoselectWordOnCreateLink
+		if (!selection
+			&& this.obsidianProxy.settings.ffAutoselectWordOnCreateLink
 			&& this.obsidianProxy.settings.autoselectWordOnCreateLink) {
 			selection = selectWordUnderCursor(editor);
 		}
