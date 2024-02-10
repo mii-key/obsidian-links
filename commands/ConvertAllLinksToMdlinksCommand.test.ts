@@ -137,6 +137,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
         {
             name: "wikilink local mdlinkAppendMdExtension=true",
             text: "[[folder1/note1|note1]] [[folder 1/note 1#heading 1#heading 2|heading 2]] [[#heading 1#heading 2|heading 2]]",
+            mdlinkAppendMdExtension: true,
             expected: [
                 {
                     text: '[heading 2](<#heading 1#heading 2>)',
@@ -153,8 +154,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
                     start: 0,
                     end: "[[folder1/note1|note1]]".length,
                 }
-            ],
-            mdlinkAppendMdExtension: true
+            ]
         },
         {
             name: "autolink https://",
@@ -207,7 +207,7 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
     ];
 
     test.each(convertData
-    )('convert - text -[$name] - success', ({ name, text, expected, mdlinkAppendMdExtension }, done) => {
+    )('convert - text -[$name] - success', ({ name, text, mdlinkAppendMdExtension, expected }, done) => {
         const editor = new EditorMock()
         editor.__mocks.getValue.mockReturnValue(text)
 
@@ -243,13 +243,13 @@ describe('ConvertAllLinksToMdlinksCommand test', () => {
     })
 
     test.each(convertData
-    )('convert - selection - success', ({ name, text, expected }, done) => {
+    )('convert - selection - success', ({ name, text, mdlinkAppendMdExtension, expected }, done) => {
         const editor = new EditorMock()
         editor.__mocks.getSelection.mockReturnValue(text)
         editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
 
         const obsidianProxyMock = new ObsidianProxyMock();
-
+        obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
         obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
             status: 200,
             text: "<title>Google</title>"

@@ -1,4 +1,4 @@
-import { LinkData, LinkTypes, getPageTitle, getPathWithoutHash, getSafeFilename, isAbsoluteFilePath, isAbsoluteUri, isSectionLink } from "../utils";
+import { LinkData, LinkTypes, getPageTitle, isAbsoluteFilePath, isAbsoluteUri, isSectionLink } from "../utils";
 import { Editor } from "obsidian";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
@@ -16,7 +16,8 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         this.obsidianProxy = obsidianProxy;
     }
 
-    async convertLinkToMarkdownLink(linkData: LinkData, editor: Editor, setCursor: boolean = true, linkOffset: number = 0) {
+    //TODO: replace with convertLinkToMarkdownLink1
+    async convertLinkToMarkdownLink(linkData: LinkData, editor: Editor, setCursor = true, linkOffset = 0) {
         let text = linkData.text ? linkData.text.content : "";
         let destination = linkData.destination ? linkData.destination.content : "";
 
@@ -43,6 +44,7 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         } else {
             if (this.obsidianProxy.settings.ffOnConvertToMdlinkAppendMdExtension
                 && this.obsidianProxy.settings.onConvertToMdlinkAppendMdExtension
+                && linkData.type == LinkTypes.Wiki
                 && !isSectionLink(destination)
                 && !isAbsoluteUri(destination)
                 && !isAbsoluteFilePath(destination)
@@ -80,15 +82,13 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
     }
 
     //TODO: refactor
-    async convertLinkToMarkdownLink1(linkData: LinkData, textBuffer: ITextBuffer, setCursor: boolean = true, linkOffset: number = 0) {
+    async convertLinkToMarkdownLink1(linkData: LinkData, textBuffer: ITextBuffer, setCursor = true, linkOffset = 0) {
         let text = linkData.text ? linkData.text.content : "";
-        const link = linkData.destination ? linkData.destination.content : "";
+        let destination = linkData.destination ? linkData.destination.content : "";
 
         if (linkData.type === LinkTypes.Wiki && !text) {
-            text = link;
+            text = destination;
         }
-
-        let destination = "";
 
         const urlRegEx = /^(http|https):\/\/[^ "]+$/i;
         if ((linkData.type === LinkTypes.Autolink || linkData.type === LinkTypes.PlainUrl) && linkData.destination && urlRegEx.test(linkData.destination.content)) {
@@ -108,7 +108,23 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         if (linkData.type === LinkTypes.Autolink && linkData.destination && RegExPatterns.Email.test(linkData.destination.content)) {
             rawLinkText = `[${text}](${this.EmailScheme}${linkData.destination.content})`;
         } else {
-            destination = encodeURI(link);
+            if (this.obsidianProxy.settings.ffOnConvertToMdlinkAppendMdExtension
+                && this.obsidianProxy.settings.onConvertToMdlinkAppendMdExtension
+                && linkData.type == LinkTypes.Wiki
+                && !isSectionLink(destination)
+                && !isAbsoluteUri(destination)
+                && !isAbsoluteFilePath(destination)
+            ) {
+                const extRegEx = /(.*?)(\.([^*"\/\<>:|\?]*?))?(#.*)?$/;
+                const match = extRegEx.exec(destination);
+                if (match) {
+                    const [, pathWithName, , ext, hash] = match;
+                    if (!ext) {
+                        destination = `${pathWithName}.md${hash ? hash : ''}`
+                    }
+                }
+            }
+            destination = encodeURI(destination);
             if (destination && linkData.type === LinkTypes.Wiki && (destination.indexOf("%20") > 0)) {
                 destination = `<${destination.replace(/%20/g, " ")}>`;
             }

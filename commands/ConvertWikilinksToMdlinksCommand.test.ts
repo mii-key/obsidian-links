@@ -40,40 +40,40 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
         }
     ];
 
-    test.each(statusData)
-        ('status - text with $name - enabled:$expected', ({ name, text, expected }) => {
-            const obsidianProxyMock = new ObsidianProxyMock()
-            const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
-            const editor = new EditorMock()
-            editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
-            //
-            const result = cmd.handler(editor, true)
-            //
-            expect(result).toBe(expected)
-            expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
+    test.each(statusData
+    )('status - text with $name - enabled:$expected', ({ name, text, expected }) => {
+        const obsidianProxyMock = new ObsidianProxyMock()
+        const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
+        const editor = new EditorMock()
+        editor.__mocks.getValue.mockReturnValue(text)
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
+        //
+        const result = cmd.handler(editor, true)
+        //
+        expect(result).toBe(expected)
+        expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
 
-        })
+    })
 
-    test.each(statusData)
-        ('status - selection with $name - enabled:$expected', ({ name, text, expected }) => {
-            const vault = new VaultMock();
-            vault.__mocks.exists.mockReturnValue(false);
+    test.each(statusData
+    )('status - selection with $name - enabled:$expected', ({ name, text, expected }) => {
+        const vault = new VaultMock();
+        vault.__mocks.exists.mockReturnValue(false);
 
-            const obsidianProxyMock = new ObsidianProxyMock(vault);
-            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
+        const obsidianProxyMock = new ObsidianProxyMock(vault);
+        obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = false;
 
-            const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
-            const editor = new EditorMock()
-            editor.__mocks.getSelection.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
-            //
-            const result = cmd.handler(editor, true)
-            //
-            expect(result).toBe(expected)
-            expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
+        const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock)
+        const editor = new EditorMock()
+        editor.__mocks.getSelection.mockReturnValue(text)
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
+        //
+        const result = cmd.handler(editor, true)
+        //
+        expect(result).toBe(expected)
+        expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
 
-        })
+    })
 
 
     const convertData = [
@@ -141,78 +141,78 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
             ]
         },
     ];
-    test.each(convertData)
-        ('convert wiki links - text with $name - success', ({ name, text, mdlinkAppendMdExtension, expected }, done) => {
-            const editor = new EditorMock()
-            editor.__mocks.getValue.mockReturnValue(text)
+    test.each(convertData
+    )('convert wiki links - text with $name - success', ({ name, text, mdlinkAppendMdExtension, expected }, done) => {
+        const editor = new EditorMock()
+        editor.__mocks.getValue.mockReturnValue(text)
 
-            const obsidianProxyMock = new ObsidianProxyMock();
-            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
+        const obsidianProxyMock = new ObsidianProxyMock();
+        obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
 
-            obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
-                status: 200,
-                text: "<title>Google</title>"
-            })
-
-            const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
-                if (err) {
-                    done(err)
-                    return
-                }
-                try {
-                    expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(expected.length)
-                    for (let call = 0; call < expected.length; call++) {
-                        expect(editor.__mocks.replaceRange.mock.calls[call][0]).toBe(expected[call].text)
-                        expect(editor.__mocks.replaceRange.mock.calls[call][1].ch).toBe(expected[call].start)
-                        expect(editor.__mocks.replaceRange.mock.calls[call][2].ch).toBe(expected[call].end)
-                    }
-                    done()
-                }
-                catch (err) {
-                    done(err)
-                }
-            })
-
-            //
-            cmd.handler(editor, false)
-            //
+        obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
+            status: 200,
+            text: "<title>Google</title>"
         })
 
-    test.each(convertData)
-        ('convert wiki links - selection with $name - success', ({ name, text, mdlinkAppendMdExtension, expected }, done) => {
-            const editor = new EditorMock()
-            editor.__mocks.getSelection.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
-
-            const obsidianProxyMock = new ObsidianProxyMock();
-            obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
-
-            obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
-                status: 200,
-                text: "<title>Google</title>"
-            })
-            const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
-                if (err) {
-                    done(err)
-                    return
+        const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            if (err) {
+                done(err)
+                return
+            }
+            try {
+                expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(expected.length)
+                for (let call = 0; call < expected.length; call++) {
+                    expect(editor.__mocks.replaceRange.mock.calls[call][0]).toBe(expected[call].text)
+                    expect(editor.__mocks.replaceRange.mock.calls[call][1].ch).toBe(expected[call].start)
+                    expect(editor.__mocks.replaceRange.mock.calls[call][2].ch).toBe(expected[call].end)
                 }
-                try {
-                    expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(expected.length)
-                    for (let call = 0; call < expected.length; call++) {
-                        expect(editor.__mocks.replaceRange.mock.calls[call][0]).toBe(expected[call].text)
-                        expect(editor.__mocks.replaceRange.mock.calls[call][1].ch).toBe(expected[call].start)
-                        expect(editor.__mocks.replaceRange.mock.calls[call][2].ch).toBe(expected[call].end)
-                    }
-                    done()
-                }
-                catch (err) {
-                    done(err)
-                }
-            })
-
-            //
-            cmd.handler(editor, false)
-            //
+                done()
+            }
+            catch (err) {
+                done(err)
+            }
         })
+
+        //
+        cmd.handler(editor, false)
+        //
+    })
+
+    test.each(convertData
+    )('convert wiki links - selection with $name - success', ({ name, text, mdlinkAppendMdExtension, expected }, done) => {
+        const editor = new EditorMock()
+        editor.__mocks.getSelection.mockReturnValue(text)
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 0 })
+
+        const obsidianProxyMock = new ObsidianProxyMock();
+        obsidianProxyMock.settings.onConvertToMdlinkAppendMdExtension = !!mdlinkAppendMdExtension;
+
+        obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
+            status: 200,
+            text: "<title>Google</title>"
+        })
+        const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            if (err) {
+                done(err)
+                return
+            }
+            try {
+                expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(expected.length)
+                for (let call = 0; call < expected.length; call++) {
+                    expect(editor.__mocks.replaceRange.mock.calls[call][0]).toBe(expected[call].text)
+                    expect(editor.__mocks.replaceRange.mock.calls[call][1].ch).toBe(expected[call].start)
+                    expect(editor.__mocks.replaceRange.mock.calls[call][2].ch).toBe(expected[call].end)
+                }
+                done()
+            }
+            catch (err) {
+                done(err)
+            }
+        })
+
+        //
+        cmd.handler(editor, false)
+        //
+    })
 
 })
