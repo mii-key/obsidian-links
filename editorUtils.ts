@@ -3,7 +3,7 @@ import { Editor } from "obsidian";
 export function selectWordUnderCursor(editor: Editor): string {
   const cursorOffset = editor.posToOffset(editor.getCursor('from'));
   const text = editor.getValue();
-  const stopChar = new Set<string>([' ', '\t', '(', ')', '{', '}', '[', ']', '.', ',', '\r', '\n', ':', ';']);
+  const stopChar = new Set<string>([' ', '\t', '(', ')', '{', '}', '[', ']', '.', ',', '\r', '\n', ':', ';', '\xa0']);
   if (!stopChar.has(text[cursorOffset])) {
     let leftIdx = cursorOffset;
     while (--leftIdx > 0 && !stopChar.has(text[leftIdx]));

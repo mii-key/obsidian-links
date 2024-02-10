@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { LinkData, LinkTypes, Position, findCodeBlocks, findLink, findLinks } from "../utils";
+import { Func } from "./ICommand"
+import { LinkTypes, Position, findCodeBlocks, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from "./ConvertToMdlinkCommandBase";
 import { TextBuffer } from "../TextBuffer";
@@ -49,7 +49,7 @@ export class ConvertLinksInFolderCommand extends ConvertToMdlinkCommandBase {
 		}
 		(async () => {
 			try {
-				for (let file of files) {
+				for (const file of files) {
 					if (file.extension !== 'md') {
 						continue;
 					}

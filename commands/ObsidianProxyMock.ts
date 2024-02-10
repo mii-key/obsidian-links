@@ -99,7 +99,7 @@ export class ObsidianProxyMock {
 
         deleteUnreferencedLinkTarget: true,
         removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
-        onConvertToMdlinkAppendMdExtension: true,
+        onConvertToMdlinkAppendMdExtension: false,
         autoselectWordOnCreateLink: false,
 
         //feature flags
