@@ -88,16 +88,19 @@ Configure this feature in the plugin settings:
 </details>
 
 
-
-
-
-
 ## Convert wikilink or html link to markdown link
 
 Convert a wikilink or HTML link to a markdown link. If a wiki link contains spaces a destination of a markdown link will be places in `<>`. HTML link must be expanded.
 
+> [!NOTE] 
+> Early access. Enable in settings.
+> 
+> If a wikilink destination doesn't have an extension, the `.md` extension can be added to a markdown link destination after conversion by enabling the **Convert to Markdown link | Append extension** option in Settings.
+
+
 - Command palette: **Convert to markdown link**
 - Context menu: **Convert to markdown link**
+
 
 <details>
 <summary>Demo. Wikilink</summary>
@@ -207,6 +210,11 @@ Converts multiple links in a note or in a selection to markdown links.
 Convert plain URLs, html links, wiki links, autolinks in a note or in a selection to markdown links.
 For URLs and autolinks with absolute URL with `http://` or `https://` schemes link text will be set to a content of a `<title/>` element of the page loaded from the URL.
 
+> [!NOTE] 
+> Early access. Enable in settings.
+> 
+> If a wikilink destination doesn't have an extension, the `.md` extension can be added to a markdown link destination after conversion by enabling the **Convert to Markdown link | Append extension** option in Settings.
+
 - Command palette: **Convert all links to Markdown links**
 - Context menu: **Convert all links to Markdown links** (enable in Settings)
 
@@ -226,6 +234,12 @@ For URLs and autolinks with absolute URL with `http://` or `https://` schemes li
 
 ### Convert wikilinks to markdown links
 Convert multiple wikilinks in a note or in a selection to markdown links.
+
+> [!NOTE] 
+> Early access. Enable in settings.
+> 
+> If a wikilink destination doesn't have an extension, the `.md` extension can be added to a markdown link destination after conversion by enabling the **Convert to Markdown link | Append extension** option in Settings.
+
 
 - Command palette: **Convert Wikilinks to Markdown links**
 - Context menu: **Convert Wikilinks to Markdown links** (enable in Settings)
