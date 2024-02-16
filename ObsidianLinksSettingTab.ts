@@ -81,18 +81,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 }));
             appendMdExtensionDescription.appendText('.');
 
-            const showOnConvertToMdLinkkAppendMdExtensionSetting = (show: boolean) => {
-                if (show) {
-                    convertToMdlinkCaptionEl.show();
-                    settingOnConvertToMdlinkAppendMdExtension.settingEl.show();
-                } else {
-                    convertToMdlinkCaptionEl.hide();
-                    settingOnConvertToMdlinkAppendMdExtension.settingEl.hide();
-                }
-            }
-
-            showOnConvertToMdLinkkAppendMdExtensionSetting(this.plugin.settings.ffOnConvertToMdlinkAppendMdExtension);
-
             // const toggleFeature1Section = (enabled: boolean) => {
             //     if (enabled) {
             //         feature1Settings.settingEl.show();
@@ -499,35 +487,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             // }
             // ----------
 
-
-            // ------------------------------------
-            // append .md extension during conversion to markdown link
-
-            new Setting(containerEl)
-                .setName("Append .md file extension")
-                .setDesc("Append .md file extension during convertion of wikilinks to markdown links.")
-                .setClass("setting-item-feature1")
-                .addToggle((toggle) => {
-                    toggle
-                        .setValue(this.plugin.settings.ffOnConvertToMdlinkAppendMdExtension)
-                        .onChange(async (value) => {
-                            this.plugin.settings.ffOnConvertToMdlinkAppendMdExtension = value;
-                            await this.plugin.saveSettings();
-                            showOnConvertToMdLinkkAppendMdExtensionSetting(value);
-                        })
-                });
-
-            const featureOnConvertToMdlinkAppendMdExtensionSettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
-
-            if (featureOnConvertToMdlinkAppendMdExtensionSettingDesc) {
-                featureOnConvertToMdlinkAppendMdExtensionSettingDesc.appendText(' see ');
-                featureOnConvertToMdlinkAppendMdExtensionSettingDesc.appendChild(
-                    createEl('a', {
-                        href: 'https://github.com/mii-key/obsidian-links?tab=readme-ov-file#convert-wikilink-or-html-link-to-markdown-link',
-                        text: 'docs'
-                    }));
-                featureOnConvertToMdlinkAppendMdExtensionSettingDesc.appendText('.');
-            }
 
             // ----------------------------------------------
             // --            Insider features              --

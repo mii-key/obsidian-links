@@ -65,7 +65,7 @@ describe('ConvertLinksInFolderCommand test', () => {
 
     ];
 
-    test.only.each(convertData
+    test.each(convertData
     )('convert - $name', ({ name, mdlinkAppendMdExtension, files }, done) => {
         const editor = new EditorMock()
 
