@@ -42,8 +42,7 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         if (linkData.type === LinkTypes.Autolink && linkData.destination && RegExPatterns.Email.test(linkData.destination.content)) {
             rawLinkText = `[${text}](${this.EmailScheme}${linkData.destination.content})`;
         } else {
-            if (this.obsidianProxy.settings.ffOnConvertToMdlinkAppendMdExtension
-                && this.obsidianProxy.settings.onConvertToMdlinkAppendMdExtension
+            if (this.obsidianProxy.settings.onConvertToMdlinkAppendMdExtension
                 && linkData.type == LinkTypes.Wiki
                 && !isSectionLink(destination)
                 && !isAbsoluteUri(destination)
@@ -108,8 +107,7 @@ export abstract class ConvertToMdlinkCommandBase extends CommandBase {
         if (linkData.type === LinkTypes.Autolink && linkData.destination && RegExPatterns.Email.test(linkData.destination.content)) {
             rawLinkText = `[${text}](${this.EmailScheme}${linkData.destination.content})`;
         } else {
-            if (this.obsidianProxy.settings.ffOnConvertToMdlinkAppendMdExtension
-                && this.obsidianProxy.settings.onConvertToMdlinkAppendMdExtension
+            if (this.obsidianProxy.settings.onConvertToMdlinkAppendMdExtension
                 && linkData.type == LinkTypes.Wiki
                 && !isSectionLink(destination)
                 && !isAbsoluteUri(destination)

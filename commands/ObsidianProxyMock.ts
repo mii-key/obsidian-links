@@ -110,7 +110,6 @@ export class ObsidianProxyMock {
         ffConvertLinksInFolder: true,
         ffConvertLinkToHtmllink: true,
         ffObsidianUrlSupport: true,
-        ffOnConvertToMdlinkAppendMdExtension: true,
         ffAutoselectWordOnCreateLink: true,
 
         //context menu

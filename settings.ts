@@ -21,7 +21,6 @@ export interface IObsidianLinksSettings {
 	ffConvertLinksInFolder: boolean;
 	ffConvertLinkToHtmllink: boolean;
 	ffObsidianUrlSupport: boolean;
-	ffOnConvertToMdlinkAppendMdExtension: boolean;
 	ffAutoselectWordOnCreateLink: boolean;
 
 	//context menu
@@ -75,7 +74,6 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffConvertLinksInFolder: false,
 	ffConvertLinkToHtmllink: false,
 	ffObsidianUrlSupport: false,
-	ffOnConvertToMdlinkAppendMdExtension: false,
 	ffAutoselectWordOnCreateLink: false,
 
 	//context menu
