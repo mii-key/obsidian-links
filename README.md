@@ -25,6 +25,7 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Edit link text](#edit-link-text)
   - [Edit link destination](#edit-link-destination)
   - [Set link text](#set-link-text)
+- [Set link text from clipboard](#set-link-text-from-clipboard)
   - [Create link from selection](#create-link-from-selection)
   - [Create link from clipboard](#create-link-from-clipboard)
   - [Embed / Unembed files](#embed--unembed-files)
@@ -373,7 +374,6 @@ Link text depends on the kind of a link.
 For local notes text will be either file name of the note or popup with suggested link texts. Title separator can be specified in the plugin settings. 
 For external http[s] links, page content is requested and link text is set to the title (content of `<title/>` element) of the requested page content.
 
-
 - Command palette: **Set link text**
 - Context menu: **Set link text**
 
@@ -398,6 +398,33 @@ For external http[s] links, page content is requested and link text is set to th
 ![External link](docs/img/set-link-text-external.gif)
 
 </details>
+
+# Set link text from clipboard
+
+> [!NOTE]
+> Early access feature. Enable in settings.
+
+Set markdown, wikilink or URL text from clipboard.
+Links that can't have text, like URL, will be converted to markdown link.
+
+- Command palette: **Set link text from clipboard**
+- Context menu: **Set link text from clipboard**
+
+<details>
+<summary>Demo.</summary>
+
+![set link text from clipbaord](/docs/img/set-link-text-from-clipboard.gif)
+
+</details>
+
+<details>
+<summary>Demo. Link to image</summary>
+
+![set link text from clipbaord](/docs/img/set-image-link-text-from-clipboard.gif)
+
+</details>
+
+
 
 ## Create link from selection
 Create link from selected text.
