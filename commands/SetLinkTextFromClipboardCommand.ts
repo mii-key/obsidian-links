@@ -29,7 +29,7 @@ export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase 
 		if (checking && !this.isEnabled()) {
 			return false;
 		}
-		// TODO: no check clipboard
+		// TODO: check clipboard
 		if (checking) {
 			const noteText = editor.getValue();
 			const cursorOffset = editor.posToOffset(editor.getCursor('from'))
@@ -54,6 +54,7 @@ export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase 
 			let linkText = clipboardText;
 			let textStartOffset: number;
 			let textEndOffset: number;
+			let cursorOffsetCorrection = 0;
 			if (link?.text) {
 				textStartOffset = link.position.start + link.text.position.start
 				textEndOffset = link.position.start + link.text.position.end
@@ -66,12 +67,17 @@ export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase 
 						break;
 					case LinkTypes.Markdown:
 						textStartOffset = textEndOffset = link.position.start + (link.embedded ? 2 : 1);
+						if (link.imageDimensions) {
+							linkText = linkText + '|';
+							cursorOffsetCorrection = -1;
+						}
 						break;
-					case LinkTypes.PlainUrl:
+					case LinkTypes.PlainUrl: {
 						const rawLink = `[${linkText}](${link.destination?.content})`;
 						editor.replaceRange(rawLink, editor.offsetToPos(link.position.start), editor.offsetToPos(link.position.end));
 						editor.setCursor(editor.offsetToPos(link.position.start + linkText.length + 1));
 						this.callback?.(null, undefined)
+					}
 						return;
 					default:
 						this.callback?.(null, undefined)
@@ -81,7 +87,7 @@ export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase 
 
 			if ((link?.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0) {
 				editor.replaceRange(linkText, editor.offsetToPos(textStartOffset), editor.offsetToPos(textEndOffset));
-				editor.setCursor(editor.offsetToPos(textStartOffset + linkText.length));
+				editor.setCursor(editor.offsetToPos(textStartOffset + linkText.length + cursorOffsetCorrection));
 				this.callback?.(null, undefined)
 			}
 		})();

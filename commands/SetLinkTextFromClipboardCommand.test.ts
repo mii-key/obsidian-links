@@ -10,6 +10,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
 
     test.each(
         [
+            // text
             {
                 name: "text",
                 text: "Aliqua minim voluptate reprehenderit duis amet et consectetur in excepteur sint exercitation.",
@@ -29,15 +30,109 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
             {
-                name: "mdlink image with text + size",
+                name: "mdlink image, text + WxH",
                 text: "Aliqua minim voluptate [reprehenderit|100x200](duis.png) amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate [re".length,
                 selection: "",
                 clipboard: "some text",
                 expectedEnabled: true,
             },
-            //TODO: image links with dimensions
-
+            {
+                name: "mdlink image, text + W",
+                text: "Aliqua minim voluptate [reprehenderit|100](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "mdlink image, empty text + W",
+                text: "Aliqua minim voluptate [|100](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "mdlink image, W",
+                text: "Aliqua minim voluptate [100](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "mdlink image, empty text + WxH",
+                text: "Aliqua minim voluptate [|100x200](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "mdlink image, WxH",
+                text: "Aliqua minim voluptate [100x200](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!mdlink",
+                text: "Aliqua minim voluptate ![reprehenderit](duis) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!mdlink image, text + WxH",
+                text: "Aliqua minim voluptate ![reprehenderit|100x200](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!mdlink image, text + W",
+                text: "Aliqua minim voluptate ![reprehenderit|100](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!mdlink image, empty text + W",
+                text: "Aliqua minim voluptate ![|100](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!mdlink image, W",
+                text: "Aliqua minim voluptate ![100](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!mdlink image, empty text + WxH",
+                text: "Aliqua minim voluptate ![|100x200](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!mdlink image, WxH",
+                text: "Aliqua minim voluptate ![100x200](duis.png) amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
 
             // wikilink
             {
@@ -57,15 +152,117 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
             {
-                name: "wikilink image with caption + size",
+                name: "wikilink image, text + WxH",
                 text: "Aliqua minim voluptate [[reprehenderit.png|some text|100x200]] duis amet et consectetur in excepteur sint exercitation.",
                 cursorPos: "Aliqua minim voluptate [[re".length,
                 selection: "",
                 clipboard: "some text",
                 expectedEnabled: true,
             },
-            //TODO: image links with dimensions
-
+            {
+                name: "wikilink image, empty text + WxH",
+                text: "Aliqua minim voluptate [[reprehenderit.png||100x200]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "wikilink image, WxH",
+                text: "Aliqua minim voluptate [[reprehenderit.png|100x200]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "wikilink image, text + W",
+                text: "Aliqua minim voluptate [[reprehenderit.png|some text|100]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "wikilink image, empty text + W",
+                text: "Aliqua minim voluptate [[reprehenderit.png||100]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "wikilink image, W",
+                text: "Aliqua minim voluptate [[reprehenderit.png|100]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!wikilink",
+                text: "Aliqua minim voluptate ![[reprehenderit]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!wikilink with text",
+                text: "Aliqua minim voluptate ![[reprehenderit|some text]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!wikilink image, text + WxH",
+                text: "Aliqua minim voluptate ![[reprehenderit.png|some text|100x200]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!wikilink image, empty text + WxH",
+                text: "Aliqua minim voluptate ![[reprehenderit.png||100x200]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!wikilink image, WxH",
+                text: "Aliqua minim voluptate ![[reprehenderit.png|100x200]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!wikilink image, text + W",
+                text: "Aliqua minim voluptate ![[reprehenderit.png|some text|100]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!wikilink image, empty text + W",
+                text: "Aliqua minim voluptate ![[reprehenderit.png||100]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
+            {
+                name: "!wikilink image, W",
+                text: "Aliqua minim voluptate ![[reprehenderit.png|100]] duis amet et consectetur in excepteur sint exercitation.",
+                cursorPos: "Aliqua minim voluptate [[re".length,
+                selection: "",
+                clipboard: "some text",
+                expectedEnabled: true,
+            },
 
             //autolink
             {
@@ -87,26 +284,26 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedEnabled: true,
             },
         ]
-    )
-        ('status - cursor on $name - success', ({ name, text, cursorPos, selection, clipboard, expectedEnabled }) => {
-            const editor = new EditorMock()
-            editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorPos })
-            editor.__mocks.getSelection.mockReturnValue(selection)
+    )('status - cursor on $name - success', ({ name, text, cursorPos, selection, clipboard, expectedEnabled }) => {
+        const editor = new EditorMock()
+        editor.__mocks.getValue.mockReturnValue(text)
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorPos })
+        editor.__mocks.getSelection.mockReturnValue(selection)
 
-            const obsidianProxyMock = new ObsidianProxyMock()
-            obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
+        const obsidianProxyMock = new ObsidianProxyMock()
+        obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboard)
 
-            const cmd = new SetLinkTextFromClipboardCommand(obsidianProxyMock);
-            //
-            const enabled = cmd.handler(editor, true)
-            //
-            expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
-            expect(enabled).toBe(expectedEnabled)
-        })
+        const cmd = new SetLinkTextFromClipboardCommand(obsidianProxyMock);
+        //
+        const enabled = cmd.handler(editor, true)
+        //
+        expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
+        expect(enabled).toBe(expectedEnabled)
+    })
 
     test.each(
         [
+            //mdlink
             {
                 name: "mdlink w/text",
                 text: "Proident laboris [nisi](elit) irure in aliquip nulla aliqua laboris.",
@@ -141,7 +338,7 @@ describe('SetLinkTextFromClipboardCommand test', () => {
 
             },
             {
-                name: "mdlink ! wo/text",
+                name: "!mdlink wo/text",
                 text: "Proident laboris ![](elit) irure in aliquip nulla aliqua laboris.",
                 clipboardText: "some text",
                 cursorOffset: "Proident laboris ![".length,
@@ -151,9 +348,72 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedCursorPos: "Proident laboris ![some text".length
 
             },
+            {
+                name: "!mdlink img, text + WxH",
+                text: "Proident laboris ![image1|200x100](elit.png) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![".length,
+                expectedReplacementEnd: "Proident laboris ![image1".length,
+                expectedCursorPos: "Proident laboris ![some text".length
 
-            // //TODO: image links with dimensions
+            },
+            {
+                name: "!mdlink img, empty text + WxH",
+                text: "Proident laboris ![|200x100](elit.png) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![".length,
+                expectedReplacementEnd: "Proident laboris ![".length,
+                expectedCursorPos: "Proident laboris ![some text".length
 
+            },
+            {
+                name: "!mdlink img, WxH",
+                text: "Proident laboris ![200x100](elit.png) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![".length,
+                expectedReplacement: 'some text|',
+                expectedReplacementStart: "Proident laboris ![".length,
+                expectedReplacementEnd: "Proident laboris ![".length,
+                expectedCursorPos: "Proident laboris ![some text".length
+
+            },
+            {
+                name: "!mdlink img, text + W",
+                text: "Proident laboris ![image1|200](elit.png) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![".length,
+                expectedReplacementEnd: "Proident laboris ![image1".length,
+                expectedCursorPos: "Proident laboris ![some text".length
+
+            },
+            {
+                name: "!mdlink img, empty text + W",
+                text: "Proident laboris ![|200](elit.png) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![".length,
+                expectedReplacementEnd: "Proident laboris ![".length,
+                expectedCursorPos: "Proident laboris ![some text".length
+
+            },
+            {
+                name: "!mdlink img, W",
+                text: "Proident laboris ![200](elit.png) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![".length,
+                expectedReplacement: 'some text|',
+                expectedReplacementStart: "Proident laboris ![".length,
+                expectedReplacementEnd: "Proident laboris ![".length,
+                expectedCursorPos: "Proident laboris ![some text".length
+
+            },
 
             // wikilink
             {
@@ -188,7 +448,66 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedReplacementEnd: "Proident laboris [[nisi".length,
                 expectedCursorPos: "Proident laboris [[nisi|some text".length
             },
-            //TODO: image links with dimensions
+            {
+                name: "!wikilink img, text + WxH",
+                text: "Proident laboris ![[elit.png|image1|200x100]] irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![[e".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![[elit.png|".length,
+                expectedReplacementEnd: "Proident laboris ![[elit.png|image1".length,
+                expectedCursorPos: "Proident laboris ![[elit.png|some text".length
+            },
+            {
+                name: "!wikilink img, empty text + WxH",
+                text: "Proident laboris ![[elit.png||200x100]] irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![[e".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![[elit.png|".length,
+                expectedReplacementEnd: "Proident laboris ![[elit.png|".length,
+                expectedCursorPos: "Proident laboris ![[elit.png|some text".length
+            },
+            {
+                name: "!wikilink img, WxH",
+                text: "Proident laboris ![[elit.png|200x100]] irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![[e".length,
+                expectedReplacement: '|some text',
+                expectedReplacementStart: "Proident laboris ![[elit.png".length,
+                expectedReplacementEnd: "Proident laboris ![[elit.png".length,
+                expectedCursorPos: "Proident laboris ![[elit.png|some text".length
+            },
+            {
+                name: "!wikilink img, text + W",
+                text: "Proident laboris ![[elit.png|image1|200]] irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![[e".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![[elit.png|".length,
+                expectedReplacementEnd: "Proident laboris ![[elit.png|image1".length,
+                expectedCursorPos: "Proident laboris ![[elit.png|some text".length
+            },
+            {
+                name: "!wikilink img, empty text + W",
+                text: "Proident laboris ![[elit.png||200]] irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![[e".length,
+                expectedReplacement: 'some text',
+                expectedReplacementStart: "Proident laboris ![[elit.png|".length,
+                expectedReplacementEnd: "Proident laboris ![[elit.png|".length,
+                expectedCursorPos: "Proident laboris ![[elit.png|some text".length
+            },
+            {
+                name: "!wikilink img, W",
+                text: "Proident laboris ![[elit.png|200]] irure in aliquip nulla aliqua laboris.",
+                clipboardText: "some text",
+                cursorOffset: "Proident laboris ![[e".length,
+                expectedReplacement: '|some text',
+                expectedReplacementStart: "Proident laboris ![[elit.png".length,
+                expectedReplacementEnd: "Proident laboris ![[elit.png".length,
+                expectedCursorPos: "Proident laboris ![[elit.png|some text".length
+            },
 
             // url
             {
@@ -202,41 +521,40 @@ describe('SetLinkTextFromClipboardCommand test', () => {
                 expectedCursorPos: "Proident laboris [some text".length
             },
         ]
-    )
-        ('set text - $name - success', ({ name, text, clipboardText, cursorOffset,
-            expectedReplacement, expectedReplacementStart, expectedReplacementEnd, expectedCursorPos }, done) => {
-            const editor = new EditorMock()
-            editor.__mocks.getValue.mockReturnValue(text)
-            editor.__mocks.getSelection.mockRejectedValue('')
-            editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorOffset })
+    )('set text - $name - success', ({ name, text, clipboardText, cursorOffset,
+        expectedReplacement, expectedReplacementStart, expectedReplacementEnd, expectedCursorPos }, done) => {
+        const editor = new EditorMock()
+        editor.__mocks.getValue.mockReturnValue(text)
+        editor.__mocks.getSelection.mockRejectedValue('')
+        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorOffset })
 
-            const obsidianProxyMock = new ObsidianProxyMock()
-            obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboardText)
+        const obsidianProxyMock = new ObsidianProxyMock()
+        obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboardText)
 
-            const cmd = new SetLinkTextFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
-                if (err) {
-                    done(err)
-                    return
-                }
-                try {
-                    expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expectedReplacement)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(expectedReplacementStart)
-                    expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(expectedReplacementEnd)
+        const cmd = new SetLinkTextFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            if (err) {
+                done(err)
+                return
+            }
+            try {
+                expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(1)
+                expect(editor.__mocks.replaceRange.mock.calls[0][0]).toBe(expectedReplacement)
+                expect(editor.__mocks.replaceRange.mock.calls[0][1].ch).toBe(expectedReplacementStart)
+                expect(editor.__mocks.replaceRange.mock.calls[0][2].ch).toBe(expectedReplacementEnd)
 
-                    expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
-                    expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(expectedCursorPos)
-                    done()
-                }
-                catch (err) {
-                    done(err)
-                }
-            })
-
-            //
-            cmd.handler(editor, false)
-            //
+                expect(editor.__mocks.setCursor.mock.calls).toHaveLength(1)
+                expect(editor.__mocks.setCursor.mock.calls[0][0].ch).toBe(expectedCursorPos)
+                done()
+            }
+            catch (err) {
+                done(err)
+            }
         })
+
+        //
+        cmd.handler(editor, false)
+        //
+    })
 
 
 
