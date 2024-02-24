@@ -25,7 +25,7 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Edit link text](#edit-link-text)
   - [Edit link destination](#edit-link-destination)
   - [Set link text](#set-link-text)
-- [Set link text from clipboard](#set-link-text-from-clipboard)
+  - [Set link text from clipboard](#set-link-text-from-clipboard)
   - [Create link from selection](#create-link-from-selection)
   - [Create link from clipboard](#create-link-from-clipboard)
   - [Embed / Unembed files](#embed--unembed-files)
@@ -399,7 +399,7 @@ For external http[s] links, page content is requested and link text is set to th
 
 </details>
 
-# Set link text from clipboard
+## Set link text from clipboard
 
 > [!NOTE]
 > Early access feature. Enable in settings.
