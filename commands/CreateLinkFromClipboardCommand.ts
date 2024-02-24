@@ -48,6 +48,7 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 			if (links.length) {
 				const link = links[0];
 				if (this.obsidianProxy.settings.ffObsidianUrlSupport && (link.type & LinkTypes.ObsidianUrl) === LinkTypes.ObsidianUrl) {
+					//TODO:
 					if (link.destination) {
 						const url = new URL(link.destination?.content)
 						if (this.obsidianProxy.Vault.getName() === url.searchParams.get('vault')) {
