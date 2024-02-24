@@ -223,6 +223,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 		}
 	}
 
+	//TODO
 	replaceExternalLink(linkData: LinkData, editor: Editor) {
 		new ReplaceLinkModal(this.app, async (path) => {
 			if (path) {
@@ -232,7 +233,22 @@ export default class ObsidianLinksPlugin extends Plugin {
 					if (links.length > 0 && links[0].destination?.content) {
 						target = links[0].destination?.content;
 					}
+				} else if (path.startsWith('obsidian://')) {
+					//TODO
+					const links = findLinks(path, LinkTypes.ObsidianUrl | LinkTypes.PlainUrl);
+					if (links.length > 0
+						&& (links[0].type & LinkTypes.ObsidianUrl) === LinkTypes.ObsidianUrl
+						&& links[0].destination?.content) {
+						const url = new URL(links[0].destination?.content)
+						if (this.obsidianProxy.Vault.getName() === url.searchParams.get('vault')) {
+							const filePath = url.searchParams.get('file')
+							if (filePath) {
+								target = decodeURI(filePath)
+							}
+						}
+					}
 				}
+
 				this.settings.linkReplacements.push({
 					source: linkData.destination!.content,
 					target: target
