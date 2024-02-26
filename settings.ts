@@ -23,6 +23,7 @@ export interface IObsidianLinksSettings {
 	ffObsidianUrlSupport: boolean;
 	ffAutoselectWordOnCreateLink: boolean;
 
+
 	//context menu
 	contexMenu: {
 		editLinkText: boolean;
