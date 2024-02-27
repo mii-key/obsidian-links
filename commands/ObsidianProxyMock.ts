@@ -111,6 +111,7 @@ export class ObsidianProxyMock {
         ffConvertLinkToHtmllink: true,
         ffObsidianUrlSupport: true,
         ffAutoselectWordOnCreateLink: true,
+        ffHighlightBrokenLinks: true,
 
         //context menu
         contexMenu: {

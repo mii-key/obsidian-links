@@ -22,6 +22,8 @@ export interface IObsidianLinksSettings {
 	ffConvertLinkToHtmllink: boolean;
 	ffObsidianUrlSupport: boolean;
 	ffAutoselectWordOnCreateLink: boolean;
+	ffHighlightBrokenLinks: boolean;
+
 
 	//context menu
 	contexMenu: {
@@ -75,6 +77,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffConvertLinkToHtmllink: false,
 	ffObsidianUrlSupport: false,
 	ffAutoselectWordOnCreateLink: false,
+	ffHighlightBrokenLinks: false,
 
 	//context menu
 	contexMenu: {
