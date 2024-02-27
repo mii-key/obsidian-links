@@ -87,7 +87,7 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 				catch (err) {
 					this.obsidianProxy.createNotice(err);
 					this.callback?.(err, undefined);
-					return;
+					linkText = '';
 				}
 				finally {
 					notice.hide();
@@ -107,7 +107,11 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 			const linkRawText = requireAngleBrackets ? `[${linkText}](<${linkDestination}>)` : `[${linkText}](${linkDestination})`;
 			const endOffset = editor.posToOffset(posRangeStart) + linkRawText.length;
 			editor.replaceRange(linkRawText, posRangeStart, posRangeEnd);
-			editor.setCursor(editor.offsetToPos(endOffset));
+			if (linkText) {
+				editor.setCursor(editor.offsetToPos(endOffset));
+			} else {
+				editor.setCursor(editor.offsetToPos(editor.posToOffset(posRangeStart) + 1));
+			}
 			this.callback?.(null, undefined)
 		})();
 	}
