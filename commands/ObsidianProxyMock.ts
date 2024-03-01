@@ -105,7 +105,6 @@ export class ObsidianProxyMock {
         //feature flags
         ffReplaceLink: true,
         ffExtractSection: true,
-        ffSetLinkTextFromClipboard: true,
         ffWrapNoteInFolder: true,
         ffConvertLinksInFolder: true,
         ffConvertLinkToHtmllink: true,
