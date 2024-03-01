@@ -401,9 +401,6 @@ For external http[s] links, page content is requested and link text is set to th
 
 ## Set link text from clipboard
 
-> [!NOTE]
-> Early access feature. Enable in settings.
-
 Set markdown, wikilink or URL text from clipboard.
 Links that can't have text, like URL, will be converted to markdown link.
 
@@ -423,7 +420,6 @@ Links that can't have text, like URL, will be converted to markdown link.
 ![set link text from clipbaord](/docs/img/set-image-link-text-from-clipboard.gif)
 
 </details>
-
 
 
 ## Create link from selection

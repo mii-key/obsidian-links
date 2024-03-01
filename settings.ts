@@ -16,7 +16,6 @@ export interface IObsidianLinksSettings {
 	// feature flags
 	ffReplaceLink: boolean;
 	ffExtractSection: boolean;
-	ffSetLinkTextFromClipboard: boolean;
 	ffWrapNoteInFolder: boolean;
 	ffConvertLinksInFolder: boolean;
 	ffConvertLinkToHtmllink: boolean;
@@ -71,7 +70,6 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	//feature flags
 	ffReplaceLink: false,
 	ffExtractSection: false,
-	ffSetLinkTextFromClipboard: false,
 	ffWrapNoteInFolder: false,
 	ffConvertLinksInFolder: false,
 	ffConvertLinkToHtmllink: false,

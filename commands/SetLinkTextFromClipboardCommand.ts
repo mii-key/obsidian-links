@@ -13,8 +13,6 @@ export class SetLinkTextFromClipboardCommand extends ConvertToMdlinkCommandBase 
 		callback: ((error: Error | null, data: any) => void) | undefined = undefined) {
 		super(obsidianProxy, isPresentInContextMenu, isEnabled)
 
-
-		this.isEnabled = () => this.obsidianProxy.settings.ffSetLinkTextFromClipboard;
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.setLinkTextFromClipboard;
 
 		this.id = 'editor-set-link-text-from-clipboard';

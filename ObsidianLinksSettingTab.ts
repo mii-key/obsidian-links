@@ -143,7 +143,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                         })
 
                 });
-            const setLinkTestFromClipboardSetting = new Setting(containerEl)
+            new Setting(containerEl)
                 .setName('Set link text from clipboard')
                 .setDesc('')
                 .addToggle((toggle) => {
@@ -155,15 +155,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                         })
 
                 });
-
-            const toggleSetLinkTextFromClipboard = (enabled: boolean) => {
-                if (enabled) {
-                    setLinkTestFromClipboardSetting.settingEl.show();
-                } else {
-                    setLinkTestFromClipboardSetting.settingEl.hide();
-                }
-            }
-            toggleSetLinkTextFromClipboard(this.plugin.settings.ffSetLinkTextFromClipboard);
 
             new Setting(containerEl)
                 .setName('Edit link destination')
@@ -487,35 +478,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             // }
             // ----------
 
-
-            // ------------------------------------
-            // feature: set link text from clipboard
-
-            new Setting(containerEl)
-                .setName("Set link text from clipboard")
-                .setDesc("Set text of a link from the clipboard")
-                .setClass("setting-item--insider-feature3")
-                .addToggle((toggle) => {
-                    toggle
-                        .setValue(this.plugin.settings.ffSetLinkTextFromClipboard)
-                        .onChange(async (value) => {
-                            this.plugin.settings.ffSetLinkTextFromClipboard = value;
-                            await this.plugin.saveSettings();
-                            toggleSetLinkTextFromClipboard(this.plugin.settings.ffSetLinkTextFromClipboard);
-                        })
-                });
-
-            const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
-
-            if (feature3SettingDesc) {
-                feature3SettingDesc.appendText(' see ');
-                feature3SettingDesc.appendChild(
-                    createEl('a', {
-                        href: 'https://github.com/mii-key/obsidian-links?tab=readme-ov-file#set-link-text-from-clipboard',
-                        text: 'docs'
-                    }));
-                feature3SettingDesc.appendText('.');
-            }
 
             // ----------------------------------------------
             // --            Insider features              --
