@@ -590,40 +590,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             //     feature3SettingDesc.appendText('.');
             // }
 
-            // // feature: options for remove internal wikilink without text replacement
-
-            // new Setting(containerEl)
-            //     .setName("Configure `Remove links from heading' command")
-            //     .setDesc("Configure `Remove links from heading' command behavior.")
-            //     .setClass("setting-item--insider-feature3")
-            //     .addToggle((toggle) => {
-            //         toggle
-            //             .setValue(this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions)
-            //             .onChange(async (value) => {
-            //                 this.plugin.settings.ffRemoveLinksFromHeadingsInternalWikilinkWithoutTextReplacementOptions = value;
-            //                 if (value) {
-            //                     removeLinksFromHeadingCaptionEl.show();
-            //                     settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.show();
-            //                 } else {
-            //                     removeLinksFromHeadingCaptionEl.hide();
-            //                     settingRemoveLinksFromHeadingsInternalLinkWithoutTextReplacemtn.settingEl.hide();
-            //                 }
-            //                 await this.plugin.saveSettings();
-            //             })
-
-            //     });
-
-            // const feature3SettingDesc = containerEl.querySelector(".setting-item--insider-feature3 .setting-item-description");
-
-            // if (feature3SettingDesc) {
-            // 	feature3SettingDesc.appendText(' see ');
-            // 	feature3SettingDesc.appendChild(
-            // 		createEl('a', {
-            // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/configure-remove-links-from-headings.md',
-            // 			text: 'docs'
-            // 		}));
-            // 		feature3SettingDesc.appendText('.');
-            // }
 
             // ------------------------------------
             // Convert to HTML link
@@ -683,6 +649,35 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     }));
                 featureObsidianUrlSettingDesc.appendText('.');
             }
+
+
+            // ------------------------------------
+            // Autoselect word upon creating link & creating link from clipboard
+
+            new Setting(containerEl)
+                .setName("Autoselect a word upon creating a link")
+                .setDesc("Autoselect a word under the cursor when creating a link")
+                .setClass("setting-item-autoselect-word-create-link")
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.ffAutoselectWordOnCreateLink)
+                        .onChange(async (value) => {
+                            this.plugin.settings.ffAutoselectWordOnCreateLink = value;
+                            await this.plugin.saveSettings();
+                        })
+                });
+
+            // const autoselectWordOnCreateLinkSettingDesc = containerEl.querySelector(".setting-item-autoselect-word-create-link .setting-item-description");
+
+            // if (autoselectWordOnCreateLinkSettingDesc) {
+            //     autoselectWordOnCreateLinkSettingDesc.appendText(' see ');
+            //     autoselectWordOnCreateLinkSettingDesc.appendChild(
+            //         createEl('a', {
+            //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature1.md',
+            //             text: 'docs'
+            //         }));
+            //     autoselectWordOnCreateLinkSettingDesc.appendText('.');
+            // }
 
         }
 
