@@ -22,7 +22,7 @@ export interface IObsidianLinksSettings {
 	ffObsidianUrlSupport: boolean;
 	ffAutoselectWordOnCreateLink: boolean;
 	ffHighlightBrokenLinks: boolean;
-
+	ffSetLinkDestinationFromClipbard: boolean;
 
 	//context menu
 	contexMenu: {
@@ -76,6 +76,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffObsidianUrlSupport: false,
 	ffAutoselectWordOnCreateLink: false,
 	ffHighlightBrokenLinks: false,
+	ffSetLinkDestinationFromClipbard: false,
 
 	//context menu
 	contexMenu: {

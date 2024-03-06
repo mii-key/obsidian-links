@@ -679,6 +679,36 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             //     autoselectWordOnCreateLinkSettingDesc.appendText('.');
             // }
 
+
+            // ------------------------------------
+            // insider feature1
+
+            // new Setting(containerEl)
+            //     .setName("Set link destination from clipboard")
+            //     .setDesc("")
+            //     .setClass("setting-item-set-link-destination-from-clipboard")
+            //     .addToggle((toggle) => {
+            //         toggle
+            //             .setValue(this.plugin.settings.ffSetLinkDestinationFromClipbard)
+            //             .onChange(async (value) => {
+            //                 this.plugin.settings.ffSetLinkDestinationFromClipbard = value;
+            //                 await this.plugin.saveSettings();
+            //             })
+
+            //     });
+
+            // const setLinkDestinationFromClipbardSettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
+
+            // if (setLinkDestinationFromClipbardSettingDesc) {
+            //     setLinkDestinationFromClipbardSettingDesc.appendText(' see ');
+            //     setLinkDestinationFromClipbardSettingDesc.appendChild(
+            //         createEl('a', {
+            //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature1.md',
+            //             text: 'docs'
+            //         }));
+            //     setLinkDestinationFromClipbardSettingDesc.appendText('.');
+            // }
+
         }
 
     }

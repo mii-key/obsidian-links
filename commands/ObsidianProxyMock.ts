@@ -111,6 +111,7 @@ export class ObsidianProxyMock {
         ffObsidianUrlSupport: true,
         ffAutoselectWordOnCreateLink: true,
         ffHighlightBrokenLinks: true,
+        ffSetLinkDestinationFromClipbard: true,
 
         //context menu
         contexMenu: {
