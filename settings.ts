@@ -30,6 +30,7 @@ export interface IObsidianLinksSettings {
 		setLinkText: boolean;
 		setLinkTextFromClipboard: boolean;
 		editLinkDestination: boolean;
+		setLinkDestinationFromClipboard: boolean;
 		copyLinkDestination: boolean;
 		unlink: boolean;
 		convertToWikilink: boolean;
@@ -84,6 +85,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		setLinkText: true,
 		setLinkTextFromClipboard: true,
 		editLinkDestination: true,
+		setLinkDestinationFromClipboard: true,
 		copyLinkDestination: true,
 		unlink: true,
 		convertToWikilink: true,

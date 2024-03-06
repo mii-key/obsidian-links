@@ -119,6 +119,7 @@ export class ObsidianProxyMock {
             setLinkText: true,
             setLinkTextFromClipboard: true,
             editLinkDestination: true,
+            setLinkDestinationFromClipboard: true,
             copyLinkDestination: true,
             unlink: true,
             convertToWikilink: true,

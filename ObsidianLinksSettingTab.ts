@@ -169,7 +169,30 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const settingCopyLink = new Setting(containerEl)
+            const setLinkDestinationFromClipboardContextMenuSetting = new Setting(containerEl)
+                .setName('Set link destination from clipboard')
+                .setDesc('')
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.contexMenu.setLinkDestinationFromClipboard)
+                        .onChange(async (value) => {
+                            this.plugin.settings.contexMenu.setLinkDestinationFromClipboard = value;
+                            await this.plugin.saveSettings();
+                        })
+
+                });
+
+            const toggleSetLinkDestinationFromClipboardContextMenuSetting = (enabled: boolean) => {
+                if (enabled) {
+                    setLinkDestinationFromClipboardContextMenuSetting.settingEl.show();
+                } else {
+                    setLinkDestinationFromClipboardContextMenuSetting.settingEl.hide();
+                }
+            }
+
+            toggleSetLinkDestinationFromClipboardContextMenuSetting(this.plugin.settings.ffSetLinkDestinationFromClipbard);
+
+            new Setting(containerEl)
                 .setName('Copy link')
                 .setDesc('')
                 .addToggle((toggle) => {
@@ -182,7 +205,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const cutLinkSettings = new Setting(containerEl)
+            new Setting(containerEl)
                 .setName('Cut link')
                 .setDesc('')
                 .addToggle((toggle) => {
@@ -681,7 +704,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
 
             // ------------------------------------
-            // insider feature1
+            // Set link destination from clipboard
 
             // new Setting(containerEl)
             //     .setName("Set link destination from clipboard")
@@ -692,6 +715,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             //             .setValue(this.plugin.settings.ffSetLinkDestinationFromClipbard)
             //             .onChange(async (value) => {
             //                 this.plugin.settings.ffSetLinkDestinationFromClipbard = value;
+            //                 toggleSetLinkDestinationFromClipboardContextMenuSetting(value);
             //                 await this.plugin.saveSettings();
             //             })
 
