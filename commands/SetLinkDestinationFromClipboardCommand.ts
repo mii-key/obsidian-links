@@ -73,6 +73,13 @@ export class SetLinkDestinationFromClipboardCommand extends ConvertToMdlinkComma
 			}
 
 			if ((link?.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0) {
+				if ((link?.type === LinkTypes.Markdown)
+					&& (!link.destination?.content
+						|| !link._destinationInAngleBrackets)
+					&& linkDestination.indexOf(' ') >= 0) {
+					linkDestination = `<${linkDestination}>`;
+				}
+
 				editor.replaceRange(linkDestination, editor.offsetToPos(destinationStartOffset), editor.offsetToPos(destinationEndOffset));
 				editor.setCursor(editor.offsetToPos(destinationStartOffset + linkDestination.length));
 				this.callback?.(null, undefined)
