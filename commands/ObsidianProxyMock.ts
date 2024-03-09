@@ -101,6 +101,7 @@ export class ObsidianProxyMock {
         removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.Delete,
         onConvertToMdlinkAppendMdExtension: false,
         autoselectWordOnCreateLink: false,
+        skipFrontmatterInNoteWideCommands: true,
 
         //feature flags
         ffReplaceLink: true,
@@ -112,6 +113,7 @@ export class ObsidianProxyMock {
         ffAutoselectWordOnCreateLink: true,
         ffHighlightBrokenLinks: true,
         ffSetLinkDestinationFromClipbard: true,
+        ffSkipFrontmatterInNoteWideCommands: true,
 
         //context menu
         contexMenu: {
