@@ -75,6 +75,7 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
 
     })
 
+    //TODO: check status with frontmatter
 
     const convertData = [
         {
@@ -215,4 +216,90 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
         //
     })
 
+    test.each([
+        {
+            name: "text w/frontmatter",
+            text: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. [[#Sint se|aliqua]] esse duis consequat.",
+            skipFrontMatter: true,
+            expected: [
+                {
+                    text: '[aliqua](<#Sint se>)',
+                    start: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. ".length,
+                    end: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. [[#Sint se|aliqua]]".length
+                },
+                {
+                    text: '[elit text](elit)',
+                    start: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris ".length,
+                    end: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]]".length
+                },
+                {
+                    text: '[cillum#heading 1](<cillum#heading 1>)',
+                    start: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur ".length,
+                    end: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]]".length
+                }
+            ]
+        },
+        {
+            name: "text w/frontmatter",
+            text: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. [[#Sint se|aliqua]] esse duis consequat.",
+            skipFrontMatter: false,
+            expected: [
+                {
+                    text: '[aliqua](<#Sint se>)',
+                    start: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. ".length,
+                    end: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]] nisi laborum. [[#Sint se|aliqua]]".length
+                },
+                {
+                    text: '[elit text](elit)',
+                    start: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris ".length,
+                    end: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]] magna sint laboris [[elit|elit text]]".length
+                },
+                {
+                    text: '[cillum#heading 1](<cillum#heading 1>)',
+                    start: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur ".length,
+                    end: "---\nkey:value\nlink:[[front-link1]]\n---\nConsectetur [[cillum#heading 1]]".length
+                },
+                {
+                    text: '[front-link1](front-link1)',
+                    start: "---\nkey:value\nlink:".length,
+                    end: "---\nkey:value\nlink:[[front-link1]]".length
+                }
+            ]
+        }
+    ]
+    )('convert wiki links - text with $name - success', ({ name, text, skipFrontMatter, expected }, done) => {
+        const editor = new EditorMock()
+        editor.__mocks.getValue.mockReturnValue(text)
+
+        const obsidianProxyMock = new ObsidianProxyMock();
+        obsidianProxyMock.settings.skipFrontmatterInNoteWideCommands = skipFrontMatter;
+
+        obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
+            status: 200,
+            text: "<title>Google</title>"
+        })
+
+        const cmd = new ConvertWikilinksToMdlinksCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
+            if (err) {
+                done(err)
+                return
+            }
+            try {
+                expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(expected.length)
+                for (let call = 0; call < expected.length; call++) {
+                    expect(editor.__mocks.replaceRange.mock.calls[call][0]).toBe(expected[call].text)
+                    expect(editor.__mocks.replaceRange.mock.calls[call][1].ch).toBe(expected[call].start)
+                    expect(editor.__mocks.replaceRange.mock.calls[call][2].ch).toBe(expected[call].end)
+                }
+                done()
+            }
+            catch (err) {
+                done(err)
+            }
+        })
+
+        //
+        cmd.handler(editor, false)
+        //
+    })
 })

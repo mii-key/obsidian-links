@@ -55,6 +55,7 @@ export class LinkData extends TextPart {
     _text?: TextPart;
     _imageText?: TextPart;
     _imageDimensions?: ImageDimensions;
+    _destinationInAngleBrackets = false;
     vault: string | undefined;
 
     get destination(): TextPart | undefined {
@@ -166,6 +167,8 @@ function parseMarkdownLink(regExp: RegExp, match: RegExpMatchArray, raw: string,
         linkData.destination = wrappedInAngleBrackets ?
             new TextPart(destination.substring(1, destination.length - 1), new Position(linkIdx + 1, linkIdx + destination.length - 1))
             : new TextPart(destination, new Position(linkIdx, linkIdx + destination.length))
+        //TODO
+        linkData._destinationInAngleBrackets = wrappedInAngleBrackets;
     }
 
     return linkData;
@@ -636,4 +639,16 @@ export function findCodeBlocks(text: string, start?: number, end?: number): Arra
         blocks.push(block);
     }
     return blocks;
+}
+
+export function getFrontmatter(text: string): TextPart | null {
+    if (!text || !text.startsWith('---')) {
+        return null;
+    }
+    const match = text.match(new RegExp(RegExPatterns.Frontmatter.source, 'gs'));
+    if (!match) {
+        return null;
+    }
+    const [frontmatter] = match;
+    return new TextPart(frontmatter, new Position(0, frontmatter.length));
 }

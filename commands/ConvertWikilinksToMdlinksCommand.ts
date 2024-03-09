@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { Func, ICommand } from "./ICommand"
-import { LinkTypes, findLink, findLinks } from "../utils";
+import { Func } from "./ICommand"
+import { LinkTypes, TextPart, findLinks, getFrontmatter } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from './ConvertToMdlinkCommandBase'
 
@@ -24,14 +24,25 @@ export class ConvertWikilinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		if(checking && !this.isEnabled()){
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
-		const selection = editor.getSelection()
-		const text = selection || editor.getValue();
+		const selection = editor.getSelection();
+		let frontmatterToIgnore: TextPart | null | undefined;
+		let text;
+		if (selection) {
+			text = selection;
+		} else {
+			text = editor.getValue();
+			if (this.obsidianProxy.settings.ffSkipFrontmatterInNoteWideCommands
+				&& this.obsidianProxy.settings.skipFrontmatterInNoteWideCommands) {
+				frontmatterToIgnore = getFrontmatter(text);
+			}
+		}
 		const links = findLinks(text);
-		const wikilinks = links ? links.filter(x => x.type == LinkTypes.Wiki) : []
+		const wikilinks = links ? links.filter(x => x.type == LinkTypes.Wiki
+			&& (frontmatterToIgnore ? x.position.start > frontmatterToIgnore.position.end : true)) : []
 
 		if (checking) {
 			return wikilinks.length > 0
@@ -41,7 +52,10 @@ export class ConvertWikilinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 
 		(async () => {
 			for (let i = wikilinks.length - 1; i >= 0; i--) {
-				const link = wikilinks[i]
+				const link = wikilinks[i];
+				if (frontmatterToIgnore && link.position.end < frontmatterToIgnore?.position?.end) {
+					continue;
+				}
 				await this.convertLinkToMarkdownLink(link, editor, false, selectionOffset)
 			}
 		})()

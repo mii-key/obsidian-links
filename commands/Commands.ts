@@ -27,6 +27,7 @@ import { CopyLinkToClipboardCommand } from "./CopyLinkToClipboardCommand";
 import { ConvertLinksInFolderCommand } from "./ConvertLinksInFolderCommand";
 import { ConvertLinkToHtmllinkCommand } from "./ConvertLinkToHtmllinkCommand";
 import { CutLinkToClipboardCommand } from "./CutLinkToClipboardCommand";
+import { SetLinkDestinationFromClipboardCommand } from "./SetLinkDestinationFromClipboardCommand";
 
 
 const commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -66,6 +67,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
 
     commands.set(ExtractSectionCommand.name, new ExtractSectionCommand(obsidianProxy));
     commands.set(SetLinkTextFromClipboardCommand.name, new SetLinkTextFromClipboardCommand(obsidianProxy));
+    commands.set(SetLinkDestinationFromClipboardCommand.name, new SetLinkDestinationFromClipboardCommand(obsidianProxy));
     commands.set(WrapNoteInFolderCommand.name, new WrapNoteInFolderCommand(obsidianProxy));
 
     commands.set(ConvertLinksInFolderCommand.name, new ConvertLinksInFolderCommand(obsidianProxy));
@@ -86,6 +88,7 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         SetLinkTextCommand.name,
         SetLinkTextFromClipboardCommand.name,
         EditLinkDestinationCommand.name,
+        SetLinkDestinationFromClipboardCommand.name,
         CopyLinkToClipboardCommand.name,
         CutLinkToClipboardCommand.name,
         CopyLinkDestinationToClipboardCommand.name,

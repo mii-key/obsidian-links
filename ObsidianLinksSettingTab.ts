@@ -15,6 +15,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         containerEl.empty();
 
         containerEl.createEl('h3', { text: 'Command settings' });
+
+        const generalHeading = containerEl.createEl('h4', { text: 'General' });
+
+        const skipFrontmatterInNoteWideCommandsSetting = new Setting(containerEl)
+            .setName('Skip Frontmatter')
+            .setDesc('Skip Frontmatter in note wide commands.')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.skipFrontmatterInNoteWideCommands)
+                    .onChange(async (value) => {
+                        this.plugin.settings.skipFrontmatterInNoteWideCommands = value;
+                        await this.plugin.saveSettings();
+                    })
+            });
+
+        const toggleskipFrontmatterInNoteWideCommandsSetting = (enabled: boolean) => {
+            if (enabled) {
+                skipFrontmatterInNoteWideCommandsSetting.settingEl.show();
+                generalHeading.show();
+            } else {
+                skipFrontmatterInNoteWideCommandsSetting.settingEl.hide();
+                generalHeading.hide();
+            }
+        }
+
+        toggleskipFrontmatterInNoteWideCommandsSetting(this.plugin.settings.ffSkipFrontmatterInNoteWideCommands);
+
+
         containerEl.createEl('h4', { text: 'Set link text' });
         new Setting(containerEl)
             .setName('Title separator')
@@ -169,7 +197,30 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const settingCopyLink = new Setting(containerEl)
+            const setLinkDestinationFromClipboardContextMenuSetting = new Setting(containerEl)
+                .setName('Set link destination from clipboard')
+                .setDesc('')
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.contexMenu.setLinkDestinationFromClipboard)
+                        .onChange(async (value) => {
+                            this.plugin.settings.contexMenu.setLinkDestinationFromClipboard = value;
+                            await this.plugin.saveSettings();
+                        })
+
+                });
+
+            const toggleSetLinkDestinationFromClipboardContextMenuSetting = (enabled: boolean) => {
+                if (enabled) {
+                    setLinkDestinationFromClipboardContextMenuSetting.settingEl.show();
+                } else {
+                    setLinkDestinationFromClipboardContextMenuSetting.settingEl.hide();
+                }
+            }
+
+            toggleSetLinkDestinationFromClipboardContextMenuSetting(this.plugin.settings.ffSetLinkDestinationFromClipbard);
+
+            new Setting(containerEl)
                 .setName('Copy link')
                 .setDesc('')
                 .addToggle((toggle) => {
@@ -182,7 +233,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const cutLinkSettings = new Setting(containerEl)
+            new Setting(containerEl)
                 .setName('Cut link')
                 .setDesc('')
                 .addToggle((toggle) => {
@@ -678,6 +729,67 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             //         }));
             //     autoselectWordOnCreateLinkSettingDesc.appendText('.');
             // }
+
+
+            // ------------------------------------
+            // Set link destination from clipboard
+
+            // new Setting(containerEl)
+            //     .setName("Set link destination from clipboard")
+            //     .setDesc("")
+            //     .setClass("setting-item-set-link-destination-from-clipboard")
+            //     .addToggle((toggle) => {
+            //         toggle
+            //             .setValue(this.plugin.settings.ffSetLinkDestinationFromClipbard)
+            //             .onChange(async (value) => {
+            //                 this.plugin.settings.ffSetLinkDestinationFromClipbard = value;
+            //                 toggleSetLinkDestinationFromClipboardContextMenuSetting(value);
+            //                 await this.plugin.saveSettings();
+            //             })
+
+            //     });
+
+            // const setLinkDestinationFromClipbardSettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
+
+            // if (setLinkDestinationFromClipbardSettingDesc) {
+            //     setLinkDestinationFromClipbardSettingDesc.appendText(' see ');
+            //     setLinkDestinationFromClipbardSettingDesc.appendChild(
+            //         createEl('a', {
+            //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature1.md',
+            //             text: 'docs'
+            //         }));
+            //     setLinkDestinationFromClipbardSettingDesc.appendText('.');
+            // }
+
+            // ------------------------------------
+            // skip front matter in note wide commands
+
+            new Setting(containerEl)
+                .setName("Skip Frontmatter")
+                .setDesc("Skip Frontmatter in note wide commands")
+                .setClass("setting-item-skip-frontmatter-notewide")
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.ffSkipFrontmatterInNoteWideCommands)
+                        .onChange(async (value) => {
+                            this.plugin.settings.ffSkipFrontmatterInNoteWideCommands = value;
+                            await this.plugin.saveSettings();
+                            toggleskipFrontmatterInNoteWideCommandsSetting(value);
+                        })
+
+                });
+
+            const ffSkipFrontmatterSettingDesc = containerEl.querySelector(".setting-item-skip-frontmatter-notewide .setting-item-description");
+
+            if (ffSkipFrontmatterSettingDesc) {
+                ffSkipFrontmatterSettingDesc.appendText(' see ');
+                ffSkipFrontmatterSettingDesc.appendChild(
+                    createEl('a', {
+                        href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/skip-frontmatter.md',
+                        text: 'docs'
+                    }));
+                ffSkipFrontmatterSettingDesc.appendText('.');
+            }
 
         }
 
