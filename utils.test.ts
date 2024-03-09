@@ -1,5 +1,5 @@
 import exp from 'constants';
-import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction, getSafeFilename, DestinationType, CodeBlock, findCodeBlocks } from './utils';
+import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction, getSafeFilename, DestinationType, CodeBlock, findCodeBlocks, getFrontmatter } from './utils';
 import { expect, test } from '@jest/globals';
 import { RegExPatterns } from './RegExPatterns';
 
@@ -1319,4 +1319,25 @@ describe("Utils tests", () => {
                 expect(result[0].imageDimensions?.height).toBe(expectedHeight);
             }
         })
+
+    test.each([
+        {
+            name: 'just frontmatter',
+            text: '---\ncome text\n---\n',
+            hasFrontmatter: true,
+            expected: new TextPart('---\ncome text\n---\n', new Position(0, '---\ncome text\n---\n'.length))
+        }
+    ])('getFrontmatter $name', ({ text, hasFrontmatter, expected }) => {
+
+        const result = getFrontmatter(text);
+        //
+        if (hasFrontmatter) {
+            expect(result != null).toBeTruthy();
+            expect(result?.content).toBe(expected.content);
+            expect(result?.position.start).toBe(expected.position.start);
+            expect(result?.position.end).toBe(expected.position.end)
+        } else {
+            expect(result).toBeNull();
+        }
+    });
 })
