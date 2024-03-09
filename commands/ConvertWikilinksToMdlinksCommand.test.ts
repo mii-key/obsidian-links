@@ -75,6 +75,7 @@ describe('ConvertWikilinksToMdlinksCommand test', () => {
 
     })
 
+    //TODO: check status with frontmatter
 
     const convertData = [
         {

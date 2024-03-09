@@ -779,17 +779,17 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            // const feature1SettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
+            const ffSkipFrontmatterSettingDesc = containerEl.querySelector(".setting-item-skip-frontmatter-notewide .setting-item-description");
 
-            // if (feature1SettingDesc) {
-            // 	feature1SettingDesc.appendText(' see ');
-            // 	feature1SettingDesc.appendChild(
-            // 		createEl('a', {
-            // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature1.md',
-            // 			text: 'docs'
-            // 		}));
-            // 	feature1SettingDesc.appendText('.');
-            // }
+            if (ffSkipFrontmatterSettingDesc) {
+                ffSkipFrontmatterSettingDesc.appendText(' see ');
+                ffSkipFrontmatterSettingDesc.appendChild(
+                    createEl('a', {
+                        href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/skip-frontmatter.md',
+                        text: 'docs'
+                    }));
+                ffSkipFrontmatterSettingDesc.appendText('.');
+            }
 
         }
 

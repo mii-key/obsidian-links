@@ -44,7 +44,6 @@ export class ConvertWikilinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 		const wikilinks = links ? links.filter(x => x.type == LinkTypes.Wiki
 			&& (frontmatterToIgnore ? x.position.start > frontmatterToIgnore.position.end : true)) : []
 
-		console.log(wikilinks);
 		if (checking) {
 			return wikilinks.length > 0
 		}
