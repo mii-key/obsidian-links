@@ -640,3 +640,15 @@ export function findCodeBlocks(text: string, start?: number, end?: number): Arra
     }
     return blocks;
 }
+
+export function getFrontmatter(text: string): TextPart | null {
+    if (!text || !text.startsWith('---')) {
+        return null;
+    }
+    const match = text.match(new RegExp(RegExPatterns.Frontmatter.source, 'gs'));
+    if (!match) {
+        return null;
+    }
+    const [frontmatter] = match;
+    return new TextPart(frontmatter, new Position(0, frontmatter.length));
+}

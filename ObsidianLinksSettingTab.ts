@@ -15,6 +15,34 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         containerEl.empty();
 
         containerEl.createEl('h3', { text: 'Command settings' });
+
+        const generalHeading = containerEl.createEl('h4', { text: 'General' });
+
+        const skipFrontmatterInNoteWideCommandsSetting = new Setting(containerEl)
+            .setName('Skip Frontmatter')
+            .setDesc('Skip Frontmatter in note wide commands.')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.skipFrontmatterInNoteWideCommands)
+                    .onChange(async (value) => {
+                        this.plugin.settings.skipFrontmatterInNoteWideCommands = value;
+                        await this.plugin.saveSettings();
+                    })
+            });
+
+        const toggleskipFrontmatterInNoteWideCommandsSetting = (enabled: boolean) => {
+            if (enabled) {
+                skipFrontmatterInNoteWideCommandsSetting.settingEl.show();
+                generalHeading.show();
+            } else {
+                skipFrontmatterInNoteWideCommandsSetting.settingEl.hide();
+                generalHeading.hide();
+            }
+        }
+
+        toggleskipFrontmatterInNoteWideCommandsSetting(this.plugin.settings.ffSkipFrontmatterInNoteWideCommands);
+
+
         containerEl.createEl('h4', { text: 'Set link text' });
         new Setting(containerEl)
             .setName('Title separator')
@@ -731,6 +759,36 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             //             text: 'docs'
             //         }));
             //     setLinkDestinationFromClipbardSettingDesc.appendText('.');
+            // }
+
+            // ------------------------------------
+            // skip front matter in note wide commands
+
+            new Setting(containerEl)
+                .setName("Skip Frontmatter")
+                .setDesc("Skip Frontmatter in note wide commands")
+                .setClass("setting-item-skip-frontmatter-notewide")
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.ffSkipFrontmatterInNoteWideCommands)
+                        .onChange(async (value) => {
+                            this.plugin.settings.ffSkipFrontmatterInNoteWideCommands = value;
+                            await this.plugin.saveSettings();
+                            toggleskipFrontmatterInNoteWideCommandsSetting(value);
+                        })
+
+                });
+
+            // const feature1SettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
+
+            // if (feature1SettingDesc) {
+            // 	feature1SettingDesc.appendText(' see ');
+            // 	feature1SettingDesc.appendChild(
+            // 		createEl('a', {
+            // 			href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature1.md',
+            // 			text: 'docs'
+            // 		}));
+            // 	feature1SettingDesc.appendText('.');
             // }
 
         }

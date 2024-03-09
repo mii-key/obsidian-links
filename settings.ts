@@ -12,6 +12,7 @@ export interface IObsidianLinksSettings {
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction;
 	onConvertToMdlinkAppendMdExtension: boolean;
 	autoselectWordOnCreateLink: boolean;
+	skipFrontmatterInNoteWideCommands: boolean;
 
 	// feature flags
 	ffReplaceLink: boolean;
@@ -23,6 +24,7 @@ export interface IObsidianLinksSettings {
 	ffAutoselectWordOnCreateLink: boolean;
 	ffHighlightBrokenLinks: boolean;
 	ffSetLinkDestinationFromClipbard: boolean;
+	ffSkipFrontmatterInNoteWideCommands: boolean;
 
 	//context menu
 	contexMenu: {
@@ -67,6 +69,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.None,
 	onConvertToMdlinkAppendMdExtension: false,
 	autoselectWordOnCreateLink: false,
+	skipFrontmatterInNoteWideCommands: true,
 
 	//feature flags
 	ffReplaceLink: false,
@@ -78,6 +81,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffAutoselectWordOnCreateLink: false,
 	ffHighlightBrokenLinks: false,
 	ffSetLinkDestinationFromClipbard: false,
+	ffSkipFrontmatterInNoteWideCommands: false,
 
 	//context menu
 	contexMenu: {
