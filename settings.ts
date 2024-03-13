@@ -95,7 +95,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		convertToWikilink: true,
 		convertToAutolink: true,
 		convertToMakrdownLink: true,
-		convertToHtmlLink: true,
+		convertToHtmlLink: false,
 		replaceLink: true,
 		embedUnembedLink: true,
 		deleteLink: true,

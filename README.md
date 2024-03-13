@@ -31,6 +31,7 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Embed / Unembed files](#embed--unembed-files)
   - [Copy link](#copy-link)
   - [Cut link](#cut-link)
+- [Convert to HTML link](#convert-to-html-link)
 
 
 # Features
@@ -496,5 +497,37 @@ Cut markdown, wiki, auto, html link or plain url to the clipboard
 <summary>Demo. Cut link to the clipbard </summary>
 
 ![remove link](/docs/img/cut-link-to-clipboard.gif)
+
+</details>
+
+# Convert to HTML link
+
+> [!NOTE] 
+> Early access feature. Enable in settings.
+
+- Command palette: **Convert to HTML link**
+- Context menu: **Convert to HTML link**
+
+Convert wiki link to HTML link.
+
+
+<details>
+<summary>Demo. Create link to a note in a <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
+
+![Create link to a note in a diagram](/docs/img/convert-wikilink-to-html-mermaid.gif)
+
+</details>
+
+<details>
+<summary>Demo. Create link to a note's heading in a <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
+
+![Create link to a note's heading in a diagram](/docs/img/convert-wikilink-wheading-to-html-mermaid.gif)
+
+</details>
+
+<details>
+<summary>Demo. Create link to a note in a class <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
+
+![Create link to a note's heading in a diagram](/docs/img/convert-wikilink-wheading-to-html-mermaid-class-diagram.gif)
 
 </details>
