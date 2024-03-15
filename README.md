@@ -76,7 +76,7 @@ Configure this feature in the plugin settings:
 </details>
 
 <details>
-<summary>Demo. Makdown link</summary>
+<summary>Demo. Markdown link</summary>
 
 ![delete link](docs/img/delete-markdown-link.gif)
 
