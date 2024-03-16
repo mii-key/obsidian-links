@@ -108,7 +108,6 @@ export class ObsidianProxyMock {
         ffExtractSection: true,
         ffWrapNoteInFolder: true,
         ffConvertLinksInFolder: true,
-        ffConvertLinkToHtmllink: true,
         ffObsidianUrlSupport: true,
         ffAutoselectWordOnCreateLink: true,
         ffHighlightBrokenLinks: true,

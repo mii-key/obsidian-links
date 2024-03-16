@@ -17,7 +17,6 @@ export class ConvertLinkToHtmllinkCommand extends CommandBase {
 		this.icon = 'rotate-cw';
 		this.obsidianProxy = obsidianProxy;
 
-		this.isEnabled = () => this.obsidianProxy.settings.ffConvertLinkToHtmllink;
 		this.isPresentInContextMenu = () => this.obsidianProxy.settings.contexMenu.convertToHtmlLink;
 	}
 

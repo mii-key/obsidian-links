@@ -19,7 +19,6 @@ export interface IObsidianLinksSettings {
 	ffExtractSection: boolean;
 	ffWrapNoteInFolder: boolean;
 	ffConvertLinksInFolder: boolean;
-	ffConvertLinkToHtmllink: boolean;
 	ffObsidianUrlSupport: boolean;
 	ffAutoselectWordOnCreateLink: boolean;
 	ffHighlightBrokenLinks: boolean;
@@ -76,7 +75,6 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffExtractSection: false,
 	ffWrapNoteInFolder: false,
 	ffConvertLinksInFolder: false,
-	ffConvertLinkToHtmllink: false,
 	ffObsidianUrlSupport: false,
 	ffAutoselectWordOnCreateLink: false,
 	ffHighlightBrokenLinks: false,
