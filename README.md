@@ -31,7 +31,7 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Embed / Unembed files](#embed--unembed-files)
   - [Copy link](#copy-link)
   - [Cut link](#cut-link)
-- [Convert to HTML link](#convert-to-html-link)
+  - [Convert to HTML link](#convert-to-html-link)
 
 
 # Features
@@ -76,7 +76,7 @@ Configure this feature in the plugin settings:
 </details>
 
 <details>
-<summary>Demo. Makdown link</summary>
+<summary>Demo. Markdown link</summary>
 
 ![delete link](docs/img/delete-markdown-link.gif)
 
@@ -500,7 +500,7 @@ Cut markdown, wiki, auto, html link or plain url to the clipboard
 
 </details>
 
-# Convert to HTML link
+## Convert to HTML link
 
 > [!NOTE] 
 > Early access feature. Enable in settings.
