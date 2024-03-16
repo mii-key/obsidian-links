@@ -502,14 +502,10 @@ Cut markdown, wiki, auto, html link or plain url to the clipboard
 
 ## Convert to HTML link
 
-> [!NOTE] 
-> Early access feature. Enable in settings.
-
 - Command palette: **Convert to HTML link**
 - Context menu: **Convert to HTML link**
 
 Convert wiki link to HTML link.
-
 
 <details>
 <summary>Demo. Create link to a note in a <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
