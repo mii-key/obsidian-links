@@ -44,7 +44,7 @@ export interface EditorRangeOrCaret {
 
 export type EditorCommandName = 'goUp' | 'goDown' | 'goLeft' | 'goRight' | 'goStart' | 'goEnd' | 'goWordLeft' | 'goWordRight' | 'indentMore' | 'indentLess' | 'newlineAndIndent' | 'swapLineUp' | 'swapLineDown' | 'deleteLine' | 'toggleFold' | 'foldAll' | 'unfoldAll';
 
-export interface EditorTransaction {}
+export interface EditorTransaction { }
 
 export class EditorMock {
     constructor() {
@@ -57,29 +57,31 @@ export class EditorMock {
         this.getSelection = this.__mocks.getSelection
         this.setSelection = this.__mocks.setSelection
         this.replaceSelection = this.__mocks.replaceSelection
+        this.getLine = this.__mocks.getLine
     }
-    __mocks : {
-        getValue : jest.Mock
-        setValue : jest.Mock
-        getCursor : jest.Mock
-        setCursor : jest.Mock
+    __mocks: {
+        getValue: jest.Mock
+        setValue: jest.Mock
+        getCursor: jest.Mock
+        setCursor: jest.Mock
         getRange: jest.Mock
-        replaceRange : jest.Mock
-        getSelection : jest.Mock
-        setSelection : jest.Mock
-        replaceSelection : jest.Mock
+        replaceRange: jest.Mock
+        getSelection: jest.Mock
+        setSelection: jest.Mock
+        replaceSelection: jest.Mock
+        getLine: jest.Mock
     } = {
-        getValue : jest.fn(),
-        setValue : jest.fn(),
-        getCursor : jest.fn(),
-        setCursor : jest.fn(),
-        getRange: jest.fn(),
-        replaceRange : jest.fn(),
-        getSelection : jest.fn(),
-        setSelection : jest.fn(),
-        replaceSelection : jest.fn()
-
-    }
+            getValue: jest.fn(),
+            setValue: jest.fn(),
+            getCursor: jest.fn(),
+            setCursor: jest.fn(),
+            getRange: jest.fn(),
+            replaceRange: jest.fn(),
+            getSelection: jest.fn(),
+            setSelection: jest.fn(),
+            replaceSelection: jest.fn(),
+            getLine: jest.fn()
+        }
 
     refresh(): void {
         throw new Error('Method not implemented.');
@@ -160,25 +162,25 @@ export class EditorMock {
         return pos.ch;
     }
     offsetToPos(offset: number): EditorPosition {
-        return {line: 0, ch: offset};
+        return { line: 0, ch: offset };
     }
-    getDoc(): this{
+    getDoc(): this {
         throw new Error('Method not implemented.');
     }
 
-    setLine(n: number, text: string): void{
+    setLine(n: number, text: string): void {
 
     }
 
-    somethingSelected(): boolean{
+    somethingSelected(): boolean {
         throw new Error('Method not implemented.');
 
     }
 
-    setCursor(pos: EditorPosition | number, ch?: number): void{
+    setCursor(pos: EditorPosition | number, ch?: number): void {
 
     }
-    processLines<T>(read: (line: number, lineText: string) => T | null, write: (line: number, lineText: string, value: T | null) => EditorChange | void, ignoreEmpty?: boolean): void{
+    processLines<T>(read: (line: number, lineText: string) => T | null, write: (line: number, lineText: string, value: T | null) => EditorChange | void, ignoreEmpty?: boolean): void {
 
     }
 

@@ -753,6 +753,35 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 ffSkipFrontmatterSettingDesc.appendText('.');
             }
 
+            // ------------------------------------
+            // copy link to heading
+
+            new Setting(containerEl)
+                .setName("Copy link to heading")
+                .setDesc("Copy link to a heading to the clipboard. ")
+                .setClass("setting-item-copy-link-to-heading")
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.ffCopyLinkToHeading)
+                        .onChange(async (value) => {
+                            this.plugin.settings.ffCopyLinkToHeading = value;
+                            await this.plugin.saveSettings();
+                        })
+
+                });
+
+            const feature1SettingDesc = containerEl.querySelector(".setting-item-copy-link-to-heading .setting-item-description");
+
+            if (feature1SettingDesc) {
+                feature1SettingDesc.appendText(' see ');
+                feature1SettingDesc.appendChild(
+                    createEl('a', {
+                        href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/copy-link-to-heading.md',
+                        text: 'docs'
+                    }));
+                feature1SettingDesc.appendText('.');
+            }
+
         }
 
     }

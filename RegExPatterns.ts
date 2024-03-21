@@ -9,7 +9,7 @@ export class RegExPatterns {
     static readonly AutolinkMail = /<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>/;
     static readonly PlainUrl = /\b((?:[a-z][\w\-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/
     static readonly InvalidNoteNameChars = /[#^\[\]\|*"\/\\<>:?]/
-    static readonly NoteHeader = /^#+\s+(.*)$/
+    static readonly NoteHeading = /^#+\s+(.*)$/
     static readonly AbsoluteUriCheck = /^(?:[a-z+]+:)?\/\//;
     static readonly AbsoluteFilePathCheck = /^\/|([a-z]:[\/\\])/;
     //TODO: fix
