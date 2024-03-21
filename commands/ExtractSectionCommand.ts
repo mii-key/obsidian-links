@@ -95,7 +95,7 @@ export class ExtractSectionCommand extends CommandBase {
 			return
 		}
 
-		const headerMatch = section.match(new RegExp(RegExPatterns.NoteHeader.source, 'im'))
+		const headerMatch = section.match(new RegExp(RegExPatterns.NoteHeading.source, 'im'))
 		if (headerMatch) {
 			const safeFilename = getSafeFilename(headerMatch[1]).trim();
 			const noteFullPath = (currentNoteParentPath === '/' ? safeFilename :
