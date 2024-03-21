@@ -44,14 +44,14 @@ Unlink single link or all links in a selection.
 - Context menu: **Unlink**
 
 <details>
-<summary>Demo. Single link.</summary>
+<summary>🎞️ Demo. Single link.</summary>
 
 ![remove link](docs/img/unlink-link.gif)
 
 </details>
 
 <details>
-<summary>Demo. Links in a selection.</summary>
+<summary>🎞️ Demo. Links in a selection.</summary>
 
 ![remove link](docs/img/unlink-selection.gif)
 
@@ -69,21 +69,21 @@ Configure this feature in the plugin settings:
 ![delete unreferenced link target on delete link](/docs/img/delete-unreferenced-link-target-on-delete-link-setting.png)
 
 <details>
-<summary>Demo. Wikilink</summary>
+<summary>🎞️ Demo. Wikilink</summary>
 
 ![delete link](docs/img/delete-wikilink.gif)
 
 </details>
 
 <details>
-<summary>Demo. Markdown link</summary>
+<summary>🎞️ Demo. Markdown link</summary>
 
 ![delete link](docs/img/delete-markdown-link.gif)
 
 </details>
 
 <details>
-<summary>Demo. Autolink</summary>
+<summary>🎞️ Demo. Autolink</summary>
 
 ![delete link](docs/img/delete-autolink.gif)
 
@@ -102,14 +102,14 @@ If a wikilink destination doesn't have an extension, the `.md` extension can be 
 
 
 <details>
-<summary>Demo. Wikilink</summary>
+<summary>🎞️ Demo. Wikilink</summary>
 
 ![convert wikilink to markdown link](docs/img/convert-wikilink-to-mdlink.gif)
 
 </details>
 
 <details>
-<summary>Demo. HTML link</summary>
+<summary>🎞️ Demo. HTML link</summary>
 
 ![convert html link to markdown link](docs/img/convert-htmllink-to-mdlink.gif)
 
@@ -140,14 +140,14 @@ Converts a markdown link with an absolute URL or an email address to an autolink
 
 
 <details>
-<summary>Demo. Markdown link with absolute URL.</summary>
+<summary>🎞️ Demo. Markdown link with absolute URL.</summary>
 
 ![convert markdown link to wiki link](docs/img/convert-markdown-url-link-to-autolink.gif)
 
 </details>
 
 <details>
-<summary>Demo. Markdown link with email address.</summary>
+<summary>🎞️ Demo. Markdown link with email address.</summary>
 
 ![convert markdown link to wiki link](docs/img/convert-markdown-email-link-to-autolink.gif)
 
@@ -162,7 +162,7 @@ If an autolink has an absolute URI with `http` or `https` scheme content of the 
 - Context menu: **Convert to markdown link**
 
 <details>
-<summary>Demo. Convert autolink to markdown link</summary>
+<summary>🎞️ Demo. Convert autolink to markdown link</summary>
 
 ![convert to markdown link](/docs/img/convert-autolink-to-markdown-link.gif)
 
@@ -179,7 +179,7 @@ If a URL has an absolute URI with `http` or `https` scheme content of the `<titl
 - Context menu: **Convert to markdown link**
 
 <details>
-<summary>Demo. Convert a URL to a markdown link</summary>
+<summary>🎞️ Demo. Convert a URL to a markdown link</summary>
 
 ![convert to markdown link](/docs/img/convert-url-to-markdown-link.gif)
 
@@ -195,7 +195,7 @@ Convert an absolute URL to an autolink.
 - Context menu: **Convert to autolink**
 
 <details>
-<summary>Demo. Convert an absolute URL to an autolink</summary>
+<summary>🎞️ Demo. Convert an absolute URL to an autolink</summary>
 
 ![convert to markdown link](/docs/img/convert-url-to-autolink.gif)
 
@@ -215,14 +215,14 @@ If a wikilink destination doesn't have an extension, the `.md` extension can be 
 - Context menu: **Convert all links to Markdown links** (enable in Settings)
 
 <details>
-<summary>Demo. Convert all links in a note to markdown links </summary>
+<summary>🎞️ Demo. Convert all links in a note to markdown links </summary>
 
 ![remove link](/docs/img/convert-all-to-mdlinks.gif)
 
 </details>
 
 <details>
-<summary>Demo. Convert all links in a selection to markdown links </summary>
+<summary>🎞️ Demo. Convert all links in a selection to markdown links </summary>
 
 ![remove link](/docs/img/convert-all-in-selection-to-mdlinks.gif)
 
@@ -237,7 +237,7 @@ If a wikilink destination doesn't have an extension, the `.md` extension can be 
 - Command palette: **Convert Wikilinks to Markdown links**
 - Context menu: **Convert Wikilinks to Markdown links** (enable in Settings)
 
-Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+🎞️ Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
 
 see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
 
@@ -248,7 +248,7 @@ For autolinks with absolute URL with `http://` or `https://` schemes link text w
 - Command palette: **Convert Autolinks to Markdown links**
 - Context menu: **Convert Autolinks to Markdown links** (enable in Settings)
 
-Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+🎞️ Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
 
 ### Convert URLs to markdown links
 Convert multiple raw URLs in a note or in a selection to markdown links.
@@ -257,7 +257,7 @@ For absolute URLs with `http://` or `https://` schemes link text will be set to 
 - Command palette: **Convert URLs to Markdown links**
 - Context menu: **Convert URLs to Markdown links** (enable in Settings)
 
-Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+🎞️ Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
 
 ### Convert HTML links to markdown links
 Convert multiple raw URLs in a note or in a selection to markdown links.
@@ -265,7 +265,7 @@ Convert multiple raw URLs in a note or in a selection to markdown links.
 - Command palette: **Convert HTML links to Markdown links**
 - Context menu: **Convert HTML links to Markdown links** (enable in Settings)
 
-Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
+🎞️ Demo. see [Convert all links to markdown links](#convert-all-links-to-markdown-links)
 
 ## Copy link destination to clipboard
 
@@ -306,7 +306,7 @@ Available options:
 - Replace with lowest heading
 
 <details>
-<summary>Demo. Remove</summary>
+<summary>🎞️ Demo. Remove</summary>
 Original text:
 
 ![Alt text](/docs/img/heading-wikilink-notext-subheadings.png)
@@ -318,7 +318,7 @@ After command execution:
 </details>
 
 <details>
-<summary>Demo. Replace with destination</summary>
+<summary>🎞️ Demo. Replace with destination</summary>
 Original text:
 
 ![Alt text](/docs/img/heading-wikilink-notext-subheadings.png)
@@ -330,7 +330,7 @@ After command execution:
 </details>
 
 <details>
-<summary>Demo. Replace with lowest heading</summary>
+<summary>🎞️ Demo. Replace with lowest heading</summary>
 Original text:
 
 ![Alt text](/docs/img/heading-wikilink-notext-subheadings.png)
@@ -380,21 +380,21 @@ For external http[s] links, page content is requested and link text is set to th
 
 
 <details>
-<summary>Demo. Link to a local note</summary>
+<summary>🎞️ Demo. Link to a local note</summary>
 
 ![Link to local note](docs/img/set-link-text-local.gif)
 
 </details>
 
 <details>
-<summary>Demo. Link to a heading in a local note</summary>
+<summary>🎞️ Demo. Link to a heading in a local note</summary>
 
 ![Link to a heading in local note](docs/img/set-link-text-local-heading.gif)
 
 </details>
 
 <details>
-<summary>Demo. External link</summary>
+<summary>🎞️ Demo. External link</summary>
 
 ![External link](docs/img/set-link-text-external.gif)
 
@@ -409,14 +409,14 @@ Links that can't have text, like URL, will be converted to markdown link.
 - Context menu: **Set link text from clipboard**
 
 <details>
-<summary>Demo.</summary>
+<summary>🎞️ Demo.</summary>
 
 ![set link text from clipbaord](/docs/img/set-link-text-from-clipboard.gif)
 
 </details>
 
 <details>
-<summary>Demo. Link to image</summary>
+<summary>🎞️ Demo. Link to image</summary>
 
 ![set link text from clipbaord](/docs/img/set-image-link-text-from-clipboard.gif)
 
@@ -459,14 +459,14 @@ Add or remove [file embedding](https://help.obsidian.md/Linking+notes+and+files/
 - Context menu: Embed / Unembed
 
 <details>
-<summary>Demo. Embed </summary>
+<summary>🎞️ Demo. Embed </summary>
 
 ![remove link](/docs/img/embed-link.gif)
 
 </details>
 
 <details>
-<summary>Demo. Unembed </summary>
+<summary>🎞️ Demo. Unembed </summary>
 
 ![remove link](/docs/img/unembed-link.gif)
 
@@ -480,7 +480,7 @@ Copy markdown, wiki, auto, html link or plain url to the clipboard
 - Context menu: Copy link
 
 <details>
-<summary>Demo. Copy link to the clipbard </summary>
+<summary>🎞️ Demo. Copy link to the clipbard </summary>
 
 ![remove link](/docs/img/copy-link-to-clipboard.gif)
 
@@ -494,7 +494,7 @@ Cut markdown, wiki, auto, html link or plain url to the clipboard
 - Context menu: Cut link
 
 <details>
-<summary>Demo. Cut link to the clipbard </summary>
+<summary>🎞️ Demo. Cut link to the clipbard </summary>
 
 ![remove link](/docs/img/cut-link-to-clipboard.gif)
 
@@ -508,21 +508,21 @@ Cut markdown, wiki, auto, html link or plain url to the clipboard
 Convert wiki link to HTML link.
 
 <details>
-<summary>Demo. Create link to a note in a <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
+<summary>🎞️ Demo. Create link to a note in a <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
 
 ![Create link to a note in a diagram](/docs/img/convert-wikilink-to-html-mermaid.gif)
 
 </details>
 
 <details>
-<summary>Demo. Create link to a note's heading in a <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
+<summary>🎞️ Demo. Create link to a note's heading in a <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
 
 ![Create link to a note's heading in a diagram](/docs/img/convert-wikilink-wheading-to-html-mermaid.gif)
 
 </details>
 
 <details>
-<summary>Demo. Create link to a note in a class <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
+<summary>🎞️ Demo. Create link to a note in a class <a href="https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram">diagram</a></summary>
 
 ![Create link to a note's heading in a diagram](/docs/img/convert-wikilink-wheading-to-html-mermaid-class-diagram.gif)
 
