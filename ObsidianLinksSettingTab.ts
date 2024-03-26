@@ -18,6 +18,32 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         const generalHeading = containerEl.createEl('h4', { text: 'General' });
 
+
+
+        const autoselectWordOnCreateLinkCommandsSetting = new Setting(containerEl)
+            .setName('Autoselect upon creating a link')
+            .setDesc('Autoselect a word under the cursor when creating a link.')
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.autoselectWordOnCreateLink)
+                    .onChange(async (value) => {
+                        this.plugin.settings.autoselectWordOnCreateLink = value;
+                        await this.plugin.saveSettings();
+                    })
+            });
+
+        const toggleAutoselectWordOnCreateLinkCommandsSetting = (enabled: boolean) => {
+            if (enabled) {
+                autoselectWordOnCreateLinkCommandsSetting.settingEl.show();
+                generalHeading.show();
+            } else {
+                autoselectWordOnCreateLinkCommandsSetting.settingEl.hide();
+                generalHeading.hide();
+            }
+        }
+
+        toggleAutoselectWordOnCreateLinkCommandsSetting(this.plugin.settings.ffAutoselectWordOnCreateLink);
+
         const skipFrontmatterInNoteWideCommandsSetting = new Setting(containerEl)
             .setName('Skip Frontmatter')
             .setDesc('Skip Frontmatter in note wide commands.')
@@ -676,6 +702,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                         .setValue(this.plugin.settings.ffAutoselectWordOnCreateLink)
                         .onChange(async (value) => {
                             this.plugin.settings.ffAutoselectWordOnCreateLink = value;
+                            toggleAutoselectWordOnCreateLinkCommandsSetting(value);
                             await this.plugin.saveSettings();
                         })
                 });
