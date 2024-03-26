@@ -58,18 +58,47 @@ describe('CreateLinkFromSelectionCommand test', () => {
     test.each(
         [
             {
-                name: "cursor middle of <space>word<space>",
+                name: "cursor: <space>wo|rd<space>",
                 text: "Ea non laboris ut magna amet laborum",
                 cursorPos: "Ea non labo".length,
                 expectedSelection: "laboris",
                 expectedSelectionStart: "Ea non ".length,
-                expected: '[laboris](some-text)'
+                expected: '[laboris](laboris)'
+            },
+            {
+                name: "cursor: |<space>word<space>",
+                text: "Ea non laboris ut magna amet laborum",
+                cursorPos: "Ea non ".length,
+                expectedSelection: "laboris",
+                expectedSelectionStart: "Ea non ".length,
+                expected: '[laboris](laboris)'
+            },
+            {
+                name: "cursor: <space>word|<space>",
+                text: "Ea non laboris ut magna amet laborum",
+                cursorPos: "Ea non laboris".length,
+                expectedSelection: "laboris",
+                expectedSelectionStart: "Ea non ".length,
+            },
+            {
+                name: "cursor: <doc-start>|word<space>",
+                text: "Ea non laboris ut magna amet laborum",
+                cursorPos: "".length,
+                expectedSelection: "Ea",
+                expectedSelectionStart: "".length,
+            },
+            {
+                name: "cursor: <space>word|<doc-end>",
+                text: "Ea non laboris ut magna amet laborum",
+                cursorPos: "Ea non laboris ut magna amet laborum".length,
+                expectedSelection: "laborum",
+                expectedSelectionStart: "Ea non laboris ut magna amet ".length,
             },
             //TODO:
             // - wordEOL
             // - EOLword
         ]
-    )('create link - selectWordUnderCursor - $name - success', ({ name, text, cursorPos, expectedSelection, expectedSelectionStart, expected }) => {
+    )('create link - selectWordUnderCursor - $name - success', ({ name, text, cursorPos, expectedSelection, expectedSelectionStart }) => {
         const editor = new EditorMock();
 
         editor.__mocks.getValue.mockReturnValue(text);
