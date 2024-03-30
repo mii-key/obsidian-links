@@ -3,6 +3,7 @@ import { expect, test } from '@jest/globals';
 import { EditorMock } from './EditorMock'
 import { SetLinkDestinationFromClipboardCommand } from './SetLinkDestinationFromClipboardCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
+import { VaultMock } from '../VaultMock';
 
 describe('SetLinkDestinationFromClipboardCommand test', () => {
 
@@ -132,7 +133,6 @@ describe('SetLinkDestinationFromClipboardCommand test', () => {
                 clipboard: "some-text",
                 expectedEnabled: true,
             },
-
             // wikilink
             {
                 name: "wikilink",
@@ -435,6 +435,18 @@ describe('SetLinkDestinationFromClipboardCommand test', () => {
                 expectedCursorPos: "Proident laboris ![200](some-text".length
 
             },
+            {
+                name: "mdlink w/text, obsidian link in clipboard, same vault",
+                text: "Proident laboris [nisi](elit) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "obsidian://open?vault=vault1&file=Folder1%2FLink%20Title",
+                cursorOffset: "Proident laboris [n".length,
+                expectedReplacement: '<Folder1/Link Title.md>',
+                expectedReplacementStart: "Proident laboris [nisi](".length,
+                expectedReplacementEnd: "Proident laboris [nisi](elit".length,
+                expectedCursorPos: "Proident laboris [nisi](<Folder1/Link Title.md>".length
+
+            },
+
 
             // wikilink
             {
@@ -537,7 +549,9 @@ describe('SetLinkDestinationFromClipboardCommand test', () => {
         editor.__mocks.getSelection.mockRejectedValue('')
         editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: cursorOffset })
 
-        const obsidianProxyMock = new ObsidianProxyMock()
+        const vault = new VaultMock();
+        vault.__mocks.getName.mockReturnValue('vault1');
+        const obsidianProxyMock = new ObsidianProxyMock(vault)
         obsidianProxyMock.__mocks.clipboardReadText.mockResolvedValue(clipboardText)
 
         const cmd = new SetLinkDestinationFromClipboardCommand(obsidianProxyMock, () => true, () => true, (err, data) => {
