@@ -652,3 +652,16 @@ export function getFrontmatter(text: string): TextPart | null {
     const [frontmatter] = match;
     return new TextPart(frontmatter, new Position(0, frontmatter.length));
 }
+
+export function getFileExtension(path: string): string | null {
+    const dotIdx = path.lastIndexOf('.');
+    if (dotIdx > 0) {
+        for (let i = dotIdx; i < path.length; i++) {
+            if (path[i] === "/" || path[i] === "\\") {
+                return null;
+            }
+        }
+        return path.substring(dotIdx);
+    }
+    return null;
+}

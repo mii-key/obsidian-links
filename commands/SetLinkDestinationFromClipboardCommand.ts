@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { Func } from "./ICommand"
-import { LinkTypes, findLinks } from "../utils";
+import { LinkTypes, findLinks, getFileExtension } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from "./ConvertToMdlinkCommandBase";
 
@@ -51,6 +51,21 @@ export class SetLinkDestinationFromClipboardCommand extends ConvertToMdlinkComma
 			const link = links[0];
 			const clipboardText = await this.obsidianProxy.clipboardReadText();
 			let linkDestination = clipboardText;
+			if (this.obsidianProxy.settings.ffObsidianUrlSupport) {
+				//TODO:
+				if (linkDestination.startsWith('obsidian://open?vault=')) {
+					const links = findLinks(linkDestination, LinkTypes.PlainUrl);
+					if (links.length == 1 && links[0].destination) {
+						const url = new URL(links[0].destination?.content)
+						if (this.obsidianProxy.Vault.getName() === url.searchParams.get('vault')) {
+							const filePath = url.searchParams.get('file')
+							if (filePath) {
+								linkDestination = filePath + (getFileExtension(filePath) ? '' : '.md');
+							}
+						}
+					}
+				}
+			}
 			let destinationStartOffset: number;
 			let destinationEndOffset: number;
 			if (link?.destination) {
