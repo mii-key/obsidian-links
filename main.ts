@@ -190,7 +190,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 	async loadSettings() {
 		const loadedSettings = await this.loadData();
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedSettings);
-		this.settings.contexMenu = Object.assign({}, DEFAULT_SETTINGS.contexMenu, loadedSettings.contexMenu);
+		this.settings.contexMenu = Object.assign({}, DEFAULT_SETTINGS.contexMenu, loadedSettings?.contexMenu);
 		this.linkTextSuggestContext.titleSeparator = this.settings.titleSeparator;
 	}
 
