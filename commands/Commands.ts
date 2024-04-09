@@ -29,6 +29,7 @@ import { ConvertLinkToHtmllinkCommand } from "./ConvertLinkToHtmllinkCommand";
 import { CutLinkToClipboardCommand } from "./CutLinkToClipboardCommand";
 import { SetLinkDestinationFromClipboardCommand } from "./SetLinkDestinationFromClipboardCommand";
 import { CopyLinkToHeadingToClipboardCommand } from "./CopyLinkToHeadingToClipboardCommand";
+import { EmbedUnembedLinkCommand } from "./EmbedUnembedLinkCommand";
 
 
 const commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -59,8 +60,10 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(EditLinkDestinationCommand.name, new EditLinkDestinationCommand(() => settings.contexMenu.editLinkDestination));
     commands.set(CreateLinkFromSelectionCommand.name, new CreateLinkFromSelectionCommand(obsidianProxy, () => settings.contexMenu.createLink));
     commands.set(CreateLinkFromClipboardCommand.name, new CreateLinkFromClipboardCommand(obsidianProxy, () => settings.contexMenu.createLinkFromClipboard));
-    commands.set(EmbedLinkCommand.name, new EmbedLinkCommand(() => settings.contexMenu.embedUnembedLink));
-    commands.set(UnembedLinkCommand.name, new UnembedLinkCommand(() => settings.contexMenu.embedUnembedLink));
+    // commands.set(EmbedLinkCommand.name, new EmbedLinkCommand(() => settings.contexMenu.embedUnembedLink));
+    // commands.set(UnembedLinkCommand.name, new UnembedLinkCommand(() => settings.contexMenu.embedUnembedLink));
+    commands.set(EmbedUnembedLinkCommand.name, new EmbedUnembedLinkCommand(() => settings.contexMenu.embedUnembedLink));
+
     commands.set(ConvertAllLinksToMdlinksCommand.name, new ConvertAllLinksToMdlinksCommand(obsidianProxy));
     commands.set(ConvertWikilinksToMdlinksCommand.name, new ConvertWikilinksToMdlinksCommand(obsidianProxy));
     commands.set(ConvertUrlsToMdlinksCommand.name, new ConvertUrlsToMdlinksCommand(obsidianProxy));
@@ -102,8 +105,9 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         ConvertLinkToAutolinkCommand.name,
         ConvertLinkToMdlinkCommand.name,
         ConvertLinkToHtmllinkCommand.name,
-        UnembedLinkCommand.name,
-        EmbedLinkCommand.name,
+        // UnembedLinkCommand.name,
+        // EmbedLinkCommand.name,
+        EmbedUnembedLinkCommand.name,
         DeleteLinkCommand.name,
         null,
         CreateLinkFromSelectionCommand.name,

@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand  } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, LinkTypes, findLink } from "../utils";
 
 export class EmbedLinkCommand extends CommandBase {
 	constructor(isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
@@ -10,9 +10,9 @@ export class EmbedLinkCommand extends CommandBase {
 		this.displayNameContextMenu = 'Embed';
 		this.icon = 'file-input';
 	}
-	
-    handler(editor: Editor, checking: boolean) : boolean | void {
-		if(checking && !this.isEnabled()){
+
+	handler(editor: Editor, checking: boolean): boolean | void {
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
@@ -26,9 +26,9 @@ export class EmbedLinkCommand extends CommandBase {
 		if (linkData) {
 			this.embedLinkUnderCursor(linkData, editor);
 		}
-    }
+	}
 
-    embedLinkUnderCursor(linkData: LinkData, editor: Editor) {
+	embedLinkUnderCursor(linkData: LinkData, editor: Editor) {
 		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && !linkData.embedded) {
 			editor.replaceRange(
 				'!' + linkData.content,
