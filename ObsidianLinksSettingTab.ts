@@ -545,6 +545,23 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             // }
             // ----------
 
+            // ------------------------------------
+            // Autoselect word upon creating link & creating link from clipboard
+
+            new Setting(containerEl)
+                .setName("Autoselect a word upon creating a link")
+                .setDesc("Autoselect a word under the cursor when creating a link")
+                .setClass("setting-item-autoselect-word-create-link")
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.ffAutoselectWordOnCreateLink)
+                        .onChange(async (value) => {
+                            this.plugin.settings.ffAutoselectWordOnCreateLink = value;
+                            toggleAutoselectWordOnCreateLinkCommandsSetting(value);
+                            await this.plugin.saveSettings();
+                        })
+                });
+
 
             // ----------------------------------------------
             // --            Insider features              --
@@ -688,24 +705,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     }));
                 featureObsidianUrlSettingDesc.appendText('.');
             }
-
-
-            // ------------------------------------
-            // Autoselect word upon creating link & creating link from clipboard
-
-            new Setting(containerEl)
-                .setName("Autoselect a word upon creating a link")
-                .setDesc("Autoselect a word under the cursor when creating a link")
-                .setClass("setting-item-autoselect-word-create-link")
-                .addToggle((toggle) => {
-                    toggle
-                        .setValue(this.plugin.settings.ffAutoselectWordOnCreateLink)
-                        .onChange(async (value) => {
-                            this.plugin.settings.ffAutoselectWordOnCreateLink = value;
-                            toggleAutoselectWordOnCreateLinkCommandsSetting(value);
-                            await this.plugin.saveSettings();
-                        })
-                });
 
             // const autoselectWordOnCreateLinkSettingDesc = containerEl.querySelector(".setting-item-autoselect-word-create-link .setting-item-description");
 
