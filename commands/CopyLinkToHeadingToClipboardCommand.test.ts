@@ -46,6 +46,18 @@ describe('CopyLinkToHeadingToClipboardCommand test', () => {
                 text: "# heading1",
                 filepath: 'note1.md',
                 expected: "[heading1](note1.md#heading1)"
+            },
+            {
+                name: "heading w/spaces",
+                text: "# heading 1",
+                filepath: 'note1.md',
+                expected: "[heading 1](<note1.md#heading 1>)"
+            },
+            {
+                name: "note path w/spaces",
+                text: "# heading1",
+                filepath: 'note 1.md',
+                expected: "[heading1](<note 1.md#heading1>)"
             }
         ]
     )('copy - [$name] - success', ({ name, text, filepath, expected }) => {

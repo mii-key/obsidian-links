@@ -665,3 +665,15 @@ export function getFileExtension(path: string): string | null {
     }
     return null;
 }
+
+export function destinationRequireAngleBrackets(destination: string): boolean {
+    for (let i = 0; i < destination.length; i++) {
+        const code = destination.charCodeAt(i);
+        //TODO:
+        if (code === 0x20) {
+            return true;
+        }
+    }
+
+    return false;
+}

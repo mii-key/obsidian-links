@@ -8,7 +8,7 @@
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json package.json && git commit -m \"update version\"",
 		"test": "jest",
-		"test-watch": "jest --watch",
+		"test:watch": "jest --watch",
 		"clean": "rmdir /s /q node_modules",
 		"coverage": "jest --coverage",
 		"push-all-wtags": "git checkout develop && git push && git checkout master && git push && git push --tags"

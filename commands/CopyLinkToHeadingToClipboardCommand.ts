@@ -2,6 +2,7 @@ import { Editor } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
+import { destinationRequireAngleBrackets } from "../utils";
 
 export class CopyLinkToHeadingToClipboardCommand extends CommandBase {
 
@@ -40,7 +41,11 @@ export class CopyLinkToHeadingToClipboardCommand extends CommandBase {
 	}
 
 	copyLinkToHeadingUnderCursorToClipboard(heading: string, notePath: string) {
-		const rawLink = `[${heading}](${notePath}#${heading})`;
+		let destination = `${notePath}#${heading}`;
+		if (destinationRequireAngleBrackets(destination)) {
+			destination = `<${destination}>`;
+		}
+		const rawLink = `[${heading}](${destination})`;
 		// navigator.clipboard.writeText(linkData.link?.content);
 		this.obsidianProxy.clipboardWriteText(rawLink);
 		this.obsidianProxy.createNotice("Link copied to your clipboard");
