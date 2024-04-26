@@ -20,7 +20,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
 
 
-        const autoselectWordOnCreateLinkCommandsSetting = new Setting(containerEl)
+        new Setting(containerEl)
             .setName('Autoselect upon creating a link')
             .setDesc('Autoselect a word under the cursor when creating a link.')
             .addToggle((toggle) => {
@@ -31,18 +31,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     })
             });
-
-        const toggleAutoselectWordOnCreateLinkCommandsSetting = (enabled: boolean) => {
-            if (enabled) {
-                autoselectWordOnCreateLinkCommandsSetting.settingEl.show();
-                generalHeading.show();
-            } else {
-                autoselectWordOnCreateLinkCommandsSetting.settingEl.hide();
-                generalHeading.hide();
-            }
-        }
-
-        toggleAutoselectWordOnCreateLinkCommandsSetting(this.plugin.settings.ffAutoselectWordOnCreateLink);
 
         const skipFrontmatterInNoteWideCommandsSetting = new Setting(containerEl)
             .setName('Skip Frontmatter')
@@ -545,22 +533,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             // }
             // ----------
 
-            // ------------------------------------
-            // Autoselect word upon creating link & creating link from clipboard
-
-            new Setting(containerEl)
-                .setName("Autoselect a word upon creating a link")
-                .setDesc("Autoselect a word under the cursor when creating a link")
-                .setClass("setting-item-autoselect-word-create-link")
-                .addToggle((toggle) => {
-                    toggle
-                        .setValue(this.plugin.settings.ffAutoselectWordOnCreateLink)
-                        .onChange(async (value) => {
-                            this.plugin.settings.ffAutoselectWordOnCreateLink = value;
-                            toggleAutoselectWordOnCreateLinkCommandsSetting(value);
-                            await this.plugin.saveSettings();
-                        })
-                });
 
 
             // ----------------------------------------------
