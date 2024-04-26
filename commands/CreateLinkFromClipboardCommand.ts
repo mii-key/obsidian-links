@@ -71,7 +71,6 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 			let selection = editor.getSelection();
 
 			if (!selection
-				&& this.obsidianProxy.settings.ffAutoselectWordOnCreateLink
 				&& this.obsidianProxy.settings.autoselectWordOnCreateLink) {
 				selection = selectWordUnderCursor(editor);
 			}

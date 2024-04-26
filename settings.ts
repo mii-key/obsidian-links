@@ -20,7 +20,6 @@ export interface IObsidianLinksSettings {
 	ffWrapNoteInFolder: boolean;
 	ffConvertLinksInFolder: boolean;
 	ffObsidianUrlSupport: boolean;
-	ffAutoselectWordOnCreateLink: boolean;
 	ffHighlightBrokenLinks: boolean;
 	ffSetLinkDestinationFromClipbard: boolean;
 	ffSkipFrontmatterInNoteWideCommands: boolean;
@@ -69,7 +68,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 
 	removeLinksFromHeadingsInternalWikilinkWithoutTextAction: InternalWikilinkWithoutTextAction.None,
 	onConvertToMdlinkAppendMdExtension: false,
-	autoselectWordOnCreateLink: false,
+	autoselectWordOnCreateLink: true,
 	skipFrontmatterInNoteWideCommands: true,
 
 	//feature flags
@@ -78,7 +77,6 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffWrapNoteInFolder: false,
 	ffConvertLinksInFolder: false,
 	ffObsidianUrlSupport: false,
-	ffAutoselectWordOnCreateLink: false,
 	ffHighlightBrokenLinks: false,
 	ffSetLinkDestinationFromClipbard: false,
 	ffSkipFrontmatterInNoteWideCommands: false,

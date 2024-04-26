@@ -109,7 +109,6 @@ export class ObsidianProxyMock {
         ffWrapNoteInFolder: true,
         ffConvertLinksInFolder: true,
         ffObsidianUrlSupport: true,
-        ffAutoselectWordOnCreateLink: true,
         ffHighlightBrokenLinks: true,
         ffSetLinkDestinationFromClipbard: true,
         ffSkipFrontmatterInNoteWideCommands: true,
