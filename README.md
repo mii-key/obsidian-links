@@ -432,14 +432,14 @@ Create link from selected text.
 To autoselect a word under the cursor enable 'Autoselect upon creating a link' in settings.
 
 <details>
-<summary>Demo. Create a link from selection</summary>
+<summary>🎞️ Demo. Create a link from selection</summary>
 
 ![Create link from selection](docs/img/create-wikilink-from-selection.gif)
 
 </details>
 
 <details>
-<summary>Demo. Create a link with the enabled option 'Autoselect upon creating a link'</summary>
+<summary>🎞️ Demo. Create a link with the enabled option 'Autoselect upon creating a link'</summary>
 
 ![Create link from selection](docs/img/create-wikilink-autoselect-word.gif)
 
@@ -454,14 +454,14 @@ Create link from textual content of the system clipboard.
 To autoselect a word under the cursor enable 'Autoselect upon creating a link' in settings.
 
 <details>
-<summary>Demo. Create a link from selection</summary>
+<summary>🎞️ Demo. Create a link from selection</summary>
 
 ![Create link from clipboard](docs/img/create-mdlink-from-clipboard.gif)
 
 </details>
 
 <details>
-<summary>Demo. Create a link with the enabled option 'Autoselect upon creating a link'</summary>
+<summary>🎞️ Demo. Create a link with the enabled option 'Autoselect upon creating a link'</summary>
 
 ![Create link from selection](docs/img/create-mdlink-from-clipboard-autoselect-word.gif)
 
