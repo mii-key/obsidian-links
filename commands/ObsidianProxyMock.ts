@@ -113,6 +113,8 @@ export class ObsidianProxyMock {
         ffSetLinkDestinationFromClipbard: true,
         ffSkipFrontmatterInNoteWideCommands: true,
         ffCopyLinkToHeading: true,
+        ffCopyLinkToBlock: false,
+
 
         //context menu
         contexMenu: {
@@ -141,6 +143,7 @@ export class ObsidianProxyMock {
             wrapNoteInFolder: true,
             copyLinkToClipboard: true,
             copyLinkToHeadingToClipboard: true,
+            copyLinkToBlockToClipboard: true,
             cutLinkToClipboard: true
         }
     }
