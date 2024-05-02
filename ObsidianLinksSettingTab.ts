@@ -98,8 +98,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
             });
 
-        const convertToMdlinkCaptionEl = containerEl.createEl('h4', { text: 'Convert to Markdown link' });
-        const settingOnConvertToMdlinkAppendMdExtension = new Setting(containerEl)
+        containerEl.createEl('h4', { text: 'Convert to Markdown link' });
+        new Setting(containerEl)
             .setName('Append .md extension')
             .setDesc("")
             .setClass("setting-item-append-mdextension")
@@ -272,6 +272,52 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                         })
 
                 });
+
+            const settingCopyLinkToHeadingContextMenu = new Setting(containerEl)
+                .setName('Copy link to heading')
+                .setDesc('')
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.contexMenu.copyLinkToHeadingToClipboard)
+                        .onChange(async (value) => {
+                            this.plugin.settings.contexMenu.copyLinkToHeadingToClipboard = value;
+                            await this.plugin.saveSettings();
+                        })
+
+                });
+
+            const toggleCopyLinkToHeadingContextMenuSetting = (enabled: boolean) => {
+                if (enabled) {
+                    settingCopyLinkToHeadingContextMenu.settingEl.show();
+                } else {
+                    settingCopyLinkToHeadingContextMenu.settingEl.hide();
+                }
+            }
+
+            toggleCopyLinkToHeadingContextMenuSetting(this.plugin.settings.ffCopyLinkToHeading);
+
+            const settingCopyLinkToBlockContextMenu = new Setting(containerEl)
+                .setName('Copy link to block')
+                .setDesc('')
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.contexMenu.copyLinkToBlockToClipboard)
+                        .onChange(async (value) => {
+                            this.plugin.settings.contexMenu.copyLinkToBlockToClipboard = value;
+                            await this.plugin.saveSettings();
+                        })
+
+                });
+
+            const toggleCopyLinkToBlockContextMenuSetting = (enabled: boolean) => {
+                if (enabled) {
+                    settingCopyLinkToBlockContextMenu.settingEl.show();
+                } else {
+                    settingCopyLinkToBlockContextMenu.settingEl.hide();
+                }
+            }
+
+            toggleCopyLinkToBlockContextMenuSetting(this.plugin.settings.ffCopyLinkToBlock);
 
             new Setting(containerEl)
                 .setName('Unlink')
@@ -763,6 +809,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                         .setValue(this.plugin.settings.ffCopyLinkToHeading)
                         .onChange(async (value) => {
                             this.plugin.settings.ffCopyLinkToHeading = value;
+                            toggleCopyLinkToHeadingContextMenuSetting(value);
                             await this.plugin.saveSettings();
                         })
 
@@ -778,6 +825,36 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                         text: 'docs'
                     }));
                 feature1SettingDesc.appendText('.');
+            }
+
+            // ------------------------------------
+            // Copy link to block
+
+            new Setting(containerEl)
+                .setName("Copy link to block")
+                .setDesc("Copy link to a block to the clipboard")
+                .setClass("setting-item-copy-link-to-block")
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.ffCopyLinkToBlock)
+                        .onChange(async (value) => {
+                            this.plugin.settings.ffCopyLinkToBlock = value;
+                            toggleCopyLinkToBlockContextMenuSetting(value);
+                            await this.plugin.saveSettings();
+                        })
+
+                });
+
+            const copyLinkToBlockSettingDesc = containerEl.querySelector(".setting-item-copy-link-to-block .setting-item-description");
+
+            if (copyLinkToBlockSettingDesc) {
+                copyLinkToBlockSettingDesc.appendText(' see ');
+                copyLinkToBlockSettingDesc.appendChild(
+                    createEl('a', {
+                        href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/copy-link-to-block.md',
+                        text: 'docs'
+                    }));
+                copyLinkToBlockSettingDesc.appendText('.');
             }
 
         }

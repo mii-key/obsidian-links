@@ -24,6 +24,7 @@ export interface IObsidianLinksSettings {
 	ffSetLinkDestinationFromClipbard: boolean;
 	ffSkipFrontmatterInNoteWideCommands: boolean;
 	ffCopyLinkToHeading: boolean;
+	ffCopyLinkToBlock: boolean;
 
 	//context menu
 	contexMenu: {
@@ -52,6 +53,7 @@ export interface IObsidianLinksSettings {
 		wrapNoteInFolder: boolean;
 		copyLinkToClipboard: boolean;
 		copyLinkToHeadingToClipboard: boolean;
+		copyLinkToBlockToClipboard: boolean;
 		cutLinkToClipboard: boolean;
 	}
 }
@@ -81,6 +83,8 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffSetLinkDestinationFromClipbard: false,
 	ffSkipFrontmatterInNoteWideCommands: false,
 	ffCopyLinkToHeading: false,
+	ffCopyLinkToBlock: false,
+
 
 	//context menu
 	//TODO: fix typo
@@ -110,6 +114,7 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 		wrapNoteInFolder: false,
 		copyLinkToClipboard: true,
 		copyLinkToHeadingToClipboard: true,
+		copyLinkToBlockToClipboard: false,
 		cutLinkToClipboard: true
 	}
 }
