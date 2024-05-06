@@ -11,6 +11,7 @@ export interface IObsidianProxy {
 
     createNotice(message: string | DocumentFragment, timeout?: number): Notice
     requestUrl(request: RequestUrlParam | string): RequestUrlResponsePromise
+    request(request: RequestUrlParam | string): Promise<string>
     clipboardWriteText(text: string): void;
     clipboardReadText(): Promise<string>;
     linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]): void;
