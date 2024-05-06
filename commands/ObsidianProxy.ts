@@ -1,6 +1,6 @@
 import { IVault } from "IVault";
 import { VaultImp } from "Vault";
-import { App, Notice, RequestUrlParam, RequestUrlResponsePromise, requestUrl } from "obsidian";
+import { App, Notice, RequestUrlParam, RequestUrlResponsePromise, requestUrl, request } from "obsidian";
 import { IObsidianLinksSettings } from "settings";
 import { ILinkTextSuggestContext } from "suggesters/ILinkTextSuggestContext";
 import { IUiFactory } from "ui/IUiFactory";
@@ -30,6 +30,10 @@ export class ObsidianProxy {
 
     requestUrl(request: RequestUrlParam | string): RequestUrlResponsePromise {
         return requestUrl(request)
+    }
+
+    request(req: RequestUrlParam | string): Promise<string> {
+        return request(req)
     }
 
     clipboardWriteText(text: string): void {

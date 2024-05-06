@@ -67,6 +67,7 @@ export class ObsidianProxyMock {
             hide: jest.Mock
         }
         requestUrlMock: jest.Mock
+        requestMock: jest.Mock
         clipboardWriteText: jest.Mock
         clipboardReadText: jest.Mock
         createNotice: jest.Mock
@@ -79,6 +80,7 @@ export class ObsidianProxyMock {
                 hide: jest.fn()
             },
             requestUrlMock: jest.fn(),
+            requestMock: jest.fn(),
             clipboardWriteText: jest.fn(),
             clipboardReadText: jest.fn(),
             createNotice: jest.fn(),
@@ -171,6 +173,10 @@ export class ObsidianProxyMock {
 
     requestUrl(request: RequestUrlParam | string): RequestUrlResponsePromise {
         return this.__mocks.requestUrlMock()
+    }
+
+    request(req: RequestUrlParam | string): Promise<string> {
+        return this.__mocks.requestMock()
     }
 
     clipboardWriteText(text: string): void {
