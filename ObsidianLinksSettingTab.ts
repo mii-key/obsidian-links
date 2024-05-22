@@ -582,33 +582,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             // ------------------------------------
             // copy link to heading
 
-            new Setting(containerEl)
-                .setName("Copy link to heading")
-                .setDesc("Copy link to a heading to the clipboard. ")
-                .setClass("setting-item-copy-link-to-heading")
-                .addToggle((toggle) => {
-                    toggle
-                        .setValue(this.plugin.settings.ffCopyLinkToHeading)
-                        .onChange(async (value) => {
-                            this.plugin.settings.ffCopyLinkToHeading = value;
-                            toggleCopyLinkToHeadingContextMenuSetting(value);
-                            await this.plugin.saveSettings();
-                        })
-
-                });
-
-            const feature1SettingDesc = containerEl.querySelector(".setting-item-copy-link-to-heading .setting-item-description");
-
-            if (feature1SettingDesc) {
-                feature1SettingDesc.appendText(' see ');
-                feature1SettingDesc.appendChild(
-                    createEl('a', {
-                        href: 'https://github.com/mii-key/obsidian-links/blob/master/README.md#copy-link-to-heading',
-                        text: 'docs'
-                    }));
-                feature1SettingDesc.appendText('.');
-            }
-
 
             // ----------------------------------------------
             // --            Insider features              --
@@ -856,6 +829,35 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     }));
                 copyLinkToBlockSettingDesc.appendText('.');
             }
+
+
+            new Setting(containerEl)
+                .setName("Copy link to heading")
+                .setDesc("Copy link to a heading to the clipboard. ")
+                .setClass("setting-item-copy-link-to-heading")
+                .addToggle((toggle) => {
+                    toggle
+                        .setValue(this.plugin.settings.ffCopyLinkToHeading)
+                        .onChange(async (value) => {
+                            this.plugin.settings.ffCopyLinkToHeading = value;
+                            toggleCopyLinkToHeadingContextMenuSetting(value);
+                            await this.plugin.saveSettings();
+                        })
+
+                });
+
+            const feature1SettingDesc = containerEl.querySelector(".setting-item-copy-link-to-heading .setting-item-description");
+
+            if (feature1SettingDesc) {
+                feature1SettingDesc.appendText(' see ');
+                feature1SettingDesc.appendChild(
+                    createEl('a', {
+                        href: 'https://github.com/mii-key/obsidian-links/blob/master/README.md#copy-link-to-heading',
+                        text: 'docs'
+                    }));
+                feature1SettingDesc.appendText('.');
+            }
+
 
         }
 
