@@ -24,7 +24,6 @@ export interface IObsidianLinksSettings {
 	ffSetLinkDestinationFromClipbard: boolean;
 	ffSkipFrontmatterInNoteWideCommands: boolean;
 	ffCopyLinkToObject: boolean;
-	ffCopyLinkToBlock: boolean;
 
 	//context menu
 	contexMenu: {
@@ -83,8 +82,6 @@ export const DEFAULT_SETTINGS: IObsidianLinksSettings = {
 	ffSetLinkDestinationFromClipbard: false,
 	ffSkipFrontmatterInNoteWideCommands: false,
 	ffCopyLinkToObject: false,
-	ffCopyLinkToBlock: false,
-
 
 	//context menu
 	//TODO: fix typo

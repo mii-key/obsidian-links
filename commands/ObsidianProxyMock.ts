@@ -115,8 +115,6 @@ export class ObsidianProxyMock {
         ffSetLinkDestinationFromClipbard: true,
         ffSkipFrontmatterInNoteWideCommands: true,
         ffCopyLinkToObject: true,
-        ffCopyLinkToBlock: false,
-
 
         //context menu
         contexMenu: {

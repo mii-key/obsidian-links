@@ -296,29 +296,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
             toggleCopyLinkToObjectContextMenuSetting(this.plugin.settings.ffCopyLinkToObject);
 
-            const settingCopyLinkToBlockContextMenu = new Setting(containerEl)
-                .setName('Copy link to block')
-                .setDesc('')
-                .addToggle((toggle) => {
-                    toggle
-                        .setValue(this.plugin.settings.contexMenu.copyLinkToBlockToClipboard)
-                        .onChange(async (value) => {
-                            this.plugin.settings.contexMenu.copyLinkToBlockToClipboard = value;
-                            await this.plugin.saveSettings();
-                        })
-
-                });
-
-            const toggleCopyLinkToBlockContextMenuSetting = (enabled: boolean) => {
-                if (enabled) {
-                    settingCopyLinkToBlockContextMenu.settingEl.show();
-                } else {
-                    settingCopyLinkToBlockContextMenu.settingEl.hide();
-                }
-            }
-
-            toggleCopyLinkToBlockContextMenuSetting(this.plugin.settings.ffCopyLinkToBlock);
-
             new Setting(containerEl)
                 .setName('Unlink')
                 .setDesc('')
@@ -800,36 +777,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             }
 
 
+
             // ------------------------------------
-            // Copy link to block
-
-            new Setting(containerEl)
-                .setName("Copy link to block")
-                .setDesc("Copy link to a block to the clipboard")
-                .setClass("setting-item-copy-link-to-block")
-                .addToggle((toggle) => {
-                    toggle
-                        .setValue(this.plugin.settings.ffCopyLinkToBlock)
-                        .onChange(async (value) => {
-                            this.plugin.settings.ffCopyLinkToBlock = value;
-                            toggleCopyLinkToBlockContextMenuSetting(value);
-                            await this.plugin.saveSettings();
-                        })
-
-                });
-
-            const copyLinkToBlockSettingDesc = containerEl.querySelector(".setting-item-copy-link-to-block .setting-item-description");
-
-            if (copyLinkToBlockSettingDesc) {
-                copyLinkToBlockSettingDesc.appendText(' see ');
-                copyLinkToBlockSettingDesc.appendChild(
-                    createEl('a', {
-                        href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/copy-link-to-block.md',
-                        text: 'docs'
-                    }));
-                copyLinkToBlockSettingDesc.appendText('.');
-            }
-
+            // copy link to element to the clipboard
 
             new Setting(containerEl)
                 .setName("Copy link to element")
@@ -846,7 +796,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const feature1SettingDesc = containerEl.querySelector(".setting-item-copy-link-to-heading .setting-item-description");
+            const feature1SettingDesc = containerEl.querySelector(".setting-item-copy-link-to-object .setting-item-description");
 
             if (feature1SettingDesc) {
                 feature1SettingDesc.appendText(' see ');
