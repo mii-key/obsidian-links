@@ -4,21 +4,21 @@ import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
 import { destinationRequireAngleBrackets } from "../utils";
 
-export class CopyLinkToHeadingToClipboardCommand extends CommandBase {
+export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
 
 	obsidianProxy: IObsidianProxy;
 
 	constructor(obsidianProxy: IObsidianProxy, isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true) {
 		super(isPresentInContextMenu, isEnabled)
-		this.id = 'editor-copy-link-to-heading-to-clipboard';
-		this.displayNameCommand = 'Copy link to heading';
-		this.displayNameContextMenu = 'Copy link to heading';
+		this.id = 'editor-copy-link-to-object-to-clipboard';
+		this.displayNameCommand = 'Copy link to element';
+		this.displayNameContextMenu = 'Copy link to element';
 		this.icon = 'copy';
 		this.obsidianProxy = obsidianProxy;
 
-		this.isEnabled = () => this.obsidianProxy.settings.ffCopyLinkToHeading;
-		this.isPresentInContextMenu = () => this.obsidianProxy.settings.ffCopyLinkToHeading && this.obsidianProxy.settings.contexMenu.copyLinkToHeadingToClipboard;
+		this.isEnabled = () => this.obsidianProxy.settings.ffCopyLinkToObject;
+		this.isPresentInContextMenu = () => this.obsidianProxy.settings.ffCopyLinkToObject && this.obsidianProxy.settings.contexMenu.copyLinkToHeadingToClipboard;
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {

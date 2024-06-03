@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals';
-import { CopyLinkToHeadingToClipboardCommand } from './CopyLinkToHeadingToClipboardCommand';
+import { CopyLinkToHeadingToObjectCommand } from './CopyLinkToObjectToClipboardCommand';
 
 import { EditorMock } from './EditorMock'
 import { ObsidianProxyMock } from './ObsidianProxyMock';
@@ -27,7 +27,7 @@ describe('CopyLinkToHeadingToClipboardCommand test', () => {
         ]
     )('status - cursor on [$name]', ({ name, text, expectedEnabled }) => {
         const obsidianProxy = new ObsidianProxyMock();
-        const cmd = new CopyLinkToHeadingToClipboardCommand(obsidianProxy)
+        const cmd = new CopyLinkToHeadingToObjectCommand(obsidianProxy)
         const editor = new EditorMock()
         editor.__mocks.getLine.mockReturnValue(text)
         editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
@@ -70,7 +70,7 @@ describe('CopyLinkToHeadingToClipboardCommand test', () => {
         })
 
         const obsidianProxy = new ObsidianProxyMock(vault);
-        const cmd = new CopyLinkToHeadingToClipboardCommand(obsidianProxy)
+        const cmd = new CopyLinkToHeadingToObjectCommand(obsidianProxy)
         const editor = new EditorMock()
         editor.__mocks.getLine.mockReturnValue(text)
         editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
