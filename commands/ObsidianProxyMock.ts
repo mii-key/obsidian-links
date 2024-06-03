@@ -114,7 +114,7 @@ export class ObsidianProxyMock {
         ffHighlightBrokenLinks: true,
         ffSetLinkDestinationFromClipbard: true,
         ffSkipFrontmatterInNoteWideCommands: true,
-        ffCopyLinkToHeading: true,
+        ffCopyLinkToObject: true,
         ffCopyLinkToBlock: false,
 
 

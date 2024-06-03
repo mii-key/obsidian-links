@@ -273,8 +273,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const settingCopyLinkToHeadingContextMenu = new Setting(containerEl)
-                .setName('Copy link to heading')
+            const settingCopyLinkToObjectContextMenu = new Setting(containerEl)
+                .setName('Copy link to element')
                 .setDesc('')
                 .addToggle((toggle) => {
                     toggle
@@ -286,15 +286,15 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const toggleCopyLinkToHeadingContextMenuSetting = (enabled: boolean) => {
+            const toggleCopyLinkToObjectContextMenuSetting = (enabled: boolean) => {
                 if (enabled) {
-                    settingCopyLinkToHeadingContextMenu.settingEl.show();
+                    settingCopyLinkToObjectContextMenu.settingEl.show();
                 } else {
-                    settingCopyLinkToHeadingContextMenu.settingEl.hide();
+                    settingCopyLinkToObjectContextMenu.settingEl.hide();
                 }
             }
 
-            toggleCopyLinkToHeadingContextMenuSetting(this.plugin.settings.ffCopyLinkToHeading);
+            toggleCopyLinkToObjectContextMenuSetting(this.plugin.settings.ffCopyLinkToObject);
 
             const settingCopyLinkToBlockContextMenu = new Setting(containerEl)
                 .setName('Copy link to block')
@@ -832,15 +832,15 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
 
             new Setting(containerEl)
-                .setName("Copy link to heading")
-                .setDesc("Copy link to a heading to the clipboard. ")
-                .setClass("setting-item-copy-link-to-heading")
+                .setName("Copy link to element")
+                .setDesc("Copy link to a heading or a block to the clipboard. ")
+                .setClass("setting-item-copy-link-to-object")
                 .addToggle((toggle) => {
                     toggle
-                        .setValue(this.plugin.settings.ffCopyLinkToHeading)
+                        .setValue(this.plugin.settings.ffCopyLinkToObject)
                         .onChange(async (value) => {
-                            this.plugin.settings.ffCopyLinkToHeading = value;
-                            toggleCopyLinkToHeadingContextMenuSetting(value);
+                            this.plugin.settings.ffCopyLinkToObject = value;
+                            toggleCopyLinkToObjectContextMenuSetting(value);
                             await this.plugin.saveSettings();
                         })
 
@@ -852,14 +852,11 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 feature1SettingDesc.appendText(' see ');
                 feature1SettingDesc.appendChild(
                     createEl('a', {
-                        href: 'https://github.com/mii-key/obsidian-links/blob/master/README.md#copy-link-to-heading',
+                        href: 'https://github.com/mii-key/obsidian-links/blob/master/README.md#copy-link-to-object',
                         text: 'docs'
                     }));
                 feature1SettingDesc.appendText('.');
             }
-
-
         }
-
     }
 }

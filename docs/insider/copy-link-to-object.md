@@ -1,3 +1,5 @@
+# Copy link to block
+
 ## Copy link to heading
 
 > [!NOTE] 

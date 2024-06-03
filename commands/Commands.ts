@@ -26,7 +26,7 @@ import { ConvertLinksInFolderCommand } from "./ConvertLinksInFolderCommand";
 import { ConvertLinkToHtmllinkCommand } from "./ConvertLinkToHtmllinkCommand";
 import { CutLinkToClipboardCommand } from "./CutLinkToClipboardCommand";
 import { SetLinkDestinationFromClipboardCommand } from "./SetLinkDestinationFromClipboardCommand";
-import { CopyLinkToHeadingToClipboardCommand } from "./CopyLinkToHeadingToClipboardCommand";
+import { CopyLinkToHeadingToObjectCommand } from "./CopyLinkToObjectToClipboardCommand";
 import { EmbedUnembedLinkCommand } from "./EmbedUnembedLinkCommand";
 import { CopyLinkToBlockToClipboardCommand } from "./CopyLinkToBlockToClipboardCommand";
 
@@ -44,7 +44,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(ConvertLinkToHtmllinkCommand.name, new ConvertLinkToHtmllinkCommand(obsidianProxy));
     commands.set(ConvertLinkToAutolinkCommand.name, new ConvertLinkToAutolinkCommand(() => settings.contexMenu.convertToAutolink));
     commands.set(CopyLinkToClipboardCommand.name, new CopyLinkToClipboardCommand(obsidianProxy));
-    commands.set(CopyLinkToHeadingToClipboardCommand.name, new CopyLinkToHeadingToClipboardCommand(obsidianProxy));
+    commands.set(CopyLinkToHeadingToObjectCommand.name, new CopyLinkToHeadingToObjectCommand(obsidianProxy));
     commands.set(CopyLinkToBlockToClipboardCommand.name, new CopyLinkToBlockToClipboardCommand(obsidianProxy));
     commands.set(CutLinkToClipboardCommand.name, new CutLinkToClipboardCommand(obsidianProxy));
     commands.set(CopyLinkDestinationToClipboardCommand.name,
@@ -95,7 +95,7 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         EditLinkDestinationCommand.name,
         SetLinkDestinationFromClipboardCommand.name,
         CopyLinkToClipboardCommand.name,
-        CopyLinkToHeadingToClipboardCommand.name,
+        CopyLinkToHeadingToObjectCommand.name,
         CopyLinkToBlockToClipboardCommand.name,
         CutLinkToClipboardCommand.name,
         CopyLinkDestinationToClipboardCommand.name,
