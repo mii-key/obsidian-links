@@ -28,8 +28,6 @@ import { CutLinkToClipboardCommand } from "./CutLinkToClipboardCommand";
 import { SetLinkDestinationFromClipboardCommand } from "./SetLinkDestinationFromClipboardCommand";
 import { CopyLinkToHeadingToObjectCommand } from "./CopyLinkToObjectToClipboardCommand";
 import { EmbedUnembedLinkCommand } from "./EmbedUnembedLinkCommand";
-import { CopyLinkToBlockToClipboardCommand } from "./CopyLinkToBlockToClipboardCommand";
-
 
 const commands: Map<string, ICommand> = new Map<string, ICommand>();
 
@@ -45,7 +43,6 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(ConvertLinkToAutolinkCommand.name, new ConvertLinkToAutolinkCommand(() => settings.contexMenu.convertToAutolink));
     commands.set(CopyLinkToClipboardCommand.name, new CopyLinkToClipboardCommand(obsidianProxy));
     commands.set(CopyLinkToHeadingToObjectCommand.name, new CopyLinkToHeadingToObjectCommand(obsidianProxy));
-    commands.set(CopyLinkToBlockToClipboardCommand.name, new CopyLinkToBlockToClipboardCommand(obsidianProxy));
     commands.set(CutLinkToClipboardCommand.name, new CutLinkToClipboardCommand(obsidianProxy));
     commands.set(CopyLinkDestinationToClipboardCommand.name,
         new CopyLinkDestinationToClipboardCommand(obsidianProxy, () => settings.contexMenu.copyLinkDestination));
@@ -96,7 +93,6 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         SetLinkDestinationFromClipboardCommand.name,
         CopyLinkToClipboardCommand.name,
         CopyLinkToHeadingToObjectCommand.name,
-        CopyLinkToBlockToClipboardCommand.name,
         CutLinkToClipboardCommand.name,
         CopyLinkDestinationToClipboardCommand.name,
         null,
