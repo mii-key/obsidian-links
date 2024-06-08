@@ -242,7 +242,7 @@ function parsePlainUrl(regExp: RegExp, match: RegExpMatchArray, raw: string, des
     return linkData;
 }
 
-//TODO: refactor
+//TODO: depricated. use findLinks
 export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): LinkData | undefined {
     // eslint-disable-next-line no-useless-escape
     const wikiLinkRegEx = /(!?)\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;

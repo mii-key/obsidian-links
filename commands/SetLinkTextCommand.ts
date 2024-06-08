@@ -1,8 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, getFileName, getLinkTitles, getPageTitle, removeLinks } from "../utils";
-import { ObsidianProxy } from "./ObsidianProxy";
-import { ILinkTextSuggestContext } from "suggesters/ILinkTextSuggestContext";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, LinkTypes, findLink, findLinks, getFileName, getLinkTitles, getPageTitle, isAbsoluteUri } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 
 export class SetLinkTextCommand extends CommandBase {
@@ -10,7 +8,7 @@ export class SetLinkTextCommand extends CommandBase {
 	obsidianProxy: IObsidianProxy;
 	callback: ((error: Error | null, data: any) => void) | undefined;
 
-	constructor(obsidianProxy: IObsidianProxy, 
+	constructor(obsidianProxy: IObsidianProxy,
 		isPresentInContextMenu: Func<boolean> = () => true, isEnabled: Func<boolean> = () => true,
 		callback: ((error: Error | null, data: any) => void) | undefined = undefined) {
 		super(isPresentInContextMenu, isEnabled);
@@ -23,27 +21,40 @@ export class SetLinkTextCommand extends CommandBase {
 		this.callback = callback;
 	}
 
+	//TODO: refactor
 	handler(editor: Editor, checking: boolean): boolean | void {
-		if(checking && !this.isEnabled()){
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
-		const linkData = this.getLink(editor);
+		const linkData = this.getLinks(editor);
+		const selection = editor.getSelection();
 		if (checking) {
-			return !!linkData
-				&& ((linkData.type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
-				&& !!linkData.destination?.content
-				&& (!linkData.text || !linkData?.text.content || (!linkData.destination.content.startsWith('#') && linkData.destination.content.includes('#')));
+			return selection
+				? !!linkData?.length && !!linkData.find(x => !x.text && x.destination?.content && !isAbsoluteUri(x.destination.content))
+				: !!linkData?.length
+				&& ((linkData[0].type & (LinkTypes.Markdown | LinkTypes.Wiki)) != 0)
+				&& !!linkData[0].destination?.content
+				&& (!linkData[0].text || !linkData[0]?.text.content || (!linkData[0].destination.content.startsWith('#') && linkData[0].destination.content.includes('#')));
 		}
-		if (linkData) {
+		if (linkData?.length) {
 			// workaround: if executed from command palette, whole link is selected.
 			// with timeout, only specified region is selected.
 			setTimeout(() => {
-				this.setLinkText(linkData, editor)
-					.then(() => {
-						this.callback?.(null, undefined);
-					})
-					.catch(err => this.callback?.(err, undefined))
+				//TODO: refactor
+				if (selection) {
+					this.setLinksText(linkData, editor)
+						.then(() => {
+							this.callback?.(null, undefined);
+						})
+						.catch(err => this.callback?.(err, undefined))
+				} else {
+					this.setLinkText(linkData[0], editor)
+						.then(() => {
+							this.callback?.(null, undefined);
+						})
+						.catch(err => this.callback?.(err, undefined))
+				}
 			}, 500);
 		}
 	}
@@ -57,7 +68,7 @@ export class SetLinkTextCommand extends CommandBase {
 			if (this.showLinkTextSuggestions(linkData, editor)) {
 				return;
 			}
-			const text = linkData.destination.content[0] === '#' ? 
+			const text = linkData.destination.content[0] === '#' ?
 				linkData.destination.content.substring(1) : getFileName(linkData.destination?.content);
 			let textStart = linkData.position.start + linkData.destination.position.end;
 			if (linkData.text) {
@@ -96,11 +107,43 @@ export class SetLinkTextCommand extends CommandBase {
 		}
 	}
 
+
+	//TODO: wip
+	async setLinksText(linkData: LinkData[], editor: Editor) {
+		const offset = editor.getSelection() ? editor.posToOffset(editor.getCursor('from')) : 0;
+		for (let i = linkData.length - 1; i >= 0; i--) {
+			//TODO: 
+			//right now only local wiki links without headings supported
+			const destinationContent = linkData[i].destination?.content;
+			if (linkData[i].text
+				|| !destinationContent
+				|| isAbsoluteUri(destinationContent)
+				|| destinationContent.lastIndexOf('#') >= 0
+			) {
+				continue;
+			}
+
+			//TODO
+			const text = getFileName(destinationContent);
+			let textStart = offset + linkData[i].position.start + linkData[i].destination!.position.end;
+
+			editor.replaceRange("|" + text, editor.offsetToPos(textStart));
+			textStart++;
+		}
+	}
+
 	//TODO: refactor
-	getLink(editor: Editor): LinkData | undefined {
-		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		return findLink(text, cursorOffset, cursorOffset)
+	getLinks(editor: Editor): LinkData[] | undefined {
+		const selection = editor.getSelection();
+		if (selection) {
+			//TODO: process mdlink
+			return findLinks(selection, LinkTypes.Wiki)
+		} else {
+			const text = editor.getValue();
+			const cursorOffset = editor.posToOffset(editor.getCursor('from'));
+			const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
+			return linkData ? [linkData] : [];
+		}
 	}
 
 	showLinkTextSuggestions(linkData: LinkData, editor: Editor): boolean {
