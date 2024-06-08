@@ -64,6 +64,12 @@ describe('SetLinkTextCommand test', () => {
                 expected: true
             },
             //TODO: image links with dimensions
+            {
+                name: "multiple wikilink heading in a note",
+                text: "[[note1]] [[note2]]",
+                expected: true
+            },
+
 
             // mdlink
             {
@@ -87,6 +93,7 @@ describe('SetLinkTextCommand test', () => {
                 expected: true
             },
             //TODO: image links with dimensions
+
 
 
             // autolink
@@ -153,7 +160,11 @@ describe('SetLinkTextCommand test', () => {
                     titles: ["heading1"]
                 }
             },
+
+            //TODO: multiple local wiki links
+
             //TODO: image links with dimensions
+
 
 
             // mdlink
