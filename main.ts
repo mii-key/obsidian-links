@@ -231,7 +231,7 @@ export default class ObsidianLinksPlugin extends Plugin {
 			if (path) {
 				let target = path;
 				if (path.startsWith('[')) {
-					const links = findLinks(path, LinkTypes.Wiki);
+					const links = findLinks(path, LinkTypes.Wiki | LinkTypes.Markdown);
 					if (links.length > 0 && links[0].destination?.content) {
 						target = links[0].destination?.content;
 					}
