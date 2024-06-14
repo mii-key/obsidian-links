@@ -32,7 +32,6 @@ Manipulate links in [Obsidian](https://obsidian.md).
   - [Copy link](#copy-link)
   - [Cut link](#cut-link)
   - [Convert to HTML link](#convert-to-html-link)
-  - [Copy link to heading](#copy-link-to-heading)
 
 
 # Features
@@ -547,20 +546,3 @@ Convert wiki link to HTML link.
 
 </details>
 
-## Copy link to heading
-
-> [!NOTE] 
-> Early access feature. Enable in settings.
-
-Copy markdown link to a heading to the clipboard.
-
-- Command palette: **Copy link to heading**
-- Context menu: **Copy link to heading**
-
-
-<details>
-<summary>🎞️ Demo. Copy link to heading</summary>
-
-![Copy link to heading](/docs/img/copy-link-to-heading.gif)
-
-</details>
