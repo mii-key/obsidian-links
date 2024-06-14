@@ -1,4 +1,4 @@
-import { Editor } from "obsidian";
+import { Editor, EditorPosition, HeadingCache, ListItemCache, SectionCache, TFile } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
@@ -26,17 +26,20 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 			return false;
 		}
 		const text = editor.getLine(editor.getCursor('from').line);
-		const result = text.match(new RegExp(RegExPatterns.NoteHeading.source));
+		const headingMatch = text.match(new RegExp(RegExPatterns.NoteHeading.source));
+		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
+		const block = headingMatch ? undefined : currentView?.file ? this.getBlock(editor, currentView?.file) : undefined;
 
 		if (checking) {
-			return !!result;
+			return !!headingMatch || !!block;
 		}
-		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
 		const currentNotePath = currentView?.file?.path;
 
-		if (result && result[1] && currentNotePath) {
+		if (headingMatch && headingMatch[1] && currentNotePath) {
 			console.log(currentNotePath);
-			this.copyLinkToHeadingUnderCursorToClipboard(result[1], currentNotePath);
+			this.copyLinkToHeadingUnderCursorToClipboard(headingMatch[1], currentNotePath);
+		} else if (block && currentView?.file) {
+			this.copyLinkToBlockUnderCursorToClipboard(currentView?.file, editor, block as SectionCache | ListItemCache);
 		}
 	}
 
@@ -50,4 +53,86 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 		this.obsidianProxy.clipboardWriteText(rawLink);
 		this.obsidianProxy.createNotice("Link copied to your clipboard");
 	}
+
+	copyLinkToBlockUnderCursorToClipboard(
+		file: TFile,
+		editor: Editor,
+		block: ListItemCache | SectionCache
+	) {
+		if (block.id) {
+			return this.obsidianProxy.clipboardWriteText(
+				`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
+					file,
+					"",
+					"#^" + block.id
+				)}`
+			);
+		}
+
+		const sectionEnd = block.position.end;
+		const end: EditorPosition = {
+			ch: sectionEnd.col,
+			line: sectionEnd.line,
+		};
+
+		const id = this.generateId();
+
+		editor.replaceRange(`${this.isEolRequired(block) ? "\n\n" : " "}^${id}`, end);
+		navigator.clipboard.writeText(
+			`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
+				file,
+				"",
+				"#^" + id
+			)}`
+		);
+	}
+
+	getBlock(editor: Editor, file: TFile): ListItemCache | HeadingCache | SectionCache | undefined {
+		const cursor = editor.getCursor("from");
+		const fileCache = this.obsidianProxy.app.metadataCache.getFileCache(file);
+
+		let block: ListItemCache | HeadingCache | SectionCache | undefined = (
+			fileCache?.sections || []
+		).find((section) => {
+			return (
+				section.position.start.line <= cursor.line &&
+				section.position.end.line >= cursor.line
+			);
+		});
+
+		if (block?.type === "list") {
+			block = (fileCache?.listItems || []).find((item) => {
+				return (
+					item.position.start.line <= cursor.line &&
+					item.position.end.line >= cursor.line
+				);
+			});
+		} else if (block?.type === "heading") {
+			block = (fileCache?.headings || []).find((heading) => {
+				return heading.position.start.line === cursor.line;
+			});
+		}
+
+		return block;
+	}
+
+	generateId(): string {
+		return Math.random().toString(36).substring(2, 6);
+	}
+
+	isEolRequired(block: ListItemCache | SectionCache): boolean {
+		const blockType = (block as SectionCache).type || "";
+
+		switch (blockType) {
+			case "blockquote":
+			case "code":
+			case "table":
+			case "comment":
+			case "footnoteDefinition":
+				return true;
+			default:
+				return false;
+		}
+	}
+
 }

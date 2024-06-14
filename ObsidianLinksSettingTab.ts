@@ -802,7 +802,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 feature1SettingDesc.appendText(' see ');
                 feature1SettingDesc.appendChild(
                     createEl('a', {
-                        href: 'https://github.com/mii-key/obsidian-links/blob/master/README.md#copy-link-to-object',
+                        href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/copy-link-to-element.md',
                         text: 'docs'
                     }));
                 feature1SettingDesc.appendText('.');
