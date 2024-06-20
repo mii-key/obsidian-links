@@ -67,6 +67,7 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 	) {
 		if (block.id) {
 			return this.obsidianProxy.clipboardWriteText(
+				//TODO: handle spaces
 				`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
 					file,
 					"",
@@ -85,6 +86,7 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
 		editor.replaceRange(`${this.isEolRequired(block) ? "\n\n" : " "}^${id}`, end);
 		navigator.clipboard.writeText(
+			//TODO: handle spaces
 			`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
 				file,
 				"",
