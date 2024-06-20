@@ -48,6 +48,7 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 		// }
 		// let rawLink = `[${heading}](${destination})`;
 
+		//TODO: handle spaces
 		const rawLink = this.obsidianProxy.app.fileManager.generateMarkdownLink(
 			noteFile,
 			"",
