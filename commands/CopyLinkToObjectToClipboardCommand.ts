@@ -2,7 +2,6 @@ import { Editor, EditorPosition, HeadingCache, ListItemCache, SectionCache, TFil
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
-import { destinationRequireAngleBrackets } from "../utils";
 
 export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
@@ -33,22 +32,28 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 		if (checking) {
 			return !!headingMatch || !!block;
 		}
-		const currentNotePath = currentView?.file?.path;
+		const currentNoteFile = currentView?.file;
 
-		if (headingMatch && headingMatch[1] && currentNotePath) {
-			console.log(currentNotePath);
-			this.copyLinkToHeadingUnderCursorToClipboard(headingMatch[1], currentNotePath);
+		if (headingMatch && headingMatch[1] && currentNoteFile) {
+			this.copyLinkToHeadingUnderCursorToClipboard(headingMatch[1], currentNoteFile);
 		} else if (block && currentView?.file) {
 			this.copyLinkToBlockUnderCursorToClipboard(currentView?.file, editor, block as SectionCache | ListItemCache);
 		}
 	}
 
-	copyLinkToHeadingUnderCursorToClipboard(heading: string, notePath: string) {
-		let destination = `${notePath}#${heading}`;
-		if (destinationRequireAngleBrackets(destination)) {
-			destination = `<${destination}>`;
-		}
-		const rawLink = `[${heading}](${destination})`;
+	copyLinkToHeadingUnderCursorToClipboard(heading: string, noteFile: TFile) {
+		// let destination = `${noteFile.path}#${heading}`;
+		// if (destinationRequireAngleBrackets(destination)) {
+		// 	destination = `<${destination}>`;
+		// }
+		// let rawLink = `[${heading}](${destination})`;
+
+		const rawLink = this.obsidianProxy.app.fileManager.generateMarkdownLink(
+			noteFile,
+			"",
+			"#" + heading,
+			heading
+		)
 		// navigator.clipboard.writeText(linkData.link?.content);
 		this.obsidianProxy.clipboardWriteText(rawLink);
 		this.obsidianProxy.createNotice("Link copied to your clipboard");
