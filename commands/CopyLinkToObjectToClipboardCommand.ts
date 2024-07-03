@@ -2,6 +2,7 @@ import { Editor, EditorPosition, HeadingCache, ListItemCache, SectionCache, TFil
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
+import { DestinationType, LinkTypes, findLinks } from "utils";
 
 export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
@@ -65,13 +66,22 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 		editor: Editor,
 		block: ListItemCache | SectionCache
 	) {
+		let linkText = undefined;
+		const blockFirstLine = editor.getLine(block.position.start.line);
+		const links = findLinks(blockFirstLine, LinkTypes.Wiki | LinkTypes.Markdown);
+		if (links && links.length && links[0].destinationType == DestinationType.Image
+		) {
+			linkText = links[0].text?.content;
+		}
+
 		if (block.id) {
 			return this.obsidianProxy.clipboardWriteText(
 				//TODO: handle spaces
 				`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
 					file,
 					"",
-					"#^" + block.id
+					"#^" + block.id,
+					linkText
 				)}`
 			);
 		}
@@ -90,7 +100,8 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 			`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
 				file,
 				"",
-				"#^" + id
+				"#^" + id,
+				linkText
 			)}`
 		);
 	}
