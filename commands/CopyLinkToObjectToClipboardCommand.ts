@@ -2,6 +2,7 @@ import { Editor, EditorPosition, HeadingCache, ListItemCache, SectionCache, TFil
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
+import { DestinationType, LinkTypes, findLinks } from "utils";
 
 export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
@@ -48,6 +49,7 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 		// }
 		// let rawLink = `[${heading}](${destination})`;
 
+		//TODO: handle spaces
 		const rawLink = this.obsidianProxy.app.fileManager.generateMarkdownLink(
 			noteFile,
 			"",
@@ -64,12 +66,22 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 		editor: Editor,
 		block: ListItemCache | SectionCache
 	) {
+		let linkText = undefined;
+		const blockFirstLine = editor.getLine(block.position.start.line);
+		const links = findLinks(blockFirstLine, LinkTypes.Wiki | LinkTypes.Markdown);
+		if (links && links.length && links[0].destinationType == DestinationType.Image
+		) {
+			linkText = links[0].text?.content;
+		}
+
 		if (block.id) {
 			return this.obsidianProxy.clipboardWriteText(
+				//TODO: handle spaces
 				`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
 					file,
 					"",
-					"#^" + block.id
+					"#^" + block.id,
+					linkText
 				)}`
 			);
 		}
@@ -84,10 +96,12 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
 		editor.replaceRange(`${this.isEolRequired(block) ? "\n\n" : " "}^${id}`, end);
 		navigator.clipboard.writeText(
+			//TODO: handle spaces
 			`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
 				file,
 				"",
-				"#^" + id
+				"#^" + id,
+				linkText
 			)}`
 		);
 	}
