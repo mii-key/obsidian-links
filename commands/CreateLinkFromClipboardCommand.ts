@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
-import { LinkTypes, findLink, findLinks, getPageTitle } from "../utils";
+import { LinkTypes, findLink, findLinks, getFileName, getPageTitle, getSafeFilename } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { selectWordUnderCursor } from "../editorUtils";
 
@@ -43,6 +43,7 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 
 			const clipboardText = await this.obsidianProxy.clipboardReadText();
 			const links = findLinks(clipboardText, LinkTypes.All)
+			let linkText = "";
 
 			let linkDestination = "";
 			if (links.length) {
@@ -54,7 +55,8 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 						if (this.obsidianProxy.Vault.getName() === url.searchParams.get('vault')) {
 							const filePath = url.searchParams.get('file')
 							if (filePath) {
-								linkDestination = decodeURI(filePath)
+								linkDestination = decodeURI(filePath);
+								linkText = getFileName(linkDestination);
 							}
 						}
 					}
@@ -65,8 +67,9 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 				linkDestination = clipboardText;
 			}
 
-			let linkText = linkDestination;
-
+			if (!linkText) {
+				linkText = linkDestination;
+			}
 
 			let selection = editor.getSelection();
 
