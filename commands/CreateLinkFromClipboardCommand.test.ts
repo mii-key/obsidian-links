@@ -130,6 +130,14 @@ describe('CreateLinkFromClipboardCommand test', () => {
                 expected: '[Google](https://google.com)',
                 cursurPos: "[Google](https://google.com)".length
             },
+            {
+                name: "no selection, obsidian url in clipboard",
+                selection: "",
+                clipboard: "obsidian://open?vault=defaultVault&file=folder%201/folder%202/file%201",
+                expected: '[file 1](<folder 1/folder 2/file 1>)',
+                cursurPos: "[file 1](<folder 1/folder 2/file 1>)".length
+            },
+            //TODO: add more obsidian URL tests: no spaces, no folders, etc.
         ]
     )('create link - $name - success', ({ name, selection, clipboard: clipboard, expected, cursurPos }, done) => {
         const editor = new EditorMock()
