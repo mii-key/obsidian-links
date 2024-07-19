@@ -52,4 +52,11 @@ export class ObsidianProxy {
         this.uiFactory.createPromptModal(title, text, buttons, onSubmit)
             .open();
     }
+
+    generateLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string): string {
+        const useMarkdownLinks = this.Vault.configuration.useMarkdownLinks;
+        return useMarkdownLinks
+            ? `[${text}](${destination}${destinationSubPath})`
+            : `[[${destination}${destinationSubPath}${text ? '|' + text : ''}]]`
+    }
 }

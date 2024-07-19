@@ -195,4 +195,9 @@ export class ObsidianProxyMock {
             .open();
     }
 
+    generateLink(notePath: string, destination: string, destinationSubPath?: string, text?: string): string {
+        //TODO: add mock
+        throw new Error('Method not implemented.');
+    }
+
 }

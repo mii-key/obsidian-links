@@ -2,7 +2,7 @@ import { Editor, EditorPosition, HeadingCache, ListItemCache, SectionCache, TFil
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
-import { DestinationType, LinkTypes, findLinks } from "utils";
+import { DestinationType, LinkTypes, findLinks } from "../utils";
 
 export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 

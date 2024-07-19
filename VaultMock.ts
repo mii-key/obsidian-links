@@ -1,5 +1,5 @@
 import { INoteView } from "INoteView";
-import { IVault } from "IVault";
+import { IVault, IVaultConfiguration } from "IVault";
 import { DataWriteOptions, FileStats, Vault } from "obsidian";
 import { LinkData } from "utils";
 
@@ -82,6 +82,9 @@ export class TFile extends TAbstractFile {
 
 
 export class VaultMock implements IVault {
+    //TODO: add mock
+    configuration: IVaultConfiguration;
+
     __mocks: {
         getFilesInFolder: jest.Mock,
         read: jest.Mock,
@@ -95,7 +98,8 @@ export class VaultMock implements IVault {
         getName: jest.Mock,
         delete: jest.Mock,
         trash: jest.Mock,
-        getAbstractFileByPath: jest.Mock
+        getAbstractFileByPath: jest.Mock,
+        getConfig: jest.Mock
     } = {
             getFilesInFolder: jest.fn(),
             read: jest.fn(),
@@ -109,7 +113,8 @@ export class VaultMock implements IVault {
             getName: jest.fn(),
             delete: jest.fn(),
             trash: jest.fn(),
-            getAbstractFileByPath: jest.fn()
+            getAbstractFileByPath: jest.fn(),
+            getConfig: jest.fn()
         }
 
     constructor() {
@@ -126,6 +131,7 @@ export class VaultMock implements IVault {
         this.delete = this.__mocks.delete;
         this.trash = this.__mocks.trash;
         this.getAbstractFileByPath = this.__mocks.getAbstractFileByPath;
+        this.getConfig = this.__mocks.getConfig;
     }
 
     getFilesInFolder(folder: TFolder): TFile[] {
@@ -187,6 +193,10 @@ export class VaultMock implements IVault {
     }
 
     getAbstractFileByPath(path: string): TAbstractFile | null {
+        throw new Error("Method not implemented.");
+    }
+
+    getConfig(setting: string): boolean | string | number {
         throw new Error("Method not implemented.");
     }
 
