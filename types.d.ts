@@ -6,4 +6,7 @@ declare module 'obsidian' {
             data: Record<string, LinkCache[]>;
         };
     }
+    interface Vault {
+        getConfig(key: string): unknown;
+    }
 }
