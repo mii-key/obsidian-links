@@ -1,6 +1,6 @@
 {
 	"name": "links",
-	"version": "1.17.10",
+	"version": "1.17.11",
 	"description": "Manipulate links in Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
@@ -11,7 +11,7 @@
 		"test:watch": "jest --watch",
 		"clean": "rmdir /s /q node_modules",
 		"coverage": "jest --coverage",
-		"push:wtags": "git checkout develop && git push && git checkout master && git push && git push --tags"
+		"push:release": "git checkout develop && git push && git checkout master && git push && git push --tags && git checkout develop"
 	},
 	"keywords": [],
 	"author": "",

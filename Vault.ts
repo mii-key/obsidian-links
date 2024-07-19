@@ -106,6 +106,6 @@ export class VaultImp implements IVault {
         return this.app.vault.getAbstractFileByPath(path);
     }
     getConfig(setting: string): boolean | string | number {
-        return this.app.vault.getConfig(setting);
+        return this.app.vault.getConfig(setting) as boolean | string | number;
     }
 }
