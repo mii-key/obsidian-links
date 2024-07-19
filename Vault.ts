@@ -1,13 +1,15 @@
 import { INoteView } from "INoteView";
-import { IVault } from "IVault";
+import { IVault, IVaultConfiguration, VaultConfiguration } from "IVault";
 import { App, DataWriteOptions, MarkdownView, TAbstractFile, TFile, TFolder } from "obsidian";
 import { LinkData, Position } from "utils";
 
 export class VaultImp implements IVault {
     app: App;
+    readonly configuration: IVaultConfiguration;
 
     constructor(app: App) {
         this.app = app;
+        this.configuration = new VaultConfiguration(this);
     }
 
     getFilesInFolder(folder: TFolder): TFile[] {
@@ -102,5 +104,8 @@ export class VaultImp implements IVault {
 
     getAbstractFileByPath(path: string): TAbstractFile | null {
         return this.app.vault.getAbstractFileByPath(path);
+    }
+    getConfig(setting: string): boolean | string | number {
+        return this.app.vault.getConfig(setting);
     }
 }

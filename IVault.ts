@@ -3,6 +3,8 @@ import { DataWriteOptions, TAbstractFile, TFile, TFolder } from "obsidian";
 import { LinkData } from "utils";
 
 export interface IVault {
+    readonly configuration: IVaultConfiguration;
+
     exists(path: string, caseSensitive?: boolean): Promise<boolean>;
     createNote(path: string, content: string): Promise<TFile>;
     getActiveNoteView(): INoteView | null;
@@ -17,4 +19,26 @@ export interface IVault {
     delete(file: TAbstractFile, force?: boolean): Promise<void>;
     trash(file: TAbstractFile, system: boolean): Promise<void>;
     getAbstractFileByPath(path: string): TAbstractFile | null;
+    getConfig(setting: string): boolean | string | number;
+}
+
+export interface IVaultConfiguration {
+    readonly useMarkdownLinks: boolean;
+    //return value: absolute | shortest | relative
+    readonly newLinkFormat: string;
+}
+
+export class VaultConfiguration implements IVaultConfiguration {
+    vault: IVault;
+    constructor(vault: IVault) {
+        this.vault = vault;
+    }
+
+    get useMarkdownLinks(): boolean {
+        return this.vault.getConfig("useMarkdownLinks") as boolean;
+    }
+
+    get newLinkFormat(): string {
+        return this.vault.getConfig("newLinkFormat") as string;
+    }
 }
