@@ -677,3 +677,21 @@ export function destinationRequireAngleBrackets(destination: string): boolean {
 
     return false;
 }
+
+export enum DestinationType {
+    None = 'none',
+    Absolute = 'absolute',
+    Relative = 'relative',
+    Shortest = 'shortest'
+}
+
+export function createWikiLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string, destinationType: DestinationType = DestinationType.None): string {
+    //TODO: compute destination based on destinationType
+    return `[[${destination}${destinationSubPath ? '#' + destinationSubPath : ''} ${text ? '|' + text : ''}${dimensions ? '|' + dimensions : ''}]]`;
+}
+
+export function createMarkdownLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string, destinationType: DestinationType = DestinationType.None): string {
+    //TODO: compute destination based on destinationType
+    //TODO: handle spaces in destination
+    return `[${text}${dimensions ? '|' + dimensions : ''}](${destination}${destinationSubPath ? '#' + destinationSubPath : ''})`;
+}

@@ -73,6 +73,7 @@ export class ObsidianProxyMock {
         createNotice: jest.Mock
         linkTextSuggestContextSetLinkData: jest.Mock
         showPromptModal: jest.Mock
+        createLink: jest.Mock
 
     } = {
             NoticeMock: {
@@ -85,7 +86,8 @@ export class ObsidianProxyMock {
             clipboardReadText: jest.fn(),
             createNotice: jest.fn(),
             linkTextSuggestContextSetLinkData: jest.fn(),
-            showPromptModal: jest.fn()
+            showPromptModal: jest.fn(),
+            createLink: jest.fn()
         }
 
     Vault: IVault;
@@ -195,7 +197,7 @@ export class ObsidianProxyMock {
             .open();
     }
 
-    generateLink(notePath: string, destination: string, destinationSubPath?: string, text?: string): string {
+    createLink(notePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string): string {
         //TODO: add mock
         throw new Error('Method not implemented.');
     }
