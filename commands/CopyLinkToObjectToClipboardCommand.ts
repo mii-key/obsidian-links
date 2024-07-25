@@ -49,13 +49,7 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 		// }
 		// let rawLink = `[${heading}](${destination})`;
 
-		//TODO: handle spaces
-		const rawLink = this.obsidianProxy.app.fileManager.generateMarkdownLink(
-			noteFile,
-			"",
-			"#" + heading,
-			heading
-		)
+		const rawLink = this.obsidianProxy.createLink("", noteFile.path, heading, heading);
 		// navigator.clipboard.writeText(linkData.link?.content);
 		this.obsidianProxy.clipboardWriteText(rawLink);
 		this.obsidianProxy.createNotice("Link copied to your clipboard");
@@ -76,13 +70,7 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
 		if (block.id) {
 			return this.obsidianProxy.clipboardWriteText(
-				//TODO: handle spaces
-				`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
-					file,
-					"",
-					"#^" + block.id,
-					linkText
-				)}`
+				this.obsidianProxy.createLink("", file.path, '^' + block.id, linkText)
 			);
 		}
 
@@ -96,13 +84,7 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
 		editor.replaceRange(`${this.isEolRequired(block) ? "\n\n" : " "}^${id}`, end);
 		navigator.clipboard.writeText(
-			//TODO: handle spaces
-			`${this.obsidianProxy.app.fileManager.generateMarkdownLink(
-				file,
-				"",
-				"#^" + id,
-				linkText
-			)}`
+			this.obsidianProxy.createLink("", file.path, '^' + id, linkText)
 		);
 	}
 

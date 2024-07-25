@@ -16,5 +16,5 @@ export interface IObsidianProxy {
     clipboardReadText(): Promise<string>;
     linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]): void;
     showPromptModal(title: string, text: string[], buttons: ButtonInfo[], onSubmit: (result: string) => void): void;
-    generateLink(notePath: string, destination: string, destinationSubPath?: string, text?: string): string;
+    createLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string): string;
 }

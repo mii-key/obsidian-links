@@ -5,7 +5,7 @@ import { IObsidianLinksSettings } from "settings";
 import { ILinkTextSuggestContext } from "suggesters/ILinkTextSuggestContext";
 import { IUiFactory } from "ui/IUiFactory";
 import { ButtonInfo } from "ui/PromotModal.common";
-import { LinkData } from "utils";
+import { createMarkdownLink, createWikiLink, DestinationType, LinkData } from "utils";
 
 export class ObsidianProxy {
 
@@ -53,10 +53,11 @@ export class ObsidianProxy {
             .open();
     }
 
-    generateLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string): string {
+    createLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string): string {
         const useMarkdownLinks = this.Vault.configuration.useMarkdownLinks;
+        //TODO: use destination type (absolute, relative, ...)
         return useMarkdownLinks
-            ? `[${text}](${destination}${destinationSubPath})`
-            : `[[${destination}${destinationSubPath}${text ? '|' + text : ''}]]`
+            ? createMarkdownLink(sourcePath, destination, destinationSubPath, text, dimensions, DestinationType.None)
+            : createWikiLink(sourcePath, destination, destinationSubPath, text, dimensions, DestinationType.None)
     }
 }
