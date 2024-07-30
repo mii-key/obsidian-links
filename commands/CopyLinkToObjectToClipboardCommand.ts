@@ -50,7 +50,6 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 		// let rawLink = `[${heading}](${destination})`;
 
 		const rawLink = this.obsidianProxy.createLink("", noteFile.path, heading, heading);
-		// navigator.clipboard.writeText(linkData.link?.content);
 		this.obsidianProxy.clipboardWriteText(rawLink);
 		this.obsidianProxy.createNotice("Link copied to your clipboard");
 	}
@@ -90,7 +89,7 @@ export class CopyLinkToHeadingToObjectCommand extends CommandBase {
 
 	getBlock(editor: Editor, file: TFile): ListItemCache | HeadingCache | SectionCache | undefined {
 		const cursor = editor.getCursor("from");
-		const fileCache = this.obsidianProxy.app.metadataCache.getFileCache(file);
+		const fileCache = this.obsidianProxy.getFileCache(file);
 
 		let block: ListItemCache | HeadingCache | SectionCache | undefined = (
 			fileCache?.sections || []

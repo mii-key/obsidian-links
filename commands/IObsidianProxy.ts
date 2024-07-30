@@ -1,5 +1,5 @@
 import { IVault } from "IVault";
-import { App, Notice, RequestUrlParam, RequestUrlResponsePromise } from "obsidian";
+import { App, CachedMetadata, Notice, RequestUrlParam, RequestUrlResponsePromise, TFile } from "obsidian";
 import { IObsidianLinksSettings } from "settings";
 import { ButtonInfo } from "ui/PromotModal.common";
 import { LinkData } from "utils";
@@ -17,4 +17,5 @@ export interface IObsidianProxy {
     linkTextSuggestContextSetLinkData(linkData: LinkData, titles: string[]): void;
     showPromptModal(title: string, text: string[], buttons: ButtonInfo[], onSubmit: (result: string) => void): void;
     createLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string): string;
+    getFileCache(file: TFile): CachedMetadata | null;
 }
