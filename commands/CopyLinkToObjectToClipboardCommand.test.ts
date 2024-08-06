@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals';
-import { CopyLinkToHeadingToObjectCommand } from './CopyLinkToObjectToClipboardCommand';
+import { CopyLinkToObjectToClipboardCommand } from './CopyLinkToObjectToClipboardCommand';
 
 import { EditorMock } from './EditorMock'
 import { ObsidianProxyMock } from './ObsidianProxyMock';
@@ -48,7 +48,7 @@ describe('CopyLinkToHeadingToClipboardCommand test', () => {
             });
         }
 
-        const cmd = new CopyLinkToHeadingToObjectCommand(obsidianProxy)
+        const cmd = new CopyLinkToObjectToClipboardCommand(obsidianProxy)
         const editor = new EditorMock()
         editor.__mocks.getLine.mockReturnValue(text)
         editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
@@ -66,25 +66,28 @@ describe('CopyLinkToHeadingToClipboardCommand test', () => {
             {
                 name: "heading1",
                 text: "# heading1",
+                isHeading: true,
                 filepath: 'note1.md',
                 expected: "[heading1](note1.md#heading1)"
             },
-            // {
-            //     name: "heading w/spaces",
-            //     text: "# heading 1",
-            //     filepath: 'note1.md',
-            //     expected: "[heading 1](<note1.md#heading 1>)"
-            // },
-            // {
-            //     name: "note path w/spaces",
-            //     text: "# heading1",
-            //     filepath: 'note 1.md',
-            //     expected: "[heading1](<note 1.md#heading1>)"
-            // }
+            {
+                name: "heading w/spaces",
+                text: "# heading 1",
+                isHeading: true,
+                filepath: 'note1.md',
+                expected: "[heading 1](<note1.md#heading 1>)"
+            },
+            {
+                name: "note path w/spaces",
+                text: "# heading1",
+                isHeading: true,
+                filepath: 'note 1.md',
+                expected: "[heading1](<note 1.md#heading1>)"
+            }
             //TODO: paragraph tests
             //TODO: link to image
         ]
-    )('copy - [$name] - success', ({ name, text, filepath, expected }) => {
+    )('copy - [$name] - success', ({ name, text, isHeading, filepath, expected }) => {
 
 
         const vault = new VaultMock();
@@ -94,14 +97,13 @@ describe('CopyLinkToHeadingToClipboardCommand test', () => {
             }
         })
 
-        const isHeading = text[0] == '#';
         const obsidianProxy = new ObsidianProxyMock(vault);
         if (isHeading) {
             obsidianProxy.__mocks.createLink.mockReturnValue(expected)
         } else {
             //TODO:
         }
-        const cmd = new CopyLinkToHeadingToObjectCommand(obsidianProxy)
+        const cmd = new CopyLinkToObjectToClipboardCommand(obsidianProxy)
         const editor = new EditorMock()
         editor.__mocks.getLine.mockReturnValue(text)
         editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
@@ -111,8 +113,6 @@ describe('CopyLinkToHeadingToClipboardCommand test', () => {
         expect(obsidianProxy.__mocks.clipboardWriteText.mock.calls).toHaveLength(1)
         expect(obsidianProxy.__mocks.clipboardWriteText.mock.calls[0][0]).toBe(expected)
         expect(obsidianProxy.__mocks.createNotice.mock.calls).toHaveLength(1)
-
-        throw new Error("WIP");
 
     })
 

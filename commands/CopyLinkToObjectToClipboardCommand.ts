@@ -4,7 +4,7 @@ import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
 import { DestinationType, LinkTypes, findLinks } from "../utils";
 
-export class CopyLinkToHeadingToObjectCommand extends CommandBase {
+export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 
 
 	obsidianProxy: IObsidianProxy;
