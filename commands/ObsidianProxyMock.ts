@@ -1,7 +1,7 @@
 import { IObsidianLinksSettings } from "settings";
 import { LinkData, InternalWikilinkWithoutTextAction } from "../utils";
 import { IVault } from "IVault";
-import { App } from "obsidian";
+import { App, CachedMetadata, TFile } from "obsidian";
 import { ButtonInfo } from "ui/PromotModal.common";
 import { IUiFactory } from "ui/IUiFactory";
 
@@ -74,6 +74,7 @@ export class ObsidianProxyMock {
         linkTextSuggestContextSetLinkData: jest.Mock
         showPromptModal: jest.Mock
         createLink: jest.Mock
+        getFileCache: jest.Mock
 
     } = {
             NoticeMock: {
@@ -87,7 +88,8 @@ export class ObsidianProxyMock {
             createNotice: jest.fn(),
             linkTextSuggestContextSetLinkData: jest.fn(),
             showPromptModal: jest.fn(),
-            createLink: jest.fn()
+            createLink: jest.fn(),
+            getFileCache: jest.fn()
         }
 
     Vault: IVault;
@@ -157,6 +159,8 @@ export class ObsidianProxyMock {
         this.createNotice = this.__mocks.createNotice;
         this.linkTextSuggestContextSetLinkData = this.__mocks.linkTextSuggestContextSetLinkData;
         // this.showPromptModal = this.__mocks.showPromptModal;
+        this.getFileCache = this.__mocks.getFileCache;
+        this.createLink = this.__mocks.createLink;
 
         if (vault) {
             this.Vault = vault;
@@ -199,6 +203,10 @@ export class ObsidianProxyMock {
 
     createLink(notePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string): string {
         //TODO: add mock
+        throw new Error('Method not implemented.');
+    }
+
+    getFileCache(file: TFile): CachedMetadata | null {
         throw new Error('Method not implemented.');
     }
 

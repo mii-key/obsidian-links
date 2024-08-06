@@ -1,6 +1,6 @@
 import { IVault } from "IVault";
 import { VaultImp } from "Vault";
-import { App, Notice, RequestUrlParam, RequestUrlResponsePromise, requestUrl, request } from "obsidian";
+import { App, Notice, RequestUrlParam, RequestUrlResponsePromise, requestUrl, request, TFile, CachedMetadata } from "obsidian";
 import { IObsidianLinksSettings } from "settings";
 import { ILinkTextSuggestContext } from "suggesters/ILinkTextSuggestContext";
 import { IUiFactory } from "ui/IUiFactory";
@@ -60,4 +60,9 @@ export class ObsidianProxy {
             ? createMarkdownLink(sourcePath, destination, destinationSubPath, text, dimensions, DestinationType.None)
             : createWikiLink(sourcePath, destination, destinationSubPath, text, dimensions, DestinationType.None)
     }
+
+    getFileCache(file: TFile): CachedMetadata | null {
+        return this.app.metadataCache.getFileCache(file);
+    }
+
 }
