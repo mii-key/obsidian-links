@@ -26,7 +26,7 @@ import { ConvertLinksInFolderCommand } from "./ConvertLinksInFolderCommand";
 import { ConvertLinkToHtmllinkCommand } from "./ConvertLinkToHtmllinkCommand";
 import { CutLinkToClipboardCommand } from "./CutLinkToClipboardCommand";
 import { SetLinkDestinationFromClipboardCommand } from "./SetLinkDestinationFromClipboardCommand";
-import { CopyLinkToHeadingToObjectCommand } from "./CopyLinkToObjectToClipboardCommand";
+import { CopyLinkToObjectToClipboardCommand } from "./CopyLinkToObjectToClipboardCommand";
 import { EmbedUnembedLinkCommand } from "./EmbedUnembedLinkCommand";
 
 const commands: Map<string, ICommand> = new Map<string, ICommand>();
@@ -42,7 +42,7 @@ function createCommands(obsidianProxy: IObsidianProxy, settings: IObsidianLinksS
     commands.set(ConvertLinkToHtmllinkCommand.name, new ConvertLinkToHtmllinkCommand(obsidianProxy));
     commands.set(ConvertLinkToAutolinkCommand.name, new ConvertLinkToAutolinkCommand(() => settings.contexMenu.convertToAutolink));
     commands.set(CopyLinkToClipboardCommand.name, new CopyLinkToClipboardCommand(obsidianProxy));
-    commands.set(CopyLinkToHeadingToObjectCommand.name, new CopyLinkToHeadingToObjectCommand(obsidianProxy));
+    commands.set(CopyLinkToObjectToClipboardCommand.name, new CopyLinkToObjectToClipboardCommand(obsidianProxy));
     commands.set(CutLinkToClipboardCommand.name, new CutLinkToClipboardCommand(obsidianProxy));
     commands.set(CopyLinkDestinationToClipboardCommand.name,
         new CopyLinkDestinationToClipboardCommand(obsidianProxy, () => settings.contexMenu.copyLinkDestination));
@@ -92,7 +92,7 @@ export function getContextMenuCommands(obsidianProxy: IObsidianProxy, settings: 
         EditLinkDestinationCommand.name,
         SetLinkDestinationFromClipboardCommand.name,
         CopyLinkToClipboardCommand.name,
-        CopyLinkToHeadingToObjectCommand.name,
+        CopyLinkToObjectToClipboardCommand.name,
         CutLinkToClipboardCommand.name,
         CopyLinkDestinationToClipboardCommand.name,
         null,
