@@ -1,5 +1,5 @@
 import { IVault } from "IVault";
-import { App, CachedMetadata, Notice, RequestUrlParam, RequestUrlResponsePromise, TFile } from "obsidian";
+import { App, CachedMetadata, Editor, HeadingCache, ListItemCache, Notice, RequestUrlParam, RequestUrlResponsePromise, SectionCache, TFile } from "obsidian";
 import { IObsidianLinksSettings } from "settings";
 import { ButtonInfo } from "ui/PromotModal.common";
 import { LinkData } from "utils";
@@ -18,4 +18,5 @@ export interface IObsidianProxy {
     showPromptModal(title: string, text: string[], buttons: ButtonInfo[], onSubmit: (result: string) => void): void;
     createLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string): string;
     getFileCache(file: TFile): CachedMetadata | null;
+    getBlock(editor: Editor, file: TFile): ListItemCache | HeadingCache | SectionCache | undefined;
 }
