@@ -1,6 +1,6 @@
 import { IVault } from "IVault";
 import { VaultImp } from "Vault";
-import { App, Notice, RequestUrlParam, RequestUrlResponsePromise, requestUrl, request, TFile, CachedMetadata } from "obsidian";
+import { App, Notice, RequestUrlParam, RequestUrlResponsePromise, requestUrl, request, TFile, CachedMetadata, Editor, ListItemCache, HeadingCache, SectionCache } from "obsidian";
 import { IObsidianLinksSettings } from "settings";
 import { ILinkTextSuggestContext } from "suggesters/ILinkTextSuggestContext";
 import { IUiFactory } from "ui/IUiFactory";
@@ -63,6 +63,35 @@ export class ObsidianProxy {
 
     getFileCache(file: TFile): CachedMetadata | null {
         return this.app.metadataCache.getFileCache(file);
+    }
+
+    getBlock(editor: Editor, file: TFile): ListItemCache | HeadingCache | SectionCache | undefined {
+        const cursor = editor.getCursor("from");
+        const fileCache = this.getFileCache(file);
+
+        let block: ListItemCache | HeadingCache | SectionCache | undefined = (
+            fileCache?.sections || []
+        ).find((section) => {
+            return (
+                section.position.start.line <= cursor.line &&
+                section.position.end.line >= cursor.line
+            );
+        });
+
+        if (block?.type === "list") {
+            block = (fileCache?.listItems || []).find((item) => {
+                return (
+                    item.position.start.line <= cursor.line &&
+                    item.position.end.line >= cursor.line
+                );
+            });
+        } else if (block?.type === "heading") {
+            block = (fileCache?.headings || []).find((heading) => {
+                return heading.position.start.line === cursor.line;
+            });
+        }
+
+        return block;
     }
 
 }

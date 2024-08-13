@@ -28,7 +28,7 @@ export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 		const text = editor.getLine(editor.getCursor('from').line);
 		const headingMatch = text.match(new RegExp(RegExPatterns.NoteHeading.source));
 		const currentView = this.obsidianProxy.Vault.getActiveNoteView();
-		const block = headingMatch ? undefined : currentView?.file ? this.getBlock(editor, currentView?.file) : undefined;
+		const block = headingMatch ? undefined : currentView?.file ? this.obsidianProxy.getBlock(editor, currentView?.file) : undefined;
 
 		if (checking) {
 			return !!headingMatch || !!block;
@@ -68,9 +68,11 @@ export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 		}
 
 		if (block.id) {
-			return this.obsidianProxy.clipboardWriteText(
+			this.obsidianProxy.clipboardWriteText(
 				this.obsidianProxy.createLink("", file.path, '^' + block.id, linkText)
 			);
+			this.obsidianProxy.createNotice("Link copied to your clipboard");
+			return;
 		}
 
 		const sectionEnd = block.position.end;
@@ -82,38 +84,10 @@ export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 		const id = this.generateId();
 
 		editor.replaceRange(`${this.isEolRequired(block) ? "\n\n" : " "}^${id}`, end);
-		navigator.clipboard.writeText(
+		this.obsidianProxy.clipboardWriteText(
 			this.obsidianProxy.createLink("", file.path, '^' + id, linkText)
 		);
-	}
-
-	getBlock(editor: Editor, file: TFile): ListItemCache | HeadingCache | SectionCache | undefined {
-		const cursor = editor.getCursor("from");
-		const fileCache = this.obsidianProxy.getFileCache(file);
-
-		let block: ListItemCache | HeadingCache | SectionCache | undefined = (
-			fileCache?.sections || []
-		).find((section) => {
-			return (
-				section.position.start.line <= cursor.line &&
-				section.position.end.line >= cursor.line
-			);
-		});
-
-		if (block?.type === "list") {
-			block = (fileCache?.listItems || []).find((item) => {
-				return (
-					item.position.start.line <= cursor.line &&
-					item.position.end.line >= cursor.line
-				);
-			});
-		} else if (block?.type === "heading") {
-			block = (fileCache?.headings || []).find((heading) => {
-				return heading.position.start.line === cursor.line;
-			});
-		}
-
-		return block;
+		this.obsidianProxy.createNotice("Link copied to your clipboard");
 	}
 
 	generateId(): string {
@@ -136,3 +110,5 @@ export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 	}
 
 }
+
+

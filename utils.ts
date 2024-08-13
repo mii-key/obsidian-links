@@ -693,5 +693,5 @@ export function createWikiLink(sourcePath: string, destination: string, destinat
 export function createMarkdownLink(sourcePath: string, destination: string, destinationSubPath?: string, text?: string, dimensions?: string, destinationType: DestinationType = DestinationType.None): string {
     //TODO: compute destination based on destinationType
     //TODO: handle spaces in destination
-    return `[${text}${dimensions ? '|' + dimensions : ''}](${destination}${destinationSubPath ? '#' + destinationSubPath : ''})`;
+    return `[${text ?? ''}${dimensions ? '|' + dimensions : ''}](${destination}${destinationSubPath ? '#' + destinationSubPath : ''})`;
 }

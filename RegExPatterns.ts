@@ -14,7 +14,7 @@ export class RegExPatterns {
     static readonly AbsoluteFilePathCheck = /^\/|([a-z]:[\/\\])/;
     //TODO: fix
     static readonly CodeBlock = /(\`{3}([a-z#\s\"]*?)\n+)(.*?)(\n+\`{3})/;
-    static readonly ImageDimentions = /((\d+)|((\d+)x(\d+)))$/;
+    static readonly ImageDimentions = /^((\d+)|((\d+)x(\d+)))$/;
 
     static readonly Frontmatter = /(\-{3}\n+)(.*?)(\n*\-{3}\n)/;
 }
