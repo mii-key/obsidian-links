@@ -547,8 +547,18 @@ describe("Utils tests", () => {
         expect(result).toBe(expected);
     });
 
-
+    // [note (1)](<note (1).md>)
     test.each([
+        {
+            name: "mdlink with ()",
+            input: "[note (1)](<note (1).md>)",
+            expected: [
+                new LinkData(LinkTypes.Markdown, "[note (1)](<note (1).md>)",
+                    new Position(0, "[note (1)](<note (1).md>)".length),
+                    new TextPart("note (1).md", new Position("[note (1)](<".length, "[note (1)](<note (1).md".length)),
+                    new TextPart("note (1)", new Position("[".length, "[note (1)".length))),
+            ]
+        },
         {
             name: "mdlink",
             input: "[Consectetur](Consectetur-dest) in id []() ad voluptate ![tempor](tempor-dest) sit ![]() " +
@@ -976,6 +986,19 @@ describe("Utils tests", () => {
                         "[Consectetur](Consectetur-dest) in id []() ad voluptate ![tempor](tempor-dest)".length),
                     new TextPart("tempor-dest", new Position("![tempor](".length, "![tempor](tempor-dest".length)),
                     new TextPart("tempor", new Position("![".length, "![tempor".length)),
+                    true),
+        },
+        {
+            name: "mdlink w/() in destination and text",
+            input: "[Consectetur(1)](Consectetur-dest(1)) in ",
+            start: "[Consectetur(1)](Conse".length,
+            end: "[Consectetur(1)](Conse".length,
+            expected:
+                new LinkData(LinkTypes.Markdown, "[Consectetur(1)](Consectetur-dest(1))",
+                    new Position("".length,
+                        "[Consectetur(1)](Consectetur-dest(1))".length),
+                    new TextPart("Consectetur-dest(1)", new Position("[Consectetur(1)](".length, "[Consectetur(1)](Consectetur-dest(1)".length)),
+                    new TextPart("Consectetur(1)", new Position("[".length, "[Consectetur(1)".length)),
                     true),
         },
         {

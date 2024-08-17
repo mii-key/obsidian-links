@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, LinkTypes, findLinks } from "../utils";
 
 export class ConvertLinkToWikilinkCommand extends CommandBase {
 	// TODO: refactor
@@ -15,18 +15,18 @@ export class ConvertLinkToWikilinkCommand extends CommandBase {
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		if(checking && !this.isEnabled()){
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Markdown);
+		const links = findLinks(text, LinkTypes.Markdown, cursorOffset, cursorOffset);
 		if (checking) {
-			return !!linkData && linkData.destination && !linkData.destination.content.trim().includes(":");
+			return links.length > 0 && !!links[0].destination && !links[0].destination.content.trim().includes(":");
 		}
 
-		if (linkData) {
-			this.convertLinkToWikiLink(linkData, editor);
+		if (links.length) {
+			this.convertLinkToWikiLink(links[0], editor);
 		}
 	}
 
