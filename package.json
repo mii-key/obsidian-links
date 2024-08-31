@@ -11,7 +11,7 @@
 		"test:watch": "jest --watch",
 		"clean": "rmdir /s /q node_modules",
 		"coverage": "jest --coverage",
-		"push:release": "git checkout develop && git push && git checkout master && git push && git push --tags && git checkout develop"
+		"release:push": "git checkout develop && git push && git checkout master && git push && git push --tags && git checkout develop"
 	},
 	"keywords": [],
 	"author": "",
