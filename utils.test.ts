@@ -1,7 +1,5 @@
-import exp from 'constants';
 import { findLink, findHtmlLink, replaceAllHtmlLinks, removeLinksFromHeadings, LinkTypes, getPageTitle, replaceMarkdownTarget, hasLinksInHeadings, HasLinks, removeLinks, decodeHtmlEntities, findLinks, LinkData, Position, TextPart, InternalWikilinkWithoutTextAction, getSafeFilename, DestinationType, CodeBlock, findCodeBlocks, getFrontmatter } from './utils';
 import { expect, test } from '@jest/globals';
-import { RegExPatterns } from './RegExPatterns';
 
 describe("Utils tests", () => {
     test.each([
@@ -973,6 +971,72 @@ describe("Utils tests", () => {
     });
 
     test.each([
+        // mdlink
+        {
+            name: "md link: cursor on text",
+            input: "Incididunt [dolore](http://dolore.com) ullamco [sunt](https://sunt.com) ullamco non.",
+            start: "Incididunt [do".length,
+            end: "Incididunt [do".length,
+            expected:
+                new LinkData(LinkTypes.Markdown, "[dolore](http://dolore.com)",
+                    new Position("Incididunt ".length,
+                        "Incididunt [dolore](http://dolore.com)".length),
+                    new TextPart("http://dolore.com", new Position("[dolore](".length, "[dolore](http://dolore.com".length)),
+                    new TextPart("dolore", new Position("[".length, "[dolore".length)),
+                    false),
+        },
+        {
+            name: "md link: cursor on target",
+            input: "Incididunt [dolore](http://dolore.com) ullamco [sunt](https://sunt.com) ullamco non.",
+            start: "Incididunt [dolore](htt".length,
+            end: "Incididunt [dolore](htt".length,
+            expected:
+                new LinkData(LinkTypes.Markdown, "[dolore](http://dolore.com)",
+                    new Position("Incididunt ".length,
+                        "Incididunt [dolore](http://dolore.com)".length),
+                    new TextPart("http://dolore.com", new Position("[dolore](".length, "[dolore](http://dolore.com".length)),
+                    new TextPart("dolore", new Position("[".length, "[dolore".length)),
+                    false),
+        },
+        {
+            name: "md link `[`: cursor on target",
+            input: "Incidid`[`unt [dolore](http://dolore.com) ullamco [sunt](https://sunt.com) ullamco non.",
+            start: "Incidid`[`unt [dolore](htt".length,
+            end: "Incidid`[`unt [dolore](htt".length,
+            expected:
+                new LinkData(LinkTypes.Markdown, "[dolore](http://dolore.com)",
+                    new Position("Incidid`[`unt ".length,
+                        "Incidid`[`unt [dolore](http://dolore.com)".length),
+                    new TextPart("http://dolore.com", new Position("[dolore](".length, "[dolore](http://dolore.com".length)),
+                    new TextPart("dolore", new Position("[".length, "[dolore".length)),
+                    false),
+        },
+        {
+            name: "md link with <> in destination: cursor on target",
+            input: "Incidid`[`unt [dolore](<http://dolore.com>) ullamco [sunt](https://sunt.com) ullamco non.",
+            start: "Incidid`[`unt [dolore](<htt".length,
+            end: "Incidid`[`unt [dolore](<htt".length,
+            expected:
+                new LinkData(LinkTypes.Markdown, "[dolore](<http://dolore.com>)",
+                    new Position("Incidid`[`unt ".length,
+                        "Incidid`[`unt [dolore](<http://dolore.com>)".length),
+                    new TextPart("http://dolore.com", new Position("[dolore](".length, "[dolore](<http://dolore.com>".length)),
+                    new TextPart("dolore", new Position("[".length, "[dolore".length)),
+                    false),
+        },
+        {
+            name: "embeded md link: cursor on target",
+            input: "Incidid`[`unt ![dolore](http://dolore.com) ullamco [sunt](https://sunt.com) ullamco non.",
+            start: "Incidid`[`unt ![dolore](<htt".length,
+            end: "Incidid`[`unt ![dolore](<htt".length,
+            expected:
+                new LinkData(LinkTypes.Markdown, "![dolore](http://dolore.com)",
+                    new Position("Incidid`[`unt ".length,
+                        "Incidid`[`unt ![dolore](http://dolore.com)".length),
+                    new TextPart("http://dolore.com", new Position("![dolore](".length, "![dolore](http://dolore.com".length)),
+                    new TextPart("dolore", new Position("![".length, "![dolore".length)),
+                    true),
+        },
         {
             name: "mdlink",
             input: "[Consectetur](Consectetur-dest) in id []() ad voluptate ![tempor](tempor-dest) sit ![]() " +
@@ -999,8 +1063,62 @@ describe("Utils tests", () => {
                         "[Consectetur(1)](Consectetur-dest(1))".length),
                     new TextPart("Consectetur-dest(1)", new Position("[Consectetur(1)](".length, "[Consectetur(1)](Consectetur-dest(1)".length)),
                     new TextPart("Consectetur(1)", new Position("[".length, "[Consectetur(1)".length)),
+                    false),
+        },
+        // wikilink
+        {
+            name: "wikilink: cursor on destination",
+            input: "Incididunt [[dolore]] ullamco [[sunt]] ullamco non.",
+            start: "Incididunt [[dol".length,
+            end: "Incididunt [[dol".length,
+            expected:
+                new LinkData(LinkTypes.Wiki, "[[dolore]]",
+                    new Position("Incididunt ".length,
+                        "Incididunt [[dolore]]".length),
+                    new TextPart("dolore", new Position("[[".length, "[[dolore".length)),
+                    undefined,
+                    false),
+        },
+        {
+            name: "wikilink with text: cursor on text",
+            input: "Incididunt [[dolore|dolore text]] ullamco [[sunt]] ullamco non.",
+            start: "Incididunt [[dolore|dol".length,
+            end: "Incididunt [[dolore|dol".length,
+            expected:
+                new LinkData(LinkTypes.Wiki, "[[dolore|dolore text]]",
+                    new Position("Incididunt ".length,
+                        "Incididunt [[dolore|dolore text]]".length),
+                    new TextPart("dolore", new Position("[[".length, "[[dolore".length)),
+                    new TextPart("dolore text", new Position("[[dolore|".length, "[[dolore|dolore text".length)),
+                    false),
+        },
+        {
+            name: "embeded wikilink with text: cursor after |",
+            input: "Incididunt ![[dolore|dolore text]] ullamco [[sunt]] ullamco non.",
+            start: "Incididunt [[dolore|".length,
+            end: "Incididunt [[dolore|".length,
+            expected:
+                new LinkData(LinkTypes.Wiki, "![[dolore|dolore text]]",
+                    new Position("Incididunt ".length,
+                        "Incididunt ![[dolore|dolore text]]".length),
+                    new TextPart("dolore", new Position("![[".length, "![[dolore".length)),
+                    new TextPart("", new Position("![[dolore|".length, "[[dolore|dolore text".length)),
                     true),
         },
+        {
+            name: "wikilink with empty text: cursor after |",
+            input: "Incididunt [[dolore|]] ullamco [[sunt]] ullamco non.",
+            start: "Incididunt [[dolore|".length,
+            end: "Incididunt [[dolore|".length,
+            expected:
+                new LinkData(LinkTypes.Wiki, "[[dolore|]]",
+                    new Position("Incididunt ".length,
+                        "Incididunt [[dolore|]]".length),
+                    new TextPart("dolore", new Position("[[".length, "[[dolore".length)),
+                    new TextPart("", new Position("[[dolore|".length, "[[dolore|".length)),
+                    false),
+        },
+
         {
             name: "wikilink",
             input: "[[Consectetur-dest|Consectetur]] in id [[]] ad voluptate ![[tempor-dest|tempor]] sit ![[]] " +
@@ -1016,8 +1134,74 @@ describe("Utils tests", () => {
                     new TextPart("tempor", new Position("![[tempor-dest|".length, "![[tempor-dest|tempor".length)),
                     true)
         },
+        // autolink
         {
-            name: "autlink",
+            name: "http autolink: cursor on target",
+            input: "Incididunt dolore <http://dolore.com> ullamco sunt <https://sunt.com> ullamco non.",
+            start: "Incididunt dolore <htt".length,
+            end: "Incididunt dolore <htt".length,
+            expected:
+                new LinkData(LinkTypes.Autolink, "<http://dolore.com>",
+                    new Position("Incididunt dolore ".length,
+                        "Incididunt dolore <http://dolore.com>".length),
+                    new TextPart("http://dolore.com", new Position("<".length, "<http://dolore.com".length)),
+                    undefined,
+                    false),
+        },
+        {
+            name: "irc scheme autolink with port: cursor on target",
+            input: "Incididunt dolore <irc://foo.bar:2233/baz> ullamco sunt <https://sunt.com> ullamco non.",
+            start: "Incididunt dolore <ir".length,
+            end: "Incididunt dolore <ir".length,
+            expected:
+                new LinkData(LinkTypes.Autolink, "<irc://foo.bar:2233/baz>",
+                    new Position("Incididunt dolore ".length,
+                        "Incididunt dolore <irc://foo.bar:2233/baz>".length),
+                    new TextPart("irc://foo.bar:2233/baz", new Position("<".length, "<irc://foo.bar:2233/baz".length)),
+                    undefined,
+                    false),
+        },
+        {
+            name: "url with request: cursor on target",
+            input: "Incididunt dolore <http://foo.bar.baz/test?q=hello&id=22&boolean> ullamco sunt <https://sunt.com> ullamco non..",
+            start: "Incididunt dolore <ht".length,
+            end: "Incididunt dolore <ht".length,
+            expected:
+                new LinkData(LinkTypes.Autolink, "<http://foo.bar.baz/test?q=hello&id=22&boolean>",
+                    new Position("Incididunt dolore ".length,
+                        "Incididunt dolore <http://foo.bar.baz/test?q=hello&id=22&boolean>".length),
+                    new TextPart("http://foo.bar.baz/test?q=hello&id=22&boolean", new Position("<".length, "<http://foo.bar.baz/test?q=hello&id=22&boolean".length)),
+                    undefined,
+                    false),
+        },
+        {
+            name: "mailto autolink w/mailto: cursor on target",
+            input: "Incididunt dolore <MAILTO:FOO@BAR.BAZ> ullamco sunt <https://sunt.com> ullamco non.",
+            start: "Incididunt dolore <M".length,
+            end: "Incididunt dolore <M".length,
+            expected:
+                new LinkData(LinkTypes.Autolink, "<MAILTO:FOO@BAR.BAZ>",
+                    new Position("Incididunt dolore ".length,
+                        "Incididunt dolore <MAILTO:FOO@BAR.BAZ>".length),
+                    new TextPart("MAILTO:FOO@BAR.BAZ", new Position("<".length, "<MAILTO:FOO@BAR.BAZ".length)),
+                    undefined,
+                    false),
+        },
+        {
+            name: "mail autolink: cursor on target",
+            input: "Incididunt dolore <foo@bar.example.com> ullamco sunt <https://sunt.com> ullamco non.",
+            start: "Incididunt dolore <f".length,
+            end: "Incididunt dolore <f".length,
+            expected:
+                new LinkData(LinkTypes.Autolink, "<foo@bar.example.com>",
+                    new Position("Incididunt dolore ".length,
+                        "Incididunt dolore <foo@bar.example.com>".length),
+                    new TextPart("foo@bar.example.com", new Position("<".length, "<foo@bar.example.com".length)),
+                    undefined,
+                    false),
+        },
+        {
+            name: "autolink",
             input: "Consectetur in <http://dolore.com> id ad voluptate  <https://sunt.com> tempor sit <irc://foo.bar:2233/baz>" +
                 "laborum <http://foo.bar.baz/test?q=hello&id=22&boolean> aliqua consequatvoluptate esse officia in ad voluptate voluptate-dest " +
                 "<MAILTO:FOO@BAR.BAZ> ad voluptate <foo@bar.example.com> Consectetur <> officia <hello> tempor",
@@ -1034,6 +1218,20 @@ describe("Utils tests", () => {
                     new TextPart("http://foo.bar.baz/test?q=hello&id=22&boolean", new Position("<".length, "<http://foo.bar.baz/test?q=hello&id=22&boolean".length)),
                     undefined)
         },
+        // html link
+        {
+            name: "html link: cursor on text",
+            input: "Incididunt <a href=\"http://dolore.com\">dolore</a> ullamco sunt ullamco non..",
+            start: "Incididunt <a href=\"http://dolore.com\">dol".length,
+            end: "Incididunt <a href=\"http://dolore.com\">dol".length,
+            expected:
+                new LinkData(LinkTypes.Html, "<a href=\"http://dolore.com\">dolore</a>",
+                    new Position("Incididunt ".length,
+                        "Incididunt <a href=\"http://dolore.com\">dolore</a>".length),
+                    new TextPart("http://dolore.com", new Position("<a href=\"".length, "Incididunt <a href=\"http://dolore.com".length)),
+                    new TextPart("dolore", new Position("<a href=\"http://dolore.com\">".length, "<a href=\"http://dolore.com\">dolore".length)),
+                    false),
+        },
         {
             name: "html link",
             input: "<a href='Consectetur-dest'>Consectetur</a> in id <a href=\"\"></a> ad voluptate !<a href=\"tempor-dest\">tempor</a> sit !<a href=''></a> " +
@@ -1048,6 +1246,7 @@ describe("Utils tests", () => {
                     new TextPart("tempor-dest", new Position("<a href=\"".length, "<a href=\"tempor-dest".length)),
                     new TextPart("tempor", new Position("<a href=\"tempor-dest\">".length, "<a href=\"tempor-dest\">tempor".length)))
         },
+        // URL
         {
             name: "plain url",
             input: "Consectetur in http://dolore.com id ad voluptate https://sunt.com tempor sit irc://foo.bar:2233/baz " +
@@ -1060,6 +1259,7 @@ describe("Utils tests", () => {
                     new TextPart("http://dolore.com", new Position("".length, "http://dolore.com".length)),
                     undefined)
         },
+        // obsidian URL
         {
             name: "obsidian url",
             input: "Consectetur in obsidian://open?vault=test&file=file1 id ad voluptate tempor sit " +
@@ -1078,10 +1278,12 @@ describe("Utils tests", () => {
 
         //
         expect(result.length).toBe(1);
-        expect(result[0].type & expected.type).toBe(expected.type);
-        expect(result[0].content).toBe(expected.content);
-        expect(result[0].position.start).toBe(expected.position.start);
-        expect(result[0].position.end).toBe(expected.position.end);
+        const link = result[0];
+        expect(link.type & expected.type).toBe(expected.type);
+        expect(link.content).toBe(expected.content);
+        expect(link.position.start).toBe(expected.position.start);
+        expect(link.position.end).toBe(expected.position.end);
+        expect(link.embedded).toBe(expected.embedded);
     });
 
     test('getSafeFilename', () => {
