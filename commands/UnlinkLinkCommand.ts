@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand  } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
+import { CommandBase, Func, ICommand } from "./ICommand"
+import { HasLinks, LinkData, LinkTypes, findLinks, removeLinks } from "../utils";
 
 export class UnlinkLinkCommand extends CommandBase {
 
@@ -12,12 +12,12 @@ export class UnlinkLinkCommand extends CommandBase {
 		this.icon = 'unlink';
 	}
 
-    handler(editor: Editor, checking: boolean) : boolean | void {
-		if(checking && !this.isEnabled()){
+	handler(editor: Editor, checking: boolean): boolean | void {
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
-        const selection = editor.getSelection();
+		const selection = editor.getSelection();
 		if (selection) {
 			if (checking) {
 				return HasLinks(selection);
@@ -27,17 +27,17 @@ export class UnlinkLinkCommand extends CommandBase {
 		} else {
 			const text = editor.getValue();
 			const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-			const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.Markdown)
+			const links = findLinks(text, LinkTypes.Wiki | LinkTypes.Html | LinkTypes.Markdown, cursorOffset, cursorOffset)
 			if (checking) {
-				return !!linkData;
+				return links.length > 0;
 			}
-			if (linkData) {
-				this.unlinkLink(linkData, editor);
+			if (links) {
+				this.unlinkLink(links[0], editor);
 			}
 		}
-    }
+	}
 
-    removeLinksFromSelection(editor: Editor, selection: string) {
+	removeLinksFromSelection(editor: Editor, selection: string) {
 		const unlinkedText = removeLinks(selection);
 		editor.replaceSelection(unlinkedText);
 	}
