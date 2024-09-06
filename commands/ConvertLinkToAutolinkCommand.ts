@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, findLinks, removeLinks } from "../utils";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, LinkTypes, findLinks } from "../utils";
 import { RegExPatterns } from "../RegExPatterns";
 
 export class ConvertLinkToAutolinkCommand extends CommandBase {
@@ -20,8 +20,8 @@ export class ConvertLinkToAutolinkCommand extends CommandBase {
 		if (checking && !this.isEnabled()) {
 			return false;
 		}
-		
-		if(checking && editor.getSelection()){
+
+		if (checking && editor.getSelection()) {
 			return false;
 		}
 
@@ -32,19 +32,19 @@ export class ConvertLinkToAutolinkCommand extends CommandBase {
 			if (links.length === 0 || links[0].destination === undefined) {
 				return false;
 			}
-			
+
 			switch (links[0].type) {
 				case LinkTypes.Markdown:
 					if (!(RegExPatterns.AbsoluteUri.test(links[0].destination.content)
 						|| links[0].destination.content.startsWith(this.EmailScheme))) {
 						return false;
 					}
-				break;
+					break;
 				case LinkTypes.PlainUrl:
-					if(!RegExPatterns.AbsoluteUri.test(links[0].destination.content)){
+					if (!RegExPatterns.AbsoluteUri.test(links[0].destination.content)) {
 						return false;
 					}
-				break; 
+					break;
 			}
 			return true;
 		}
@@ -55,7 +55,7 @@ export class ConvertLinkToAutolinkCommand extends CommandBase {
 	}
 
 	convertLinkToAutolink(linkData: LinkData, editor: Editor) {
-		if (linkData.destination?.content 
+		if (linkData.destination?.content
 			&& (linkData.type === LinkTypes.Markdown || linkData.type === LinkTypes.PlainUrl)) {
 			let linkContent;
 			if (linkData.destination.content.startsWith(this.EmailScheme)) {

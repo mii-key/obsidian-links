@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { Func, ICommand } from "./ICommand"
-import { LinkTypes, findLink, findLinks } from "../utils";
+import { Func } from "./ICommand"
+import { LinkTypes, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from './ConvertToMdlinkCommandBase'
 
@@ -24,7 +24,7 @@ export class ConvertHtmlLinksToMdlinksCommand extends ConvertToMdlinkCommandBase
 	}
 
 	handler(editor: Editor, checking: boolean): boolean | void {
-		if(checking && !this.isEnabled()){
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
