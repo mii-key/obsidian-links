@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
-import { LinkTypes, findLink, findLinks, getFileName, getPageTitle, getSafeFilename } from "../utils";
+import { LinkTypes, findLinks, getFileName, getPageTitle } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { selectWordUnderCursor } from "../editorUtils";
 
@@ -29,11 +29,8 @@ export class CreateLinkFromClipboardCommand extends CommandBase {
 		if (checking) {
 			const noteText = editor.getValue();
 			const cursorOffset = editor.posToOffset(editor.getCursor('from'))
-			const link = findLink(noteText, cursorOffset, cursorOffset, LinkTypes.All)
-			if (link && link.position.start < cursorOffset && link.position.end > cursorOffset) {
-				return false;
-			}
-			return true;
+			const links = findLinks(noteText, LinkTypes.All, cursorOffset, cursorOffset)
+			return links?.length === 0;
 		}
 
 		(async () => {
