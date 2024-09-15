@@ -1,6 +1,6 @@
 import { Editor, TFile } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
-import { LinkData, findLink, isAbsoluteFilePath, isAbsoluteUri } from "../utils";
+import { LinkData, LinkTypes, findLinks, isAbsoluteFilePath, isAbsoluteUri } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import parseFilepath from "parse-filepath";
 import { ButtonInfo } from "../ui/PromotModal.common";
@@ -28,13 +28,16 @@ export class DeleteLinkCommand extends CommandBase {
 		}
 
 		const text = editor.getValue();
-		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset);
+		const cursorOffsetStart = editor.posToOffset(editor.getCursor('from'));
+		const cursorOffsetEnd = editor.posToOffset(editor.getCursor('to'));
+
+		const links = findLinks(text, LinkTypes.All, cursorOffsetStart, cursorOffsetEnd);
+		console.log(links?.length);
 		if (checking) {
-			return !!linkData;
+			return links?.length == 1;
 		}
-		if (linkData) {
-			this.deleteLink(linkData, editor);
+		if (links?.length == 1) {
+			this.deleteLink(links[0], editor);
 		}
 	}
 
