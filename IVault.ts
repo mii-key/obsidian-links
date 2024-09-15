@@ -22,10 +22,12 @@ export interface IVault {
     getConfig(setting: string): boolean | string | number;
 }
 
+type NewLinkFormat = 'absolute' | 'shortest' | 'relative';
+
 export interface IVaultConfiguration {
     readonly useMarkdownLinks: boolean;
     //return value: absolute | shortest | relative
-    readonly newLinkFormat: string;
+    readonly newLinkFormat: NewLinkFormat;
 }
 
 export class VaultConfiguration implements IVaultConfiguration {
@@ -38,7 +40,7 @@ export class VaultConfiguration implements IVaultConfiguration {
         return this.vault.getConfig("useMarkdownLinks") as boolean;
     }
 
-    get newLinkFormat(): string {
-        return this.vault.getConfig("newLinkFormat") as string;
+    get newLinkFormat(): NewLinkFormat {
+        return this.vault.getConfig("newLinkFormat") as NewLinkFormat;
     }
 }
