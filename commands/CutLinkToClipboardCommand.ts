@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { LinkData, LinkTypes, findLink, findLinks } from "../utils";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, LinkTypes, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 
 export class CutLinkToClipboardCommand extends CommandBase {
