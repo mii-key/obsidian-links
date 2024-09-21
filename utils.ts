@@ -429,10 +429,22 @@ function removeWhitespaces(str: string): string {
 export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<string>): Promise<string> {
     const titleRegEx = /<title[^>]*>([^<]*?)<\/title>/i;
     const text = await getPageText(url);
-    const match = text.match(titleRegEx);
-    if (match) {
-        const [, title] = match;
-        return decodeHtmlEntities(removeWhitespaces(title));
+    //TODO: refactor
+    if (url.hostname === 'www.youtube.com' && url.pathname === '/watch') {
+        const titlePrefix = '"playerOverlayVideoDetailsRenderer":{"title":{"simpleText":"'
+        const titleStart = text.indexOf(titlePrefix);
+        if (titleStart > 0) {
+            const titleEnd = text.indexOf('"}', titleStart);
+            if (titleEnd > 0) {
+                return text.substring(titleStart + titlePrefix.length, titleEnd);
+            }
+        }
+    } else {
+        const match = text.match(titleRegEx);
+        if (match) {
+            const [, title] = match;
+            return decodeHtmlEntities(removeWhitespaces(title));
+        }
     }
 
     throw new Error("Page has no title.");
