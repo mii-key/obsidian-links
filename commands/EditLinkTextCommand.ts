@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand  } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, LinkTypes, findLinks } from "../utils";
 
 export class EditLinkTextCommand extends CommandBase {
 	generateLinkTextOnEdit = true;
@@ -13,12 +13,12 @@ export class EditLinkTextCommand extends CommandBase {
 		this.icon = 'text-cursor-input';
 	}
 
-    handler(editor: Editor, checking: boolean) : boolean | void {
-		if(checking && !this.isEnabled()){
+	handler(editor: Editor, checking: boolean): boolean | void {
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
-        const linkData = this.getLink(editor);
+		const linkData = this.getLink(editor);
 		if (checking) {
 			return !!linkData && !!linkData.text;
 		}
@@ -30,7 +30,7 @@ export class EditLinkTextCommand extends CommandBase {
 				this.editLinkText(linkData, editor);
 			}, 500);
 		}
-    }
+	}
 
 	editLinkText(linkData: LinkData, editor: Editor) {
 		if (linkData.text) {
@@ -41,10 +41,11 @@ export class EditLinkTextCommand extends CommandBase {
 			//TODO: 
 		}
 	}
-	
+
 	getLink(editor: Editor): LinkData | undefined {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		return findLink(text, cursorOffset, cursorOffset)
+		const links = findLinks(text, LinkTypes.All, cursorOffset, cursorOffset);
+		return links?.length > 0 ? links[0] : undefined;
 	}
 }

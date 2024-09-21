@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand  } from "./ICommand"
-import { HasLinks, hasLinksInHeadings, LinkData, LinkTypes, RemoveLinksFromHeadingsOptions, findLink, removeLinks, removeLinksFromHeadings } from "../utils";
+import { CommandBase, Func } from "./ICommand"
+import { hasLinksInHeadings, RemoveLinksFromHeadingsOptions, removeLinksFromHeadings } from "../utils";
 
 export class RemoveLinksFromHeadingsCommand extends CommandBase {
 	options: RemoveLinksFromHeadingsOptions;
@@ -14,8 +14,8 @@ export class RemoveLinksFromHeadingsCommand extends CommandBase {
 		this.icon = 'unlink';
 	}
 
-    handler(editor: Editor, checking: boolean) : boolean | void {
-		if(checking && !this.isEnabled()){
+	handler(editor: Editor, checking: boolean): boolean | void {
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
@@ -37,5 +37,5 @@ export class RemoveLinksFromHeadingsCommand extends CommandBase {
 				editor.setValue(result);
 			}
 		}
-    }
+	}
 }
