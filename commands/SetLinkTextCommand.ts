@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
-import { LinkData, LinkTypes, findLink, findLinks, getFileName, getLinkTitles, getPageTitle, isAbsoluteUri } from "../utils";
+import { LinkData, LinkTypes, findLinks, getFileName, getLinkTitles, getPageTitle, isAbsoluteUri } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 
 export class SetLinkTextCommand extends CommandBase {
@@ -141,8 +141,8 @@ export class SetLinkTextCommand extends CommandBase {
 		} else {
 			const text = editor.getValue();
 			const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-			const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
-			return linkData ? [linkData] : [];
+			const links = findLinks(text, LinkTypes.Wiki | LinkTypes.Markdown, cursorOffset, cursorOffset);
+			return links?.length > 0 ? [links[0]] : [];
 		}
 	}
 

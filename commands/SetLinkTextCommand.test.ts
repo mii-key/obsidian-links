@@ -1,9 +1,9 @@
 import { expect, test } from '@jest/globals';
 
-import { EditorMock, EditorPosition } from './EditorMock'
+import { EditorMock } from './EditorMock'
 import { SetLinkTextCommand } from './SetLinkTextCommand';
 import { ObsidianProxyMock } from './ObsidianProxyMock';
-import { LinkData, LinkTypes, findLink } from '../utils';
+import { LinkTypes, findLinks } from '../utils';
 
 describe('SetLinkTextCommand test', () => {
 
@@ -209,11 +209,10 @@ describe('SetLinkTextCommand test', () => {
         ('set text - cursor on [$name] - success', ({ name, text, isDestinationUrl, linkHasText, expected,
             selectionStart, selectionEnd, suggesterData }, done) => {
 
-            const offsetToPos = (offset: number) => ({ line: 0, ch: offset });
             const editor = new EditorMock()
             editor.__mocks.getValue.mockReturnValue(text)
             editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
-            const linkData = findLink(text, 1, 1);
+            const linkData = findLinks(text, LinkTypes.All, 1, 1)[0];
 
             const obsidianProxyMock = new ObsidianProxyMock()
             obsidianProxyMock.__mocks.requestUrlMock.mockReturnValue({
