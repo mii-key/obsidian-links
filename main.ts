@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin, PluginManifest, TAbstractFile, htmlToMarkdown, requestUrl, moment, RequestUrlParam, RequestUrlResponsePromise } from 'obsidian';
-import { findLink, replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtension, InternalWikilinkWithoutTextAction, findLinks, LinkTypes, getLinkTitles, getFileName } from './utils';
+import { replaceAllHtmlLinks, LinkData, replaceMarkdownTarget, removeExtension, InternalWikilinkWithoutTextAction, findLinks, LinkTypes, getFileName } from './utils';
 import { LinkTextSuggest } from 'suggesters/LinkTextSuggest';
 import { ILinkTextSuggestContext } from 'suggesters/ILinkTextSuggestContext';
 import { ReplaceLinkModal } from 'ui/ReplaceLinkModal';
@@ -203,7 +203,8 @@ export default class ObsidianLinksPlugin extends Plugin {
 	getLink(editor: Editor): LinkData | undefined {
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		return findLink(text, cursorOffset, cursorOffset)
+		const links = findLinks(text, LinkTypes.All, cursorOffset, cursorOffset);
+		return links?.length == 1 ? links[0] : undefined;
 	}
 
 	convertHtmlLinksToMdLinks = () => {

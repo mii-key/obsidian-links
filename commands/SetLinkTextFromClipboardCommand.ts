@@ -1,6 +1,6 @@
-import { Editor, EditorPosition } from "obsidian";
-import { CommandBase, Func, ICommand } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, findLinks, getPageTitle, removeLinks } from "../utils";
+import { Editor } from "obsidian";
+import { Func } from "./ICommand"
+import { LinkTypes, findLinks } from "../utils";
 import { IObsidianProxy } from "./IObsidianProxy";
 import { ConvertToMdlinkCommandBase } from "./ConvertToMdlinkCommandBase";
 

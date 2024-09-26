@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
-import { CommandBase, Func, ICommand  } from "./ICommand"
-import { HasLinks, LinkData, LinkTypes, findLink, removeLinks } from "../utils";
+import { CommandBase, Func } from "./ICommand"
+import { LinkData, LinkTypes, findLinks } from "../utils";
 
 export class UnembedLinkCommand extends CommandBase {
 
@@ -11,25 +11,25 @@ export class UnembedLinkCommand extends CommandBase {
 		this.displayNameContextMenu = 'Unembed';
 		this.icon = 'file-output';
 	}
-	
-    handler(editor: Editor, checking: boolean) : boolean | void {
-		if(checking && !this.isEnabled()){
+
+	handler(editor: Editor, checking: boolean): boolean | void {
+		if (checking && !this.isEnabled()) {
 			return false;
 		}
 
 		const text = editor.getValue();
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		const linkData = findLink(text, cursorOffset, cursorOffset, LinkTypes.Wiki | LinkTypes.Markdown);
+		const links = findLinks(text, LinkTypes.Wiki | LinkTypes.Markdown, cursorOffset, cursorOffset);
 		if (checking) {
-			return !!linkData && linkData.embedded && !!linkData.destination;
+			return links?.length === 1 && links[0].embedded && !!links[0].destination;
 		}
 
-		if (linkData) {
-			this.unembedLinkUnderCursor(linkData, editor);
+		if (links) {
+			this.unembedLinkUnderCursor(links[0], editor);
 		}
-    }
+	}
 
-    unembedLinkUnderCursor(linkData: LinkData, editor: Editor) {
+	unembedLinkUnderCursor(linkData: LinkData, editor: Editor) {
 		if (linkData.content && (linkData.type & (LinkTypes.Wiki | LinkTypes.Markdown)) && linkData.embedded) {
 			editor.replaceRange(
 				linkData.content.substring(1),

@@ -242,63 +242,6 @@ function parsePlainUrl(regExp: RegExp, match: RegExpMatchArray, raw: string, des
     return linkData;
 }
 
-//TODO: depricated. use findLinks
-export function findLink(text: string, startPos: number, endPos: number, linkType: LinkTypes = LinkTypes.All): LinkData | undefined {
-    // eslint-disable-next-line no-useless-escape
-    const wikiLinkRegEx = /(!?)\[\[([^\[\]|]+)(\|([^\[\]]*))?\]\]/g;
-    // const mdLinkRegEx = /(!?)\[([^\]\[]*)\]\(([^)(]*)\)/gmi
-    const mdLinkRegEx = new RegExp(RegExPatterns.Markdownlink.source, 'gmi');
-    const htmlLinkRegEx = /<a\s+[^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>(.*?)<\/a>/gi;
-    const autolinkRegEx1 = /<([a-z]+:\/\/[^>]+)>/gmi;
-    const autolinkRegEx = /(<([a-zA-Z]{2,32}:[^>]+)>)|(<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>)/gmi;
-
-    let match;
-
-    if ((linkType & LinkTypes.Wiki)) {
-        while ((match = wikiLinkRegEx.exec(text))) {
-            if (startPos >= match.index && endPos <= wikiLinkRegEx.lastIndex) {
-                const [raw, exclamationMark, destination, , text] = match
-                const linkData = parseWikiLink(wikiLinkRegEx, match, raw, exclamationMark, text, destination)
-                return linkData;
-            }
-        }
-    }
-
-    if ((linkType & LinkTypes.Markdown)) {
-        while ((match = mdLinkRegEx.exec(text))) {
-            if (startPos >= match.index && endPos <= mdLinkRegEx.lastIndex) {
-                const [raw, exclamationMark, text, destination] = match;
-                const linkData = parseMarkdownLink(mdLinkRegEx, match, raw, exclamationMark, text, destination);
-                return linkData;
-            }
-        }
-    }
-
-    if ((linkType & LinkTypes.Html)) {
-        while ((match = htmlLinkRegEx.exec(text))) {
-            if (startPos >= match.index && endPos <= htmlLinkRegEx.lastIndex) {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const [raw, destination, text] = match;
-                const linkData = parseHtmlLink(mdLinkRegEx, match, raw, text, destination);
-                return linkData;
-            }
-        }
-    }
-
-    if ((linkType & LinkTypes.Autolink)) {
-        while ((match = autolinkRegEx.exec(text))) {
-            if (startPos >= match.index && endPos <= autolinkRegEx.lastIndex) {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const [raw, urlAutolink, urlDestination, mailAutolink, mailDestination] = match;
-                const linkData = parseAutolink(autolinkRegEx, match, raw,
-                    urlDestination ? urlDestination : mailDestination)
-                return linkData;
-            }
-        }
-    }
-
-    return undefined;
-}
 
 //TODO: refactor
 export function findHtmlLink(text: string, startPos: number, endPos: number): LinkData | undefined {
@@ -429,10 +372,22 @@ function removeWhitespaces(str: string): string {
 export async function getPageTitle(url: URL, getPageText: (url: URL) => Promise<string>): Promise<string> {
     const titleRegEx = /<title[^>]*>([^<]*?)<\/title>/i;
     const text = await getPageText(url);
-    const match = text.match(titleRegEx);
-    if (match) {
-        const [, title] = match;
-        return decodeHtmlEntities(removeWhitespaces(title));
+    //TODO: refactor
+    if (url.hostname === 'www.youtube.com' && url.pathname === '/watch') {
+        const titlePrefix = '"playerOverlayVideoDetailsRenderer":{"title":{"simpleText":"'
+        const titleStart = text.indexOf(titlePrefix);
+        if (titleStart > 0) {
+            const titleEnd = text.indexOf('"}', titleStart);
+            if (titleEnd > 0) {
+                return text.substring(titleStart + titlePrefix.length, titleEnd);
+            }
+        }
+    } else {
+        const match = text.match(titleRegEx);
+        if (match) {
+            const [, title] = match;
+            return decodeHtmlEntities(removeWhitespaces(title));
+        }
     }
 
     throw new Error("Page has no title.");
