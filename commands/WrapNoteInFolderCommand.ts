@@ -1,9 +1,8 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
-import { RegExPatterns } from "../RegExPatterns";
-import { LinkData, LinkTypes, getSafeFilename } from "../utils";
-import { rawListeners } from "process";
+import { isAbsoluteFilePath } from "utils";
+import path from "path";
 
 export class WrapNoteInFolderCommand extends CommandBase {
 
@@ -42,13 +41,15 @@ export class WrapNoteInFolderCommand extends CommandBase {
 			return
 		}
 
-		const matchNoteName = currentNotePath.match(/(.*\/)(.*)\.md/);
+		const matchNoteName = currentNotePath.match(/(.*\/)?(.*)\.md/);
 		if (!matchNoteName) {
 			return;
 		}
 		const currentNoteName = matchNoteName[2];
 		(async () => {
-			const newParentFolder = `${currentNoteParentPath}/${currentNoteName}`
+			const hasSeparator = currentNoteParentPath[currentNoteParentPath.length - 1] === '/' ||
+				currentNoteParentPath[currentNoteParentPath.length - 1] == '\\';
+			const newParentFolder = `${currentNoteParentPath}${hasSeparator ? '' : '/'}${currentNoteName}`;
 			await this.obsidianProxy.Vault.createFolder(newParentFolder);
 			await this.obsidianProxy.Vault.rename(currentNotePath, `${newParentFolder}/${currentNoteName}.md`)
 		})();
