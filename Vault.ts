@@ -72,8 +72,7 @@ export class VaultImp implements IVault {
             }
             const backlinksLinkData: Record<string, LinkData[]> = {};
 
-            for (const sourceFile in backlinks) {
-                const linkCaches = backlinks[sourceFile];
+            for (const [sourceFile, linkCaches] of backlinks) {
                 const linkDataArray = new Array<LinkData>();
                 for (const linkCache of linkCaches) {
                     const linkData = LinkData.parse(linkCache.original);
