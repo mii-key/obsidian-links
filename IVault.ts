@@ -20,6 +20,8 @@ export interface IVault {
     trash(file: TAbstractFile, system: boolean): Promise<void>;
     getAbstractFileByPath(path: string): TAbstractFile | null;
     getConfig(setting: string): boolean | string | number;
+    getFiles(): TFile[];
+    getMarkdownFiles(): TFile[];
 }
 
 type NewLinkFormat = 'absolute' | 'shortest' | 'relative';

@@ -107,4 +107,13 @@ export class VaultImp implements IVault {
     getConfig(setting: string): boolean | string | number {
         return this.app.vault.getConfig(setting) as boolean | string | number;
     }
+
+    getFiles(): TFile[] {
+        return this.app.vault.getFiles()
+    }
+
+    getMarkdownFiles(): TFile[] {
+        return this.app.vault.getMarkdownFiles()
+    }
+
 }
