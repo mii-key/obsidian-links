@@ -553,6 +553,14 @@ export function isAbsoluteFilePath(path: string) {
     return new RegExp(RegExPatterns.AbsoluteFilePathCheck.source, 'i').test(path);
 }
 
+export function isRelativeDestination(path: string) {
+    return path?.length > 0 && (new RegExp(RegExPatterns.RelativePath.source, 'i')).test(path);
+}
+
+export function getDirectoryPath(path: string): string {
+    return path.substring(0, path.lastIndexOf('/'));
+}
+
 export class CodeBlock extends TextPart {
     constructor(content: string, position: Position) {
         super(content, position);
