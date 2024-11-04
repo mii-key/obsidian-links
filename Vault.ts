@@ -72,8 +72,9 @@ export class VaultImp implements IVault {
             }
             const backlinksLinkData: Record<string, LinkData[]> = {};
 
-            for (const sourceFile in backlinks) {
-                const linkCaches = backlinks[sourceFile];
+
+            for (const backlink of backlinks) {
+                const [sourceFile, linkCaches] = backlink
                 const linkDataArray = new Array<LinkData>();
                 for (const linkCache of linkCaches) {
                     const linkData = LinkData.parse(linkCache.original);
@@ -108,4 +109,13 @@ export class VaultImp implements IVault {
     getConfig(setting: string): boolean | string | number {
         return this.app.vault.getConfig(setting) as boolean | string | number;
     }
+
+    getFiles(): TFile[] {
+        return this.app.vault.getFiles()
+    }
+
+    getMarkdownFiles(): TFile[] {
+        return this.app.vault.getMarkdownFiles()
+    }
+
 }

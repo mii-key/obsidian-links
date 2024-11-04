@@ -184,6 +184,9 @@ describe('DeleteLinkCommand test', () => {
                 expectedDeleteFile: false,
                 deleteLinkTargetEnabled: false
             }
+            //TODO: test for short link
+
+
         ]
     )('delete link - cursor in selection [$name] - success', ({ name, text, linkTarget, backlinks, expectedShowPrompt, expectedDeleteFile, deleteLinkTargetEnabled }) => {
 

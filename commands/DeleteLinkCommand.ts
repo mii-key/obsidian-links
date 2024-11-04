@@ -55,12 +55,24 @@ export class DeleteLinkCommand extends CommandBase {
 					return;
 				}
 
-				const filePath = hashIdx > 0 ? destination.substring(0, hashIdx) : destination;
+				let filePath = hashIdx > 0 ? destination.substring(0, hashIdx) : destination;
 				let file = this.obsidianProxy.Vault.getAbstractFileByPath(filePath) as TFile;
 				if (!file) {
 					const path = parseFilepath(filePath);
-					if (path.ext === '') {
-						file = this.obsidianProxy.Vault.getAbstractFileByPath(filePath + '.md') as TFile;
+					let pathExt = path.ext;
+					if (pathExt === '') {
+						pathExt = ".md";
+						filePath += pathExt;
+						file = this.obsidianProxy.Vault.getAbstractFileByPath(filePath) as TFile;
+					}
+					if (!file) {
+						const vaultFiles = pathExt === '.md'
+							? this.obsidianProxy.Vault.getMarkdownFiles()
+							: this.obsidianProxy.Vault.getFiles();
+						const targetFile = vaultFiles.find(x => x.path.endsWith(filePath));
+						if (targetFile) {
+							file = targetFile;
+						}
 					}
 				}
 				if (!file) {
