@@ -1,12 +1,46 @@
 import ObsidianLinksPlugin from "main";
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, PluginSettingTab, setIcon, Setting } from "obsidian";
 import { InternalWikilinkWithoutTextAction } from "utils";
 
 export class ObsidianLinksSettingTab extends PluginSettingTab {
+
+    repoUrl: string;
     plugin: ObsidianLinksPlugin;
     constructor(app: App, plugin: ObsidianLinksPlugin) {
         super(app, plugin);
         this.plugin = plugin;
+        this.repoUrl = 'https://github.com/mii-key/obsidian-links';
+    }
+
+    getFullDocUrl(fragment: string): string {
+        return this.repoUrl + '?tab=readme-ov-file#' + fragment;
+    }
+
+    getFullInsiderDocUrl(filename: string): string {
+        return this.repoUrl + '/blob/master/docs/insider/' + filename;
+    }
+
+    setSettingHelpLink(setting: Setting, helpUrl: string): void {
+        const nameEl = setting.settingEl.querySelector(".setting-item-name");
+        if (!nameEl) {
+            return;
+        }
+        this.setElementHelpLink(nameEl, helpUrl);
+    }
+
+    setElementHelpLink(element: Element, helpUrl: string): void {
+        if (!element) {
+            return;
+        }
+        const linkEl = createEl('a', {
+            href: helpUrl
+        });
+
+        const iconEl = element.createSpan();
+        iconEl.addClass('settings-help-icon');
+        setIcon(iconEl, "circle-help");
+        linkEl.appendChild(iconEl)
+        element.appendChild(linkEl);
     }
 
     display(): void {
@@ -57,7 +91,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         toggleskipFrontmatterInNoteWideCommandsSetting(this.plugin.settings.ffSkipFrontmatterInNoteWideCommands);
 
 
-        containerEl.createEl('h4', { text: 'Set link text' });
+        const setListTextEl = containerEl.createEl('h4', { text: 'Set link text' });
+        this.setElementHelpLink(setListTextEl, this.getFullDocUrl('set-link-text'));
+
         new Setting(containerEl)
             .setName('Title separator')
             .setDesc('String used as headings separator in \'Set link text\' command.')
@@ -616,7 +652,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             // ------------------------------------
             // convert links in a folder
 
-            new Setting(containerEl)
+            const settingConvertLinksInFolder = new Setting(containerEl)
                 .setName("Convert links in folder")
                 .setDesc("Convert links in a folder")
                 .setClass("setting-item--feature-convert-links-in-folder")
@@ -630,17 +666,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const featureConvertLinksInFolderSettingDesc = containerEl.querySelector(".setting-item--feature-convert-links-in-folder .setting-item-description");
-
-            if (featureConvertLinksInFolderSettingDesc) {
-                featureConvertLinksInFolderSettingDesc.appendText(' see ');
-                featureConvertLinksInFolderSettingDesc.appendChild(
-                    createEl('a', {
-                        href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/convert-links-in-folder.md',
-                        text: 'docs'
-                    }));
-                featureConvertLinksInFolderSettingDesc.appendText('.');
-            }
+            this.setSettingHelpLink(settingConvertLinksInFolder, this.getFullInsiderDocUrl('convert-links-in-folder.md'));
 
             // ------------------------------
             // feature: extract section
@@ -771,7 +797,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 ffSkipFrontmatterSettingDesc.appendChild(
                     createEl('a', {
                         href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/skip-frontmatter.md',
-                        text: 'docs'
+                        text: 'docs '
                     }));
                 ffSkipFrontmatterSettingDesc.appendText('.');
             }
@@ -807,6 +833,10 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     }));
                 feature1SettingDesc.appendText('.');
             }
+
+
+
+
         }
     }
 }
