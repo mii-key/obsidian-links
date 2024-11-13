@@ -34,6 +34,7 @@ export class DeleteLinkCommand extends CommandBase {
 
 		const links = findLinks(text, LinkTypes.All, cursorOffsetStart, cursorOffsetEnd);
 		if (checking) {
+			console.log("'Delete link' command: Availability check.");
 			if (selection) {
 				console.log("'Delete link' command: Selected text is not supported.");
 				return false;
@@ -47,6 +48,7 @@ export class DeleteLinkCommand extends CommandBase {
 				return false;
 			}
 
+			console.log("'Delete link' command: available.");
 			return links?.length == 1;
 		}
 		if (links?.length == 1) {
