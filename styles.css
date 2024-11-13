@@ -15,3 +15,9 @@ If your plugin does not need CSS, delete this file.
 span.broken-link {
     color: red !important;
 }
+
+.settings-help-icon {
+    margin-left: var(--size-4-2);
+    display: inline-flex;
+    width: var(--icon-xs);
+}
