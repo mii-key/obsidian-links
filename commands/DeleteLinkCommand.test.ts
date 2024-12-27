@@ -11,47 +11,105 @@ import { LinkData } from '../utils';
 
 describe('DeleteLinkCommand test', () => {
 
-    test('status - cursor on text - command disabled', () => {
-        const obsidianProxyMock = new ObsidianProxyMock()
-        const cmd = new DeleteLinkCommand(obsidianProxyMock)
+    test.each(
+        [
+            {
+                name: "no links in selection",
+                text: "some text",
+                selectionStart: "",
+                selectionEnd: "some text",
+                expectedEnabled: false
+            },
+            {
+                name: "1 link selected",
+                text: "some [[my note]] text",
+                selectionStart: "some ",
+                selectionEnd: "some [[my note]]",
+                expectedEnabled: true
+            },
+            {
+                name: "selection inside a link",
+                text: "some [[my note]] text",
+                selectionStart: "some [[my n",
+                selectionEnd: "some [[my no",
+                expectedEnabled: true
+            },
+        ]
+    )('status - selection - [$name] - enable=$expectedEnabled', ({ name, text, selectionStart, selectionEnd, expectedEnabled }) => {
+
+        const vault = new VaultMock();
+        vault.__mocks.getAbstractFileByPath.mockImplementation((path: string) => {
+            if (!path || path.indexOf('.') == -1) {
+                return null;
+            }
+            return new TFile(path, vault.getRoot())
+        });
+
+        const obsidianProxy = new ObsidianProxyMock(vault);
+        const cmd = new DeleteLinkCommand(obsidianProxy)
         const editor = new EditorMock()
-        editor.__mocks.getValue.mockReturnValue('some text')
-        editor.__mocks.getCursor.mockReturnValue({ line: 0, ch: 1 })
+        editor.__mocks.getValue.mockReturnValue(text);
+        const selection = text.substring(selectionStart.length, selectionEnd.length);
+        editor.__mocks.getSelection.mockReturnValue(selection)
+        editor.__mocks.getCursor.mockImplementation((pos: string) => {
+            switch (pos) {
+                case 'from':
+                    return { line: 0, ch: selectionStart.length };
+                case 'to':
+                    return { line: 0, ch: selectionEnd.length };
+                default: return { line: 0, ch: selectionStart.length };
+            }
+
+        })
+
         //
-        const result = cmd.handler(editor, true)
+        const enabled = cmd.handler(editor, true)
         //
-        expect(result).toBeFalsy()
-        expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
+
+        expect(enabled).toBe(expectedEnabled);
     })
+
 
     test.each(
         [
             {
+                name: "plain text",
+                text: "some text",
+                expectedEnabled: false
+            },
+            {
                 name: "html - href in '",
-                text: "<a href='google.com'>google1</a>"
+                text: "<a href='google.com'>google1</a>",
+                expectedEnabled: true
             },
             {
                 name: "html - href in \"",
-                text: "<a href=\"google.com\">google1</a>"
+                text: "<a href=\"google.com\">google1</a>",
+                expectedEnabled: true
+
             },
             {
                 name: "mdlink",
-                text: "[google](google.com)"
+                text: "[google](google.com)",
+                expectedEnabled: true
             },
             {
                 name: "wikilink",
-                text: "[[google.com|google]]"
+                text: "[[google.com|google]]",
+                expectedEnabled: true
             },
             {
                 name: "wikilink empty text",
-                text: "[[google.com]]"
+                text: "[[google.com]]",
+                expectedEnabled: true
             },
             {
                 name: "autolink",
-                text: "<https://google.com>"
+                text: "<https://google.com>",
+                expectedEnabled: true
             }
         ]
-    )('status - cursor on [$name] - command enabled', ({ name, text }) => {
+    )('status - cursor on [$name] - command enabled', ({ name, text, expectedEnabled }) => {
         const obsidianProxyMock = new ObsidianProxyMock()
         const cmd = new DeleteLinkCommand(obsidianProxyMock)
         const editor = new EditorMock()
@@ -60,7 +118,7 @@ describe('DeleteLinkCommand test', () => {
         //
         const result = cmd.handler(editor, true)
         //
-        expect(result).toBeTruthy()
+        expect(result).toBe(expectedEnabled)
         expect(editor.__mocks.replaceRange.mock.calls).toHaveLength(0)
 
     })
@@ -83,7 +141,6 @@ describe('DeleteLinkCommand test', () => {
                 name: "wikilink",
                 text: "[[http://obsidian.md|obsidian]]",
                 deleteLinkTargetEnabled: true
-
             },
             {
                 name: "wikilink empty text",
@@ -188,7 +245,7 @@ describe('DeleteLinkCommand test', () => {
 
 
         ]
-    )('delete link - cursor in selection [$name] - success', ({ name, text, linkTarget, backlinks, expectedShowPrompt, expectedDeleteFile, deleteLinkTargetEnabled }) => {
+    )('delete link - cursor on [$name] - success', ({ name, text, linkTarget, backlinks, expectedShowPrompt, expectedDeleteFile, deleteLinkTargetEnabled }) => {
 
         const uiFactory = new UiFactoryMock();
         let promptModal: PromptModalMock | undefined;

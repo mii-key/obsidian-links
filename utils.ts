@@ -456,7 +456,7 @@ export function decodeHtmlEntities(text: string): string {
     });
 }
 
-export function findLinks(text: string, type?: LinkTypes, start?: number, end?: number): Array<LinkData> {
+export function findLinks(text: string, type?: LinkTypes, start?: number, end?: number, allowStartEndInsideLink = false): Array<LinkData> {
     const linksRegex = new RegExp(`${RegExPatterns.Markdownlink.source}|${RegExPatterns.Wikilink.source}` +
         `|${RegExPatterns.AutolinkUrl.source}|${RegExPatterns.AutolinkMail.source}` +
         `|${RegExPatterns.Htmllink.source}|${RegExPatterns.PlainUrl.source}`
@@ -482,7 +482,11 @@ export function findLinks(text: string, type?: LinkTypes, start?: number, end?: 
                 continue;
             }
         } else {
-            if (!(match.index >= startOffset && (match.index + rawMatch.length) <= endOffset)) {
+            if (allowStartEndInsideLink) {
+                if (!(startOffset >= match.index && endOffset <= (match.index + rawMatch.length))) {
+                    continue;
+                }
+            } else if (!(match.index >= startOffset && (match.index + rawMatch.length) <= endOffset)) {
                 continue;
             }
         }

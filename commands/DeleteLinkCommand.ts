@@ -27,28 +27,13 @@ export class DeleteLinkCommand extends CommandBase {
 			return false;
 		}
 
-		const selection = editor.getSelection();
+		// const selection = editor.getSelection();
 		const text = editor.getValue();
 		const cursorOffsetStart = editor.posToOffset(editor.getCursor('from'));
 		const cursorOffsetEnd = editor.posToOffset(editor.getCursor('to'));
 
-		const links = findLinks(text, LinkTypes.All, cursorOffsetStart, cursorOffsetEnd);
+		const links = findLinks(text, LinkTypes.All, cursorOffsetStart, cursorOffsetEnd, true);
 		if (checking) {
-			console.log("'Delete link' command: Availability check.");
-			if (selection) {
-				console.log("'Delete link' command: Selected text is not supported.");
-				return false;
-			}
-			if (links?.length == 0) {
-				console.log("'Delete link' command: No links found.");
-				return false;
-			}
-			if (links?.length > 1) {
-				console.log("'Delete link' command: Multiple links are not supported.");
-				return false;
-			}
-
-			console.log("'Delete link' command: available.");
 			return links?.length == 1;
 		}
 		if (links?.length == 1) {
