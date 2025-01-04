@@ -3,6 +3,7 @@ import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
 import { DestinationType, LinkTypes, findLinks } from "../utils";
+import { link } from "fs";
 
 export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 
@@ -36,20 +37,22 @@ export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 		const currentNoteFile = currentView?.file;
 
 		if (headingMatch && headingMatch[1] && currentNoteFile) {
-			this.copyLinkToHeadingUnderCursorToClipboard(headingMatch[1], currentNoteFile);
+			this.copyLinkToHeadingUnderCursorToClipboard(editor, headingMatch[1], currentNoteFile);
 		} else if (block && currentView?.file) {
 			this.copyLinkToBlockUnderCursorToClipboard(currentView?.file, editor, block as SectionCache | ListItemCache);
 		}
 	}
 
-	copyLinkToHeadingUnderCursorToClipboard(heading: string, noteFile: TFile) {
+	copyLinkToHeadingUnderCursorToClipboard(editor: Editor, heading: string, noteFile: TFile) {
 		// let destination = `${noteFile.path}#${heading}`;
 		// if (destinationRequireAngleBrackets(destination)) {
 		// 	destination = `<${destination}>`;
 		// }
 		// let rawLink = `[${heading}](${destination})`;
 
-		const rawLink = this.obsidianProxy.createLink("", noteFile.path, heading, heading);
+		const selection = editor.getSelection();
+		const linkText = selection ? selection : heading;
+		const rawLink = this.obsidianProxy.createLink("", noteFile.path, heading, linkText);
 		this.obsidianProxy.clipboardWriteText(rawLink);
 		this.obsidianProxy.createNotice("Link copied to your clipboard");
 	}
@@ -60,11 +63,16 @@ export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 		block: ListItemCache | SectionCache
 	) {
 		let linkText = undefined;
-		const blockFirstLine = editor.getLine(block.position.start.line);
-		const links = findLinks(blockFirstLine, LinkTypes.Wiki | LinkTypes.Markdown);
-		if (links && links.length && links[0].destinationType == DestinationType.Image
-		) {
-			linkText = links[0].text?.content;
+
+		const selection = editor.getSelection();
+		if (selection) {
+			linkText = selection;
+		} else {
+			const blockFirstLine = editor.getLine(block.position.start.line);
+			const links = findLinks(blockFirstLine, LinkTypes.Wiki | LinkTypes.Markdown);
+			if (links && links.length && links[0].destinationType == DestinationType.Image) {
+				linkText = links[0].text?.content;
+			}
 		}
 
 		if (block.id) {
