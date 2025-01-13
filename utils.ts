@@ -662,3 +662,19 @@ export function createMarkdownLink(sourcePath: string, destination: string, dest
     //TODO: handle spaces in destination
     return `[${text ?? ''}${dimensions ? '|' + dimensions : ''}](${destination}${destinationSubPath ? '#' + destinationSubPath : ''})`;
 }
+
+export function getIntersection(interval1: number[], interval2: number[]) {
+    console.log(interval1)
+    console.log(interval2)
+    const [start1, end1] = interval1;
+    const [start2, end2] = interval2;
+
+    if (start1 <= end2 && start2 <= end1) {
+        const intersectionStart = Math.max(start1, start2);
+        const intersectionEnd = Math.min(end1, end2);
+
+        return [intersectionStart, intersectionEnd];
+    } else {
+        return null;
+    }
+}

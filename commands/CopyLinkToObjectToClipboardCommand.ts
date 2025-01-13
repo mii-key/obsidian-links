@@ -2,8 +2,7 @@ import { Editor, EditorPosition, HeadingCache, ListItemCache, SectionCache, TFil
 import { CommandBase, Func } from "./ICommand"
 import { IObsidianProxy } from "./IObsidianProxy";
 import { RegExPatterns } from "../RegExPatterns";
-import { DestinationType, LinkTypes, findLinks } from "../utils";
-import { link } from "fs";
+import { DestinationType, LinkTypes, findLinks, getIntersection } from "../utils";
 
 export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 
@@ -65,13 +64,23 @@ export class CopyLinkToObjectToClipboardCommand extends CommandBase {
 		let linkText = undefined;
 
 		const selection = editor.getSelection();
+		const blockFirstLine = editor.getLine(block.position.start.line);
+		const links = findLinks(blockFirstLine, LinkTypes.Wiki | LinkTypes.Markdown);
+		const firstLink = links.length ? links[0] : undefined;
+
 		if (selection) {
-			linkText = selection;
-		} else {
-			const blockFirstLine = editor.getLine(block.position.start.line);
-			const links = findLinks(blockFirstLine, LinkTypes.Wiki | LinkTypes.Markdown);
-			if (links && links.length && links[0].destinationType == DestinationType.Image) {
-				linkText = links[0].text?.content;
+			console.log(selection)
+			const cursorStart = editor.posToOffset(editor.getCursor('from'));
+			const cursorEnd = editor.posToOffset(editor.getCursor('to'));
+			console.log(firstLink);
+			if (!firstLink
+				|| !getIntersection([cursorStart, cursorEnd],
+					[firstLink.position.start + block.position.start.offset, firstLink.position.end + block.position.start.offset])) {
+				linkText = selection;
+			} else {
+				if (links && links.length && links[0].destinationType == DestinationType.Image) {
+					linkText = links[0].text?.content;
+				}
 			}
 		}
 
