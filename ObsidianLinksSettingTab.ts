@@ -807,7 +807,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             // ------------------------------------
             // copy link to element to the clipboard
 
-            new Setting(containerEl)
+            const settingCopyLinkToElement = new Setting(containerEl)
                 .setName("Copy link to element")
                 .setDesc("Copy link to a heading or a block to the clipboard. ")
                 .setClass("setting-item-copy-link-to-object")
@@ -822,20 +822,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
                 });
 
-            const feature1SettingDesc = containerEl.querySelector(".setting-item-copy-link-to-object .setting-item-description");
-
-            if (feature1SettingDesc) {
-                feature1SettingDesc.appendText(' see ');
-                feature1SettingDesc.appendChild(
-                    createEl('a', {
-                        href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/copy-link-to-element.md',
-                        text: 'docs'
-                    }));
-                feature1SettingDesc.appendText('.');
-            }
-
-
-
+            this.setSettingHelpLink(settingCopyLinkToElement, this.getFullInsiderDocUrl('copy-link-to-element.md'));
 
         }
     }
