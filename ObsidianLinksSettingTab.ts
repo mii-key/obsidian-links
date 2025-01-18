@@ -104,8 +104,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }));
 
+        const removeLinksFromHeadingEl = containerEl.createEl('h4', { text: 'Remove links from headings' });
+        this.setElementHelpLink(removeLinksFromHeadingEl, this.getFullDocUrl('remove-links-from-headings'));
 
-        containerEl.createEl('h4', { text: 'Remove links from headings' });
         new Setting(containerEl)
             .setName('Internal wikilink without text')
             .addDropdown(dropDown =>
