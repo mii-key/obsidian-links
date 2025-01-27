@@ -123,7 +123,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     }));
 
 
-        containerEl.createEl('h4', { text: 'Delete link' });
+        const deleteLinkEl = containerEl.createEl('h4', { text: 'Delete link' });
+        this.setElementHelpLink(deleteLinkEl, this.getFullDocUrl('delete-link'));
+
         new Setting(containerEl)
             .setName('Delete unreferenced link target')
             .addToggle((toggle) => {
