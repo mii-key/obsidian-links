@@ -300,6 +300,12 @@ Each link is replaced with it's text. Links without text are removed. Wikilink w
 - Command palette: **Delete link**
 - Context menu: **Delete**
 
+Supported links:
+- Wikilink
+- Markdown link
+- URL
+- Autolink
+- HTML link
 
 If the target file for the deleted link is unreferenced the prompt to delete the file is displayed.
 Configure this feature in the plugin settings:
