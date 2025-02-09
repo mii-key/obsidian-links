@@ -178,7 +178,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         // toggleFeature1Section(this.plugin.settings.ffFeature1);
 
-        new Setting(containerEl)
+        const settingEditLinkText = new Setting(containerEl)
             .setName('Edit link text')
             .setDesc('')
             .addToggle((toggle) => {
@@ -190,6 +190,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingEditLinkText, this.getFullDocUrl('edit-link-text'));
+
         new Setting(containerEl)
             .setName('Set link text')
             .setDesc('')
