@@ -193,7 +193,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         this.setSettingHelpLink(settingEditLinkText, this.getFullDocUrl('edit-link-text'));
 
-        new Setting(containerEl)
+        const settingSetLinkText = new Setting(containerEl)
             .setName('Set link text')
             .setDesc('')
             .addToggle((toggle) => {
@@ -205,6 +205,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingSetLinkText, this.getFullDocUrl('set-link-text'));
+
         new Setting(containerEl)
             .setName('Set link text from clipboard')
             .setDesc('')
