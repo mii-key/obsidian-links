@@ -636,6 +636,24 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         // 	feature1SettingDesc.appendText('.');
         // }
 
+        // ------------------------------------
+        // insider feature1
+
+        // const settingInsiderFeature1 = new Setting(containerEl)
+        //     .setName("Insider feature")
+        //     .setDesc("Insider feature desc ")
+        //     .addToggle((toggle) => {
+        //         toggle
+        //             .setValue(this.plugin.settings.ffInsiderFeature1)
+        //             .onChange(async (value) => {
+        //                 this.plugin.settings.ffInsiderFeaturei = value;
+        //                 await this.plugin.saveSettings();
+        //             })
+
+        //     });
+
+        // this.setSettingHelpLink(settingInsiderFeature1, this.getFullInsiderDocUrl('insider-feature1.md'));
+
 
 
         // ------------------------------------
@@ -732,36 +750,6 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
 
         // ------------------------------------
-        // Set link destination from clipboard
-
-        // new Setting(containerEl)
-        //     .setName("Set link destination from clipboard")
-        //     .setDesc("")
-        //     .setClass("setting-item-set-link-destination-from-clipboard")
-        //     .addToggle((toggle) => {
-        //         toggle
-        //             .setValue(this.plugin.settings.ffSetLinkDestinationFromClipbard)
-        //             .onChange(async (value) => {
-        //                 this.plugin.settings.ffSetLinkDestinationFromClipbard = value;
-        //                 toggleSetLinkDestinationFromClipboardContextMenuSetting(value);
-        //                 await this.plugin.saveSettings();
-        //             })
-
-        //     });
-
-        // const setLinkDestinationFromClipbardSettingDesc = containerEl.querySelector(".setting-item-feature1 .setting-item-description");
-
-        // if (setLinkDestinationFromClipbardSettingDesc) {
-        //     setLinkDestinationFromClipbardSettingDesc.appendText(' see ');
-        //     setLinkDestinationFromClipbardSettingDesc.appendChild(
-        //         createEl('a', {
-        //             href: 'https://github.com/mii-key/obsidian-links/blob/master/docs/insider/feature1.md',
-        //             text: 'docs'
-        //         }));
-        //     setLinkDestinationFromClipbardSettingDesc.appendText('.');
-        // }
-
-        // ------------------------------------
         // skip front matter in note wide commands
 
         new Setting(containerEl)
@@ -812,5 +800,23 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             });
 
         this.setSettingHelpLink(settingCopyLinkToElement, this.getFullInsiderDocUrl('copy-link-to-element.md'));
+
+        // ------------------------------------
+        // Set link destination from clipboard
+
+        //const settingSetLinkDestinationFromClipboard = 
+        new Setting(containerEl)
+            .setName("Set link destination from clipboard")
+            .setDesc("Sets destination of a link from clipboard")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.ffSetLinkDestinationFromClipbard)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ffSetLinkDestinationFromClipbard = value;
+                        await this.plugin.saveSettings();
+                    })
+            });
+
+        // this.setSettingHelpLink(settingSetLinkDestinationFromClipboard, this.getFullInsiderDocUrl('set-link-destination-from-clipboard.md'));
     }
 }
