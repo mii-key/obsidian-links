@@ -50,6 +50,8 @@ export class SetLinkDestinationFromClipboardCommand extends ConvertToMdlinkComma
 			}
 			const link = links[0];
 			const clipboardText = await this.obsidianProxy.clipboardReadText();
+			//TODO: temp
+			let clipboardTextProcessed = false;
 			let linkDestination = clipboardText;
 			if (this.obsidianProxy.settings.ffObsidianUrlSupport) {
 				//TODO:
@@ -61,11 +63,22 @@ export class SetLinkDestinationFromClipboardCommand extends ConvertToMdlinkComma
 							const filePath = url.searchParams.get('file')
 							if (filePath) {
 								linkDestination = filePath + (getFileExtension(filePath) ? '' : '.md');
+								clipboardTextProcessed = true;
 							}
 						}
 					}
 				}
 			}
+
+			//TODO: temp
+			if (!clipboardTextProcessed) {
+				const links = findLinks(clipboardText, LinkTypes.All);
+				if (links?.length > 0 && links[0].destination?.content) {
+					linkDestination = links[0].destination?.content;
+				}
+			}
+
+
 			let destinationStartOffset: number;
 			let destinationEndOffset: number;
 			if (link?.destination) {

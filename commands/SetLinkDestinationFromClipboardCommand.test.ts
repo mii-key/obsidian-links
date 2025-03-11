@@ -303,6 +303,8 @@ describe('SetLinkDestinationFromClipboardCommand test', () => {
     test.each(
         [
             //mdlink
+
+            // clipboard: text
             {
                 name: "mdlink w/text, clipboard content",
                 text: "Proident laboris [nisi](elit) irure in aliquip nulla aliqua laboris.",
@@ -435,8 +437,10 @@ describe('SetLinkDestinationFromClipboardCommand test', () => {
                 expectedCursorPos: "Proident laboris ![200](some-text".length
 
             },
+
+            // clipboard: obsidian link
             {
-                name: "mdlink w/text, obsidian link in clipboard, same vault",
+                name: "mdlink w/text, clipboard: obsidian link, same vault",
                 text: "Proident laboris [nisi](elit) irure in aliquip nulla aliqua laboris.",
                 clipboardText: "obsidian://open?vault=vault1&file=Folder1%2FLink%20Title",
                 cursorOffset: "Proident laboris [n".length,
@@ -447,6 +451,19 @@ describe('SetLinkDestinationFromClipboardCommand test', () => {
 
             },
 
+
+            // clipboard: wikilink
+            {
+                name: "mdlink w/text, clipboard: wikilink",
+                text: "Proident laboris [nisi](elit) irure in aliquip nulla aliqua laboris.",
+                clipboardText: "[[Folder1/Link Title.md|Some Link Title]]",
+                cursorOffset: "Proident laboris [n".length,
+                expectedReplacement: '<Folder1/Link Title.md>',
+                expectedReplacementStart: "Proident laboris [nisi](".length,
+                expectedReplacementEnd: "Proident laboris [nisi](elit".length,
+                expectedCursorPos: "Proident laboris [nisi](<Folder1/Link Title.md>".length
+
+            },
 
             // wikilink
             {
