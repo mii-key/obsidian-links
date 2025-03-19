@@ -262,7 +262,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         toggleSetLinkDestinationFromClipboardContextMenuSetting(this.plugin.settings.ffSetLinkDestinationFromClipbard);
 
-        new Setting(containerEl)
+        const settingCopyLinkToClipboard = new Setting(containerEl)
             .setName('Copy link')
             .setDesc('')
             .addToggle((toggle) => {
@@ -274,6 +274,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingCopyLinkToClipboard, this.getFullDocUrl('copy'));
+
 
         new Setting(containerEl)
             .setName('Cut link')
