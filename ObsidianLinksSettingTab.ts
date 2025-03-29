@@ -278,7 +278,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         this.setSettingHelpLink(settingCopyLinkToClipboard, this.getFullDocUrl('copy'));
 
 
-        new Setting(containerEl)
+        const settingCutLinkToClipboard = new Setting(containerEl)
             .setName('Cut link')
             .setDesc('')
             .addToggle((toggle) => {
@@ -290,6 +290,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingCutLinkToClipboard, this.getFullDocUrl('cut'));
+
 
         new Setting(containerEl)
             .setName('Copy link destination')
