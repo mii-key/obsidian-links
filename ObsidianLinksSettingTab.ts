@@ -294,7 +294,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         this.setSettingHelpLink(settingCutLinkToClipboard, this.getFullDocUrl('cut'));
 
 
-        new Setting(containerEl)
+        const settingCopyLinkDestination = new Setting(containerEl)
             .setName('Copy link destination')
             .setDesc('')
             .addToggle((toggle) => {
@@ -306,6 +306,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingCopyLinkDestination, this.getFullDocUrl('copy-link-destination-to-clipboard'));
+
 
         const settingCopyLinkToObjectContextMenu = new Setting(containerEl)
             .setName('Copy link to element')
