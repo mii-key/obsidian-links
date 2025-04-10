@@ -330,10 +330,11 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                 settingCopyLinkToObjectContextMenu.settingEl.hide();
             }
         }
+        //TODO: link to docs
 
         toggleCopyLinkToObjectContextMenuSetting(this.plugin.settings.ffCopyLinkToObject);
 
-        new Setting(containerEl)
+        const settingUnlink = new Setting(containerEl)
             .setName('Unlink')
             .setDesc('')
             .addToggle((toggle) => {
@@ -345,6 +346,10 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingUnlink, this.getFullDocUrl('unlink'));
+
+
         new Setting(containerEl)
             .setName('Convert to wikilink')
             .setDesc('')
