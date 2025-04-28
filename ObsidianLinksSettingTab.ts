@@ -350,7 +350,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
         this.setSettingHelpLink(settingUnlink, this.getFullDocUrl('unlink'));
 
 
-        new Setting(containerEl)
+        const settingConvertToWikilink = new Setting(containerEl)
             .setName('Convert to wikilink')
             .setDesc('')
             .addToggle((toggle) => {
@@ -362,6 +362,10 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingConvertToWikilink, this.getFullDocUrl('convert-to-wiki-link'));
+
+
         new Setting(containerEl)
             .setName('Convert to autolink')
             .setDesc('')
