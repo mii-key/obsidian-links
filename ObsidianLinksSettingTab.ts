@@ -381,7 +381,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         this.setSettingHelpLink(settingConvertToAutolink, this.getFullDocUrl('convert-to-autolink'));
 
-        new Setting(containerEl)
+        const settingConvertToMarkdownlink = new Setting(containerEl)
             .setName('Convert to markdown link')
             .setDesc('')
             .addToggle((toggle) => {
@@ -393,6 +393,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+        this.setSettingHelpLink(settingConvertToMarkdownlink, this.getFullDocUrl('convert-to-markdown-link'));
 
         new Setting(containerEl)
             .setName('Convert to HTML link')
