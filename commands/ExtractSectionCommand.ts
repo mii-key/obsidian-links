@@ -38,11 +38,11 @@ export class ExtractSectionCommand extends CommandBase {
 		}
 
 		let blockStart;
-		let blockEnd;
+		let blockEnd: number | undefined;
 		const cursorOffset = editor.posToOffset(editor.getCursor('from'));
-		let found = false;
 		blockStart = blockEnd = cursorOffset;
 		let headerLevel = 1;
+		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			blockStart = text.lastIndexOf('# ', blockStart);
 			if (blockStart < 0) {
@@ -65,25 +65,13 @@ export class ExtractSectionCommand extends CommandBase {
 			blockStart = 0;
 		}
 
-		found = false;
-		let idx = blockEnd;
-		while (true) {
-			blockEnd = text.indexOf('\n' + '#'.repeat(headerLevel) + ' ', blockEnd);
-			if (blockEnd < 0) {
-				blockEnd = text.length;
-				break;
-			} else {
-				idx = blockEnd + 1;
-				while (idx < text.length && text[idx] == '#') {
-					idx++;
-				}
-				if (idx >= text.length || text[idx] == ' ') {
-					break;
-				}
-			}
-		}
+		console.log(`start: ${blockStart}, level: ${headerLevel}`)
 
-		if (blockEnd >= text.length) {
+		blockEnd = this.getSectionEnd(text, blockEnd, headerLevel);
+		console.log(`end: ${blockEnd}`)
+
+
+		if (blockEnd === undefined) {
 			blockEnd = text.length;
 		}
 
@@ -105,10 +93,41 @@ export class ExtractSectionCommand extends CommandBase {
 			(async () => {
 				const noteFile = await this.obsidianProxy.Vault.createNote(noteFullPath, noteContent);
 				const rawWikilink = `[[${noteFullPath}|${safeFilename}]]`
-				editor.replaceRange(rawWikilink, editor.offsetToPos(blockStart), editor.offsetToPos(blockEnd))
+				//TODO: use \n from section
+				editor.replaceRange(rawWikilink + '\n', editor.offsetToPos(blockStart), editor.offsetToPos(blockEnd))
 				editor.setCursor(editor.offsetToPos(blockStart + rawWikilink.length))
 			})();
 
 		}
 	}
+
+	getSectionEnd(text: string, start: number, headerLevel: number): number | undefined {
+		// Regular expression to match headers
+		const headerRegex = /^(#+)\s/;
+
+		let position = start;
+
+		while (position < text.length) {
+			const nextLineBreak = text.indexOf('\n', position);
+			const lineEnd = nextLineBreak === -1 ? text.length : nextLineBreak;
+			const line = text.slice(position, lineEnd);
+
+			const match = line.match(headerRegex);
+			if (match) {
+				const currentHeaderLevel = match[1].length;
+
+				// Check if the header level is the same or smaller than the provided level
+				if (currentHeaderLevel <= headerLevel) {
+
+					return (position > 1 && text[position - 1] === '\r') ? position - 1 : position;
+					// return position;
+				}
+			}
+
+			position = lineEnd + 1;
+		}
+
+		return undefined;
+	}
+
 }
