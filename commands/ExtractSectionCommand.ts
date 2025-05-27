@@ -65,11 +65,7 @@ export class ExtractSectionCommand extends CommandBase {
 			blockStart = 0;
 		}
 
-		console.log(`start: ${blockStart}, level: ${headerLevel}`)
-
 		blockEnd = this.getSectionEnd(text, blockEnd, headerLevel);
-		console.log(`end: ${blockEnd}`)
-
 
 		if (blockEnd === undefined) {
 			blockEnd = text.length;
