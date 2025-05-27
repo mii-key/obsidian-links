@@ -78,7 +78,7 @@ describe('ExtractSectionCommand test', () => {
                 expectedSectionStart: "Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n".length,
                 expectedSectionEnd: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
                     "# Eiusmod mollit magna consectetur est.\r\n" +
-                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
                     "Et laborum eu velit eu Lorem irure labore. \r\n").length,
                 expectedSectionFileName: "Eiusmod mollit magna consectetur est."
             },
@@ -105,20 +105,47 @@ describe('ExtractSectionCommand test', () => {
                     "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
                     "## Ea sunt ex Lorem excepteur id.\r\n" +
                     "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
-                    "Et laborum eu velit eu Lorem irure labore. \r").length,
+                    "Et laborum eu velit eu Lorem irure labore. \r\n").length,
                 expectedSectionFileName: "Eiusmod mollit magna consectetur est."
+            },
+            {
+                name: "subsection",
+                text: "Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
+                    "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
+                    "## Ea sunt ex Lorem excepteur id.\r\n" +
+                    "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
+                    "Et laborum eu velit eu Lorem irure labore. \r\n" +
+                    "# Culpa laboris cupidatat commodo sunt occaecat sint irure mollit sunt voluptate dolor dolor quis.",
+                cursorOffest: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
+                    "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
+                    "## Ea s").length,
+                expectedSection: "## Ea sunt ex Lorem excepteur id.\r\n" +
+                    "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
+                    "Et laborum eu velit eu Lorem irure labore. \r\n",
+                expectedSectionStart: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
+                    "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n").length,
+                expectedSectionEnd: ("Magna ullamco ullamco consequat esse nisi excepteur labore excepteur esse consectetur tempor esse cillum.\r\n" +
+                    "# Eiusmod mollit magna consectetur est.\r\n" +
+                    "Non voluptate quis laborum officia cupidatat. Commodo in amet Lorem incididunt.\r\n" +
+                    "## Ea sunt ex Lorem excepteur id.\r\n" +
+                    "laboris voluptate esse labore laboris. Ex amet veniam commodo do. Adipisicing sit \r\n" +
+                    "Et laborum eu velit eu Lorem irure labore. \r\n").length,
+                expectedSectionFileName: "Ea sunt ex Lorem excepteur id."
             },
         ]
     )
         ('extract - $name - success', ({ name, text, cursorOffest, expectedSection, expectedSectionStart, expectedSectionEnd, expectedSectionFileName }) => {
             const vault = new VaultMock();
-            const obsidianProxyMock = new ObsidianProxyMock(vault);
+            // const obsidianProxyMock = new ObsidianProxyMock(vault);
             vault.__mocks.getActiveNoteView.mockReturnValue({
                 file: {
                     parent: vault.getRoot()
                 }
             })
-            const activeView = vault.getActiveNoteView();
+            // const activeView = vault.getActiveNoteView();
 
             const obsidianProxy = new ObsidianProxyMock(vault)
 
@@ -140,7 +167,7 @@ describe('ExtractSectionCommand test', () => {
             if (expectedSectionFileName) {
                 expect(vault.__mocks.createNote.mock.calls).toHaveLength(1)
                 expect(vault.__mocks.createNote.mock.calls[0][0]).toBe(`${expectedSectionFileName}.md`)
-                expect(vault.__mocks.createNote.mock.calls[0][1]).toBe(expectedSection.substring(expectedSection.indexOf('\r') + 1, expectedSection.length - 1))
+                expect(vault.__mocks.createNote.mock.calls[0][1]).toBe(expectedSection.substring(expectedSection.indexOf('\n'), expectedSection.length))
             }
         })
 
