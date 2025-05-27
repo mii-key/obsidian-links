@@ -395,7 +395,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             });
         this.setSettingHelpLink(settingConvertToMarkdownlink, this.getFullDocUrl('convert-to-markdown-link'));
 
-        new Setting(containerEl)
+        const settingConvertToHtmlLink = new Setting(containerEl)
             .setName('Convert to HTML link')
             .setDesc('')
             .addToggle((toggle) => {
@@ -407,6 +407,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+        this.setSettingHelpLink(settingConvertToHtmlLink, this.getFullDocUrl('convert-to-html-link'));
 
         if (this.plugin.settings.ffReplaceLink) {
             new Setting(containerEl)
