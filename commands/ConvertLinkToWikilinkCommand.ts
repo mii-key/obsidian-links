@@ -1,6 +1,6 @@
 import { Editor } from "obsidian";
 import { CommandBase, Func } from "./ICommand"
-import { LinkData, LinkTypes, findLinks } from "../utils";
+import { DestinationType, LinkData, LinkTypes, findLinks } from "../utils";
 
 export class ConvertLinkToWikilinkCommand extends CommandBase {
 	// TODO: refactor
@@ -32,7 +32,10 @@ export class ConvertLinkToWikilinkCommand extends CommandBase {
 
 	convertLinkToWikiLink(linkData: LinkData, editor: Editor) {
 		const link = linkData.type === LinkTypes.Markdown ? (linkData.destination ? decodeURI(linkData.destination.content) : "") : linkData.destination;
-		const text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
+		let text = linkData.text ? (linkData.text.content !== link ? "|" + linkData.text.content : "") : "";
+		if(linkData.destinationType === DestinationType.Image && linkData.imageDimensions){
+			text = text + "|" + linkData.imageDimensions.width
+		}
 		//TODO: use const for !
 		const embededSymbol = linkData.embedded ? '!' : '';
 		const rawLinkText = `${embededSymbol}[[${link}${text}]]`;

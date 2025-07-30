@@ -133,6 +133,18 @@ describe('ConvertLinkToWikilinkCommand test', () => {
                 expected: '[[note 1]]',
                 cursurPos: "[[note 1]]".length
             },
+            {
+                name: "mdlink img name & width",
+                text: "[image|200](image.jpg)",
+                expected: '[[image.jpg|image|200]]',
+                cursurPos: "[[image.jpg|image|200]]".length
+            },
+            {
+                name: "mdlink img width",
+                text: "[200](image.jpg)",
+                expected: '[[image.jpg|200]]',
+                cursurPos: "[[image.jpg|200]]".length
+            },
         ]
     )
         ('convert link - cursor in selection [$name] - success', ({ name, text, expected, cursurPos }) => {
