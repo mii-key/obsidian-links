@@ -438,7 +438,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             });
         this.setSettingHelpLink(settingembedUnembedLink, this.getFullDocUrl('embed--unembed-files'));
 
-        new Setting(containerEl)
+        const settingDeleteLink = new Setting(containerEl)
             .setName('Delete')
             .setDesc('')
             .addToggle((toggle) => {
@@ -450,6 +450,8 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+        this.setSettingHelpLink(settingDeleteLink, this.getFullDocUrl('delete-link'));
+
         new Setting(containerEl)
             .setName('Create link')
             .setDesc('')
