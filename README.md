@@ -80,10 +80,10 @@ To autoselect a word under the cursor enable 'Autoselect upon creating a link' i
 
 ## Convert
 
-|                   |        **Wiki link**        |      **Makrdown link**      |        **HTML link**        |        **Autolink**         |
+|                   |        **Wiki link**        |      **Markdown link**      |        **HTML link**        |        **Autolink**         |
 | ----------------- | :-------------------------: | :-------------------------: | :-------------------------: | :-------------------------: |
 | **Wiki link**     |                             | <a href="#convert-to-markdown-link"><img src="docs/img/left-up-arrow.png"/></a> | <a href="#convert-to-html-link"><img src="docs/img/left-up-arrow.png"/></a> |                             |
-| **Makrdown link** | <a href="#convert-to-wiki-link"><img src="docs/img/left-up-arrow.png"/></a> |                             |                             | <a href="#convert-to-autolink"><img src="docs/img/left-up-arrow.png"/></a> |
+| **Markdown link** | <a href="#convert-to-wiki-link"><img src="docs/img/left-up-arrow.png"/></a> |                             |                             | <a href="#convert-to-autolink"><img src="docs/img/left-up-arrow.png"/></a> |
 | **HTML link**     |                             | <a href="#convert-to-markdown-link"><img src="docs/img/left-up-arrow.png"/></a> |                             |                             |
 | **Autolink**      |                             | <a href="#convert-to-markdown-link"><img src="docs/img/left-up-arrow.png"/></a> |                             |                             |
 | **URL**           |                             | <a href="#convert-to-markdown-link"><img src="docs/img/left-up-arrow.png"/></a> |                             | <a href="#convert-to-autolink"><img src="docs/img/left-up-arrow.png"/></a> |
