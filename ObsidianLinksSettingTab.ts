@@ -452,7 +452,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
             });
         this.setSettingHelpLink(settingDeleteLink, this.getFullDocUrl('delete-link'));
 
-        new Setting(containerEl)
+        const settingCreateLink = new Setting(containerEl)
             .setName('Create link')
             .setDesc('')
             .addToggle((toggle) => {
@@ -464,6 +464,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingCreateLink, this.getFullDocUrl('create-link-from-selection'));
+
         let settings1 = new Setting(containerEl)
             .setName('Create link from clipboard')
             .setDesc('')
