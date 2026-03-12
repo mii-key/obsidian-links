@@ -467,7 +467,7 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
 
         this.setSettingHelpLink(settingCreateLink, this.getFullDocUrl('create-link-from-selection'));
 
-        let settings1 = new Setting(containerEl)
+        let settingCreateLinkFromClipboard = new Setting(containerEl)
             .setName('Create link from clipboard')
             .setDesc('')
             .addToggle((toggle) => {
@@ -479,6 +479,9 @@ export class ObsidianLinksSettingTab extends PluginSettingTab {
                     })
 
             });
+
+        this.setSettingHelpLink(settingCreateLinkFromClipboard, this.getFullDocUrl('create-link-from-clipboard'));
+
 
         const convertAllToMdLinksSettings = new Setting(containerEl)
             .setName('Convert all links to Markdown links')
