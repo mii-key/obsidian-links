@@ -529,4 +529,3 @@ Add or remove [file embedding](https://help.obsidian.md/Linking+notes+and+files/
 ![remove link](/docs/img/unembed-link.gif)
 
 </details>
-

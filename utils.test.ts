@@ -1302,4 +1302,49 @@ describe("Utils tests", () => {
             expect(result).toBeNull();
         }
     });
+
+    describe("findLinks regex performance", () => {
+        // Regression: an unclosed markdown link such as "[x](https://example.com/..." made the
+        // Markdownlink pattern backtrack exponentially (a 90 character URL never finished and froze
+        // Obsidian), because it nested a quantifier inside a quantifier. The same applied to PlainUrl
+        // for text like "http://......". Inputs of ~25 characters took >0.5s (Markdownlink) and >20s
+        // (PlainUrl) before the fix, and is now linear.
+        const maxMs = 250;
+
+        test("unclosed markdown link with a long destination returns quickly", () => {
+            const input = "[x](" + "a".repeat(28);
+            const start = Date.now();
+            const result = findLinks(input);
+            expect(Date.now() - start).toBeLessThan(maxMs);
+            expect(result.filter(l => l.type === LinkTypes.Markdown)).toEqual([]);
+        });
+
+        test("unclosed markdown link inside a large document returns quickly", () => {
+            const input = "# Title\n\nSome text [ok](https://example.com/ok) here.\n\n"
+                + "- [Search](https://example.com/abcde\n\n"
+                + "More text.\n".repeat(200);
+            const start = Date.now();
+            const result = findLinks(input, LinkTypes.Markdown);
+            expect(Date.now() - start).toBeLessThan(maxMs);
+            expect(result.length).toBe(1);
+            expect(result[0].destination?.content).toBe("https://example.com/ok");
+        });
+
+        test("plain url made only of excluded trailing punctuation returns quickly", () => {
+            const input = "http://" + ".".repeat(26);
+            const start = Date.now();
+            findLinks(input);
+            expect(Date.now() - start).toBeLessThan(maxMs);
+        });
+
+        test.each([
+            { name: "balanced parentheses in destination", input: "[a](https://example.com/a_(b))", destination: "https://example.com/a_(b)" },
+            { name: "escaped parentheses in destination", input: "[a](a\\(b\\))", destination: "a\\(b\\)" },
+            { name: "link followed by unrelated closing paren", input: "([a](b.md))", destination: "b.md" },
+        ])("closed markdown link still parses - $name", ({ input, destination }) => {
+            const result = findLinks(input, LinkTypes.Markdown);
+            expect(result.length).toBe(1);
+            expect(result[0].destination?.content).toBe(destination);
+        });
+    });
 })
